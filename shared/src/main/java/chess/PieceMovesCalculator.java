@@ -27,6 +27,10 @@ public class PieceMovesCalculator {
             RookMovesCalculator rookMovesCalculator = new RookMovesCalculator();
             return rookMovesCalculator.pieceMovesCalculator(board,myPosition);
         }
+        if(board.getPiece(myPosition).getPieceType() == ChessPiece.PieceType.PAWN) {
+            PawnMovesCalculator pawnMovesCalculator = new PawnMovesCalculator();
+            return pawnMovesCalculator.pieceMovesCalculator(board, myPosition);
+        }
         return new ArrayList<>();
     }
 
