@@ -609,77 +609,95 @@ public class CCMCalculator {
             int aRow = attposition.getRow();
             int aColumn = attposition.getColumn();
             if((aRow == kRow && aColumn < kColumn) && (board.getPiece(attposition).getPieceType() != ChessPiece.PieceType.KNIGHT)){
+                ChessMove move = new ChessMove(attposition, attposition, null);
+                checkLine.add(move);
                 while(aColumn != kColumn - 1) {
                     aColumn++;
                     ChessPosition newPosition = new ChessPosition(aRow, aColumn);
-                    ChessMove move = new ChessMove(newPosition, kingPosition, null);
+                    newPosition = new ChessPosition(aRow, aColumn);
+                    move = new ChessMove(attposition, newPosition, null);
                     checkLine.add(move);
                 }
                 continue;
             }
             else if((aRow == kRow && aColumn > kColumn) && (board.getPiece(attposition).getPieceType() != ChessPiece.PieceType.KNIGHT)){
+                ChessMove move = new ChessMove(attposition, attposition, null);
+                checkLine.add(move);
                 while(aColumn != kColumn + 1) {
                     aColumn--;
                     ChessPosition newPosition = new ChessPosition(aRow, aColumn);
-                    ChessMove move = new ChessMove(newPosition, kingPosition, null);
+                    move = new ChessMove(attposition, newPosition, null);
                     checkLine.add(move);
                 }
                 continue;
             }
             else if((aRow > kRow && aColumn == kColumn) && (board.getPiece(attposition).getPieceType() != ChessPiece.PieceType.KNIGHT)){
+                ChessMove move = new ChessMove(attposition, attposition, null);
+                checkLine.add(move);
                 while(aRow != kRow + 1) {
                     aRow--;
                     ChessPosition newPosition = new ChessPosition(aRow, aColumn);
-                    ChessMove move = new ChessMove(newPosition, kingPosition, null);
+                    move = new ChessMove(attposition, newPosition, null);
                     checkLine.add(move);
                 }
                 continue;
             }
             else if((aRow < kRow && aColumn == kColumn) && (board.getPiece(attposition).getPieceType() != ChessPiece.PieceType.KNIGHT)){
+                ChessMove move = new ChessMove(attposition, attposition, null);
+                checkLine.add(move);
                 while(aRow != kRow - 1) {
                     aRow++;
                     ChessPosition newPosition = new ChessPosition(aRow, aColumn);
-                    ChessMove move = new ChessMove(newPosition, kingPosition, null);
+                    move = new ChessMove(attposition, newPosition, null);
                     checkLine.add(move);
                 }
                 continue;
             }
             else if((aRow < kRow && aColumn < kColumn) && (board.getPiece(attposition).getPieceType() != ChessPiece.PieceType.KNIGHT)){
+                ChessMove move = new ChessMove(attposition, attposition, null);
+                checkLine.add(move);
                 while(aRow != kRow - 1 && aColumn != kColumn - 1) {
                     aRow++;
                     aColumn++;
                     ChessPosition newPosition = new ChessPosition(aRow, aColumn);
-                    ChessMove move = new ChessMove(newPosition, kingPosition, null);
+                    move = new ChessMove(attposition, newPosition, null);
                     checkLine.add(move);
                 }
                 continue;
             }
             else if((aRow > kRow && aColumn < kColumn) && (board.getPiece(attposition).getPieceType() != ChessPiece.PieceType.KNIGHT)){
+                ChessMove move = new ChessMove(attposition, attposition, null);
+                checkLine.add(move);
                 while(aRow != kRow + 1 && aColumn != kColumn - 1) {
                     aRow--;
                     aColumn++;
                     ChessPosition newPosition = new ChessPosition(aRow, aColumn);
-                    ChessMove move = new ChessMove(newPosition, kingPosition, null);
+                    move = new ChessMove(attposition, newPosition, null);
                     checkLine.add(move);
                 }
                 continue;
             }
             else if((aRow < kRow && aColumn > kColumn) && (board.getPiece(attposition).getPieceType() != ChessPiece.PieceType.KNIGHT)){
+                ChessMove move = new ChessMove(attposition, attposition, null);
+                checkLine.add(move);
                 while(aRow != kRow - 1 && aColumn != kColumn + 1) {
                     aRow++;
                     aColumn--;
                     ChessPosition newPosition = new ChessPosition(aRow, aColumn);
-                    ChessMove move = new ChessMove(newPosition, kingPosition, null);
+                    move = new ChessMove(attposition, newPosition, null);
                     checkLine.add(move);
                 }
                 continue;
             }
             else if((aRow > kRow && aColumn > kColumn) && (board.getPiece(attposition).getPieceType() != ChessPiece.PieceType.KNIGHT)){
+
+                ChessMove move = new ChessMove(attposition, attposition, null);
+                checkLine.add(move);
                 while(aRow != kRow + 1 && aColumn != kColumn + 1) {
                     aRow--;
                     aColumn--;
                     ChessPosition newPosition = new ChessPosition(aRow, aColumn);
-                    ChessMove move = new ChessMove(newPosition, kingPosition, null);
+                    move = new ChessMove(attposition, newPosition, null);
                     checkLine.add(move);
                 }
                 continue;
