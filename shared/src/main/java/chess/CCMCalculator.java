@@ -299,6 +299,7 @@ public class CCMCalculator {
                     if ((checkpiece.getTeamColor() == teamColor)) {
                         PieceMovesCalculator myMoves = new PieceMovesCalculator();
                         System.out.println(myMoves.PieceMovesCalculator(board,position));
+
                     }
                 }
             }
