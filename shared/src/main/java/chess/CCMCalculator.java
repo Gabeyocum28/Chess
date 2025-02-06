@@ -316,6 +316,7 @@ public class CCMCalculator {
         System.out.println("My saving moves " + savingMoves);
         System.out.println("Attacker " + checkPieces);
         if(!checkPieces.isEmpty()) {
+
             return true;
         }
 
