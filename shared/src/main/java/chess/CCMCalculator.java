@@ -1,18 +1,17 @@
 package chess;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Objects;
+import java.util.*;
 
 public class CCMCalculator {
     public CCMCalculator() {
     }
 
-    private Collection<ChessPosition> oppMoves = new ArrayList<>();
-    private Collection<ChessMove> checkPieces = new ArrayList<>();
-    private Collection<ChessMove> allMyMoves = new ArrayList<>();
+    private Collection<ChessMove> oppAttacks = new ArrayList<>();
     private Collection<ChessPosition> checkStop = new ArrayList<>();
+    private Collection<ChessMove> checkPieces = new ArrayList<>();
+    private Collection<ChessMove> pieceMoves = new ArrayList<>();
+    private Collection<ChessMove> allMyMoves = new ArrayList<>();
+    private Collection<ChessMove> savingMoves = new ArrayList<>();
     private ChessPiece myKing;
     private ChessPosition myKingPosition;
 
@@ -57,22 +56,18 @@ public class CCMCalculator {
                                 }
                                 ChessPosition checkPosition = new ChessPosition(row, column);
                                 if (board.getPiece(checkPosition) != null) {
-                                    if (piece.getTeamColor() != board.getPiece(checkPosition).getTeamColor()) {
-                                        if(board.getPiece(checkPosition).getPieceType() == ChessPiece.PieceType.KING){
-                                            ChessMove check = new ChessMove(oppPosition, checkPosition,board.getPiece(oppPosition).getPieceType());
-                                            checkPieces.add(check);
-                                        }
-                                        oppMoves.add(checkPosition);
-                                        start = 0;
-                                        m++;
-                                        continue;
-                                    } else {
-                                        start = 0;
-                                        m++;
-                                        continue;
+                                    if(board.getPiece(checkPosition).getPieceType() == ChessPiece.PieceType.KING && board.getPiece(checkPosition).getTeamColor() == teamColor){
+                                        ChessMove check = new ChessMove(oppPosition, checkPosition,board.getPiece(oppPosition).getPieceType());
+                                        checkPieces.add(check);
                                     }
+                                    ChessMove check = new ChessMove(oppPosition, checkPosition,board.getPiece(oppPosition).getPieceType());
+                                    oppAttacks.add(check);
+                                    start = 0;
+                                    m++;
+                                    continue;
                                 }
-                                oppMoves.add(checkPosition);
+                                ChessMove check = new ChessMove(oppPosition, checkPosition,board.getPiece(oppPosition).getPieceType());
+                                oppAttacks.add(check);
                             }
                         }
                         if(board.getPiece(oppPosition).getPieceType() == ChessPiece.PieceType.ROOK || board.getPiece(oppPosition).getPieceType() == ChessPiece.PieceType.QUEEN) {
@@ -105,23 +100,18 @@ public class CCMCalculator {
                                 }
                                 ChessPosition checkPosition = new ChessPosition(row, column);
                                 if (board.getPiece(checkPosition) != null) {
-                                    if (piece.getTeamColor() != board.getPiece(checkPosition).getTeamColor()) {
-                                        if(board.getPiece(checkPosition).getPieceType() == ChessPiece.PieceType.KING){
-                                            ChessMove check = new ChessMove(oppPosition, checkPosition,board.getPiece(oppPosition).getPieceType());
-                                            checkPieces.add(check);
-                                        }
-                                        oppMoves.add(checkPosition);
-                                        start = 0;
-                                        m++;
-                                        continue;
-
-                                    } else {
-                                        start = 0;
-                                        m++;
-                                        continue;
+                                    if(board.getPiece(checkPosition).getPieceType() == ChessPiece.PieceType.KING && board.getPiece(checkPosition).getTeamColor() == teamColor){
+                                        ChessMove check = new ChessMove(oppPosition, checkPosition,board.getPiece(oppPosition).getPieceType());
+                                        checkPieces.add(check);
                                     }
+                                    ChessMove check = new ChessMove(oppPosition, checkPosition,board.getPiece(oppPosition).getPieceType());
+                                    oppAttacks.add(check);
+                                    start = 0;
+                                    m++;
+                                    continue;
                                 }
-                                oppMoves.add(checkPosition);
+                                ChessMove check = new ChessMove(oppPosition, checkPosition,board.getPiece(oppPosition).getPieceType());
+                                oppAttacks.add(check);
 
                             }
                         }
@@ -180,22 +170,18 @@ public class CCMCalculator {
                                 }
                                 ChessPosition checkPosition = new ChessPosition(row, column);
                                 if (board.getPiece(checkPosition) != null) {
-                                    if (piece.getTeamColor() != board.getPiece(checkPosition).getTeamColor()) {
-                                        if(board.getPiece(checkPosition).getPieceType() == ChessPiece.PieceType.KING){
-                                            ChessMove check = new ChessMove(oppPosition, checkPosition,board.getPiece(oppPosition).getPieceType());
-                                            checkPieces.add(check);
-                                        }
-                                        oppMoves.add(checkPosition);
-                                        start = 0;
-                                        m++;
-                                        continue;
-                                    } else {
-                                        start = 0;
-                                        m++;
-                                        continue;
+                                    if(board.getPiece(checkPosition).getPieceType() == ChessPiece.PieceType.KING && board.getPiece(checkPosition).getTeamColor() == teamColor){
+                                        ChessMove check = new ChessMove(oppPosition, checkPosition,board.getPiece(oppPosition).getPieceType());
+                                        checkPieces.add(check);
                                     }
+                                    ChessMove check = new ChessMove(oppPosition, checkPosition,board.getPiece(oppPosition).getPieceType());
+                                    oppAttacks.add(check);
+                                    start = 0;
+                                    m++;
+                                    continue;
                                 }
-                                oppMoves.add(checkPosition);
+                                ChessMove check = new ChessMove(oppPosition, checkPosition,board.getPiece(oppPosition).getPieceType());
+                                oppAttacks.add(check);
                                 m++;
                                 start = 0;
                             }
@@ -210,30 +196,30 @@ public class CCMCalculator {
                                 if (row > 0 && row < 9 && column > 0 && column < 9) {
                                     ChessPosition checkPosition = new ChessPosition(row, column);
                                     if (board.getPiece(checkPosition) != null) {
-                                        if (piece.getTeamColor() != board.getPiece(checkPosition).getTeamColor()) {
-                                            if(board.getPiece(checkPosition).getPieceType() == ChessPiece.PieceType.KING){
-                                                ChessMove check = new ChessMove(oppPosition, checkPosition,board.getPiece(oppPosition).getPieceType());
-                                                checkPieces.add(check);
-                                            }
-                                            oppMoves.add(checkPosition);
+                                        if(board.getPiece(checkPosition).getPieceType() == ChessPiece.PieceType.KING && board.getPiece(checkPosition).getTeamColor() == teamColor){
+                                            ChessMove check = new ChessMove(oppPosition, checkPosition,board.getPiece(oppPosition).getPieceType());
+                                            checkPieces.add(check);
                                         }
+                                        ChessMove check = new ChessMove(oppPosition, checkPosition,board.getPiece(oppPosition).getPieceType());
+                                        oppAttacks.add(check);
                                     }
-                                    oppMoves.add(checkPosition);
+                                    ChessMove check = new ChessMove(oppPosition, checkPosition,board.getPiece(oppPosition).getPieceType());
+                                    oppAttacks.add(check);
                                 }
                                 column--;
                                 column--;
                                 if (row > 0 && row < 9 && column > 0 && column < 9) {
                                     ChessPosition checkPosition = new ChessPosition(row, column);
                                     if (board.getPiece(checkPosition) != null) {
-                                        if (piece.getTeamColor() != board.getPiece(checkPosition).getTeamColor()) {
-                                            if(board.getPiece(checkPosition).getPieceType() == ChessPiece.PieceType.KING){
-                                                ChessMove check = new ChessMove(oppPosition, checkPosition,board.getPiece(oppPosition).getPieceType());
-                                                checkPieces.add(check);
-                                            }
-                                            oppMoves.add(checkPosition);
+                                        if(board.getPiece(checkPosition).getPieceType() == ChessPiece.PieceType.KING && board.getPiece(checkPosition).getTeamColor() == teamColor){
+                                            ChessMove check = new ChessMove(oppPosition, checkPosition,board.getPiece(oppPosition).getPieceType());
+                                            checkPieces.add(check);
                                         }
+                                        ChessMove check = new ChessMove(oppPosition, checkPosition,board.getPiece(oppPosition).getPieceType());
+                                        oppAttacks.add(check);
                                     }
-                                    oppMoves.add(checkPosition);
+                                    ChessMove check = new ChessMove(oppPosition, checkPosition,board.getPiece(oppPosition).getPieceType());
+                                    oppAttacks.add(check);
                                 }
                             }
                             if (board.getPiece(oppPosition).getTeamColor() == ChessGame.TeamColor.WHITE) {
@@ -242,15 +228,15 @@ public class CCMCalculator {
                                 if (row > 0 && row < 9 && column > 0 && column < 9) {
                                     ChessPosition checkPosition = new ChessPosition(row, column);
                                     if (board.getPiece(checkPosition) != null) {
-                                        if (piece.getTeamColor() != board.getPiece(checkPosition).getTeamColor()) {
-                                            if(board.getPiece(checkPosition).getPieceType() == ChessPiece.PieceType.KING){
-                                                ChessMove check = new ChessMove(oppPosition, checkPosition,board.getPiece(oppPosition).getPieceType());
-                                                checkPieces.add(check);
-                                            }
-                                            oppMoves.add(checkPosition);
+                                        if(board.getPiece(checkPosition).getPieceType() == ChessPiece.PieceType.KING && board.getPiece(checkPosition).getTeamColor() == teamColor){
+                                            ChessMove check = new ChessMove(oppPosition, checkPosition,board.getPiece(oppPosition).getPieceType());
+                                            checkPieces.add(check);
                                         }
+                                        ChessMove check = new ChessMove(oppPosition, checkPosition,board.getPiece(oppPosition).getPieceType());
+                                        oppAttacks.add(check);
                                     }else {
-                                        oppMoves.add(checkPosition);
+                                        ChessMove check = new ChessMove(oppPosition, checkPosition,board.getPiece(oppPosition).getPieceType());
+                                        oppAttacks.add(check);
                                     }
                                 }
                                 column--;
@@ -258,15 +244,15 @@ public class CCMCalculator {
                                 if (row > 0 && row < 9 && column > 0 && column < 9) {
                                     ChessPosition checkPosition = new ChessPosition(row, column);
                                     if (board.getPiece(checkPosition) != null) {
-                                        if (piece.getTeamColor() != board.getPiece(checkPosition).getTeamColor()) {
-                                            if(board.getPiece(checkPosition).getPieceType() == ChessPiece.PieceType.KING){
-                                                ChessMove check = new ChessMove(oppPosition, checkPosition,board.getPiece(oppPosition).getPieceType());
-                                                checkPieces.add(check);
-                                            }
-                                            oppMoves.add(checkPosition);
+                                        if(board.getPiece(checkPosition).getPieceType() == ChessPiece.PieceType.KING && board.getPiece(checkPosition).getTeamColor() == teamColor){
+                                            ChessMove check = new ChessMove(oppPosition, checkPosition,board.getPiece(oppPosition).getPieceType());
+                                            checkPieces.add(check);
                                         }
+                                        ChessMove check = new ChessMove(oppPosition, checkPosition,board.getPiece(oppPosition).getPieceType());
+                                        oppAttacks.add(check);
                                     } else {
-                                        oppMoves.add(checkPosition);
+                                        ChessMove check = new ChessMove(oppPosition, checkPosition,board.getPiece(oppPosition).getPieceType());
+                                        oppAttacks.add(check);
                                     }
                                 }
                             }
@@ -284,13 +270,6 @@ public class CCMCalculator {
 
 
     public boolean isInCheckmate(ChessGame.TeamColor teamColor, ChessBoard board) {
-
-        Iterator<ChessMove> checkPieceIterator = checkPieces.iterator();
-        while (checkPieceIterator.hasNext()) {
-            ChessMove Check = checkPieceIterator.next();
-            ChessPosition stopCheckPiece = new ChessPosition(Check.getStartPosition().getRow(),Check.getStartPosition().getColumn());
-            checkStop.add(stopCheckPiece);
-        }
         for (int i = 1; i < 9; i++) {
             for (int j = 1; j < 9; j++) {
                 ChessPosition position = new ChessPosition(i, j);
@@ -298,11 +277,46 @@ public class CCMCalculator {
                     ChessPiece checkpiece = board.getPiece(position);
                     if ((checkpiece.getTeamColor() == teamColor)) {
                         PieceMovesCalculator myMoves = new PieceMovesCalculator();
-                        System.out.println(myMoves.PieceMovesCalculator(board,position));
-
+                        pieceMoves = myMoves.PieceMovesCalculator(board,position);
+                        allMyMoves.addAll(pieceMoves);
                     }
                 }
             }
+        }
+        Iterator<ChessMove> allMyMovesIterator = allMyMoves.iterator();
+        Iterator<ChessMove> checkPiecesIterator = checkPieces.iterator();
+        Iterator<ChessMove> oppAttacksIterator = oppAttacks.iterator();
+        int i = 0;
+        while(checkPiecesIterator.hasNext()) {
+            ChessMove Attack = checkPiecesIterator.next();
+            while (allMyMovesIterator.hasNext()) {
+                ChessMove Save = allMyMovesIterator.next();
+                if (Save.getEndPosition().getRow() == Attack.getStartPosition().getRow() && Save.getEndPosition().getColumn() == Attack.getStartPosition().getColumn()) {
+                    int j = 0;
+                    while (oppAttacksIterator.hasNext()){
+                        ChessMove Protected = oppAttacksIterator.next();
+                        if(Protected.getEndPosition().getRow() == Attack.getStartPosition().getRow() && Protected.getEndPosition().getColumn() == Attack.getStartPosition().getColumn()){
+                            j++;
+                        }
+                    }
+                    if(j == 0) {
+                        savingMoves.add(Save);
+                        i++;
+                    }
+                }
+
+
+            }
+            if(i > 0){
+                checkPiecesIterator.remove();
+                i = 0;
+            }
+        }
+        System.out.println("My moves " + allMyMoves);
+        System.out.println("My saving moves " + savingMoves);
+        System.out.println("Attacker " + checkPieces);
+        if(!checkPieces.isEmpty()) {
+            return true;
         }
 
         return false;
@@ -318,18 +332,18 @@ public class CCMCalculator {
             return false;
         }
         CCMCalculator that = (CCMCalculator) o;
-        return Objects.equals(oppMoves, that.oppMoves) && Objects.equals(myKing, that.myKing) && Objects.equals(myKingPosition, that.myKingPosition) && Objects.equals(checkPieces, that.checkPieces);
+        return Objects.equals(oppAttacks, that.oppAttacks) && Objects.equals(myKing, that.myKing) && Objects.equals(myKingPosition, that.myKingPosition) && Objects.equals(checkPieces, that.checkPieces);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(oppMoves, myKing, myKingPosition, checkPieces);
+        return Objects.hash(oppAttacks, myKing, myKingPosition, checkPieces);
     }
 
     @Override
     public String toString() {
         return "CCMCalculator{" +
-                "oppMoves=" + oppMoves +
+                "oppAttacks=" + oppAttacks +
                 ", myKing=" + myKing +
                 ", myKingPosition=" + myKingPosition +
                 ", checkPieces=" + checkPieces +

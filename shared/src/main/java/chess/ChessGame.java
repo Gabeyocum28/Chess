@@ -53,6 +53,11 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
+        ChessBoard board = getBoard();
+        CCMCalculator checkCalculator = new CCMCalculator();
+        if(checkCalculator.isInCheck(getTeamTurn(), board)){
+            System.out.println("Is in Check");
+        }
         PieceMovesCalculator movesCalculator = new PieceMovesCalculator();
         return movesCalculator.PieceMovesCalculator(getBoard(),startPosition);
     }
