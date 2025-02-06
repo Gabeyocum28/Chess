@@ -1,5 +1,6 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -73,7 +74,9 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        ChessBoard board = getBoard();
+        CCMCalculator checkCalculator = new CCMCalculator();
+        return checkCalculator.isInCheck(teamColor, board);
     }
 
     /**
@@ -83,7 +86,12 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        ChessBoard board = getBoard();
+        CCMCalculator checkCalculator = new CCMCalculator();
+        if(checkCalculator.isInCheck(teamColor, board)){
+            return checkCalculator.isInCheckmate(teamColor, board);
+        }
+        return false;
     }
 
     /**
@@ -94,7 +102,9 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        ChessBoard board = getBoard();
+        CCMCalculator checkCalculator = new CCMCalculator();
+        return checkCalculator.isInStalemate(teamColor, board);
     }
 
     /**
