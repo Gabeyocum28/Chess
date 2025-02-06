@@ -2,21 +2,27 @@ package chess;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 
 public class CCMCalculator {
     public CCMCalculator() {
     }
 
-    public boolean isInCheck(ChessGame.TeamColor teamColor, ChessBoard Board) {
-        ChessBoard board = Board;
+    private Collection<ChessPosition> check = new ArrayList<>();
+    private ChessPiece king;
+    private ChessPosition kingPosition;
+    private Collection<ChessMove> checkLine = new ArrayList<>();
+
+    public boolean isInCheck(ChessGame.TeamColor teamColor, ChessBoard board) {
+        //ChessBoard board = Board;
         for(int i = 1; i < 9; i++){
             for(int j = 1; j < 9; j++){
                 ChessPosition position = new ChessPosition(i,j);
                 if(board.getPiece(position) != null) {
                     ChessPiece checkpiece = board.getPiece(position);
                     if((checkpiece.getPieceType() == ChessPiece.PieceType.KING) && (checkpiece.getTeamColor() == teamColor)){
-                        ChessPiece king = board.getPiece(position);
-                        Collection<ChessPosition> check = new ArrayList<>();
+                        king = board.getPiece(position);
+                        kingPosition = position;
                         int row = position.getRow();
                         int column = position.getColumn();
                         int start = 0;
@@ -428,7 +434,7 @@ public class CCMCalculator {
                                 m++;
                                 continue;
                             }
-                            else if(m == 17){
+                            else if(m == 15){
                                 row--;
                                 column--;
                                 column--;
@@ -457,7 +463,7 @@ public class CCMCalculator {
                                 m++;
                                 continue;
                             }
-                            else if(m == 18 && king.getTeamColor() == ChessGame.TeamColor.BLACK){
+                            else if(m == 16 && king.getTeamColor() == ChessGame.TeamColor.BLACK){
                                 row--;
                                 column--;
 
@@ -485,7 +491,7 @@ public class CCMCalculator {
                                 m++;
                                 continue;
                             }
-                            else if(m == 19 && king.getTeamColor() == ChessGame.TeamColor.BLACK){
+                            else if(m == 17 && king.getTeamColor() == ChessGame.TeamColor.BLACK){
                                 row--;
                                 column++;
 
@@ -541,7 +547,7 @@ public class CCMCalculator {
                                 m++;
                                 continue;
                             }
-                            else if(m == 18 && king.getTeamColor() == ChessGame.TeamColor.WHITE){
+                            else if(m == 19 && king.getTeamColor() == ChessGame.TeamColor.WHITE){
                                 row++;
                                 column++;
 
@@ -594,11 +600,98 @@ public class CCMCalculator {
         return false;
     }
 
-    public boolean isInCheckmate(ChessGame.TeamColor teamColor, ChessBoard Board) {
+    public boolean isInCheckmate(ChessGame.TeamColor teamColor, ChessBoard board) {
+        int kRow = kingPosition.getRow();
+        int kColumn = kingPosition.getColumn();
+        Iterator<ChessPosition> attackerPosition = check.iterator();
+        while(attackerPosition.hasNext()){
+            ChessPosition attposition = attackerPosition.next();
+            int aRow = attposition.getRow();
+            int aColumn = attposition.getColumn();
+            if((aRow == kRow && aColumn < kColumn) && (board.getPiece(attposition).getPieceType() != ChessPiece.PieceType.KNIGHT)){
+                while(aColumn != kColumn - 1) {
+                    aColumn++;
+                    ChessPosition newPosition = new ChessPosition(aRow, aColumn);
+                    ChessMove move = new ChessMove(newPosition, kingPosition, null);
+                    checkLine.add(move);
+                }
+                continue;
+            }
+            else if((aRow == kRow && aColumn > kColumn) && (board.getPiece(attposition).getPieceType() != ChessPiece.PieceType.KNIGHT)){
+                while(aColumn != kColumn + 1) {
+                    aColumn--;
+                    ChessPosition newPosition = new ChessPosition(aRow, aColumn);
+                    ChessMove move = new ChessMove(newPosition, kingPosition, null);
+                    checkLine.add(move);
+                }
+                continue;
+            }
+            else if((aRow > kRow && aColumn == kColumn) && (board.getPiece(attposition).getPieceType() != ChessPiece.PieceType.KNIGHT)){
+                while(aRow != kRow + 1) {
+                    aRow--;
+                    ChessPosition newPosition = new ChessPosition(aRow, aColumn);
+                    ChessMove move = new ChessMove(newPosition, kingPosition, null);
+                    checkLine.add(move);
+                }
+                continue;
+            }
+            else if((aRow < kRow && aColumn == kColumn) && (board.getPiece(attposition).getPieceType() != ChessPiece.PieceType.KNIGHT)){
+                while(aRow != kRow - 1) {
+                    aRow++;
+                    ChessPosition newPosition = new ChessPosition(aRow, aColumn);
+                    ChessMove move = new ChessMove(newPosition, kingPosition, null);
+                    checkLine.add(move);
+                }
+                continue;
+            }
+            else if((aRow < kRow && aColumn < kColumn) && (board.getPiece(attposition).getPieceType() != ChessPiece.PieceType.KNIGHT)){
+                while(aRow != kRow - 1 && aColumn != kColumn - 1) {
+                    aRow++;
+                    aColumn++;
+                    ChessPosition newPosition = new ChessPosition(aRow, aColumn);
+                    ChessMove move = new ChessMove(newPosition, kingPosition, null);
+                    checkLine.add(move);
+                }
+                continue;
+            }
+            else if((aRow > kRow && aColumn < kColumn) && (board.getPiece(attposition).getPieceType() != ChessPiece.PieceType.KNIGHT)){
+                while(aRow != kRow + 1 && aColumn != kColumn - 1) {
+                    aRow--;
+                    aColumn++;
+                    ChessPosition newPosition = new ChessPosition(aRow, aColumn);
+                    ChessMove move = new ChessMove(newPosition, kingPosition, null);
+                    checkLine.add(move);
+                }
+                continue;
+            }
+            else if((aRow < kRow && aColumn > kColumn) && (board.getPiece(attposition).getPieceType() != ChessPiece.PieceType.KNIGHT)){
+                while(aRow != kRow - 1 && aColumn != kColumn + 1) {
+                    aRow++;
+                    aColumn--;
+                    ChessPosition newPosition = new ChessPosition(aRow, aColumn);
+                    ChessMove move = new ChessMove(newPosition, kingPosition, null);
+                    checkLine.add(move);
+                }
+                continue;
+            }
+            else if((aRow > kRow && aColumn > kColumn) && (board.getPiece(attposition).getPieceType() != ChessPiece.PieceType.KNIGHT)){
+                while(aRow != kRow + 1 && aColumn != kColumn + 1) {
+                    aRow--;
+                    aColumn--;
+                    ChessPosition newPosition = new ChessPosition(aRow, aColumn);
+                    ChessMove move = new ChessMove(newPosition, kingPosition, null);
+                    checkLine.add(move);
+                }
+                continue;
+            }
+
+        }
+        System.out.println(checkLine);
+
         return false;
     }
 
-    public boolean isInStalemate(ChessGame.TeamColor teamColor, ChessBoard Board) {
+    public boolean isInStalemate(ChessGame.TeamColor teamColor, ChessBoard board) {
         return false;
     }
 }
