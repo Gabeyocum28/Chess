@@ -194,9 +194,24 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        //possibleMoves = validMoves();
-        if(possibleMoves.isEmpty()) {
-         return true;
+        if(isInCheck(teamColor)) {
+            Collection<ChessMove> validMoves = new ArrayList<>();
+            for (int i = 1; i < 9; i++) {
+                for (int j = 1; j < 9; j++) {
+                    ChessPosition position = new ChessPosition(i, j);
+                    if (Board.getPiece(position) != null) {
+                        ChessPiece checkpiece = Board.getPiece(position);
+                        if ((checkpiece.getTeamColor() == teamColor)) {
+                            Collection<ChessMove> moves = new ArrayList<>();
+                            moves = validMoves(position);
+                            validMoves.addAll(moves);
+                        }
+                    }
+                }
+            }
+            if (validMoves.isEmpty()) {
+                return true;
+            }
         }
         return false;
     }
@@ -210,7 +225,21 @@ public class ChessGame {
      */
     public boolean isInStalemate(TeamColor teamColor) {
         if(!isInCheck(teamColor)){
-            if(possibleMoves.isEmpty()){
+            Collection<ChessMove> validMoves = new ArrayList<>();
+            for (int i = 1; i < 9; i++) {
+                for (int j = 1; j < 9; j++) {
+                    ChessPosition position = new ChessPosition(i, j);
+                    if (Board.getPiece(position) != null) {
+                        ChessPiece checkpiece = Board.getPiece(position);
+                        if ((checkpiece.getTeamColor() == teamColor)) {
+                            Collection<ChessMove> moves = new ArrayList<>();
+                            moves = validMoves(position);
+                            validMoves.addAll(moves);
+                        }
+                    }
+                }
+            }
+            if (validMoves.isEmpty()) {
                 return true;
             }
         }
