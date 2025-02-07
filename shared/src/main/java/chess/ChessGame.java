@@ -2,6 +2,7 @@ package chess;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Objects;
 
 /**
@@ -14,6 +15,8 @@ public class ChessGame {
 
     private TeamColor Team;
     private ChessBoard Board;
+    private Collection<ChessMove> allOpponentMoves = new ArrayList<>();
+    private ChessPosition myKing;
 
     public ChessGame() {
         Board = new ChessBoard();
@@ -53,13 +56,11 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        ChessBoard board = getBoard();
-        CCMCalculator checkCalculator = new CCMCalculator();
-        if(checkCalculator.isInCheck(getTeamTurn(), board)){
-            System.out.println("Is in Check");
-        }
-        PieceMovesCalculator movesCalculator = new PieceMovesCalculator();
-        return movesCalculator.PieceMovesCalculator(getBoard(),startPosition);
+       // make copy of board to save curr state of game to simulate move
+        // if is in check returns true on the copy board the move in invalid
+        //if false add to collection
+        //return collection
+        return new ArrayList<>();
     }
 
     /**
@@ -69,7 +70,8 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        throw new RuntimeException("Not implemented");
+        //valid moves
+        throw new InvalidMoveException();
     }
 
     /**
@@ -79,9 +81,46 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        ChessBoard board = getBoard();
-        CCMCalculator checkCalculator = new CCMCalculator();
-        return checkCalculator.isInCheck(teamColor, board);
+        // Find King
+        for (int i = 1; i < 9; i++) {
+            for (int j = 1; j < 9; j++) {
+                ChessPosition position = new ChessPosition(i, j);
+                if (Board.getPiece(position) != null) {
+                    ChessPiece checkpiece = Board.getPiece(position);
+                    if ((checkpiece.getTeamColor() == teamColor)) {
+                        myKing = new ChessPosition(i,j);
+                        i = 8;
+                        break;
+                    }
+                }
+            }
+        }
+        //call pievemoves function on enemys
+        for (int i = 1; i < 9; i++) {
+            for (int j = 1; j < 9; j++) {
+                ChessPosition position = new ChessPosition(i, j);
+                if (Board.getPiece(position) != null) {
+                    ChessPiece checkpiece = Board.getPiece(position);
+                    if ((checkpiece.getTeamColor() != teamColor)) {
+                        PieceMovesCalculator oppMoves = new PieceMovesCalculator();
+                        allOpponentMoves.addAll(oppMoves.PieceMovesCalculator(Board,position));
+                    }
+                }
+            }
+        }
+        //iterate through and find if any endposition is on my king
+        Iterator<ChessMove> allOpponentMovesIterator = allOpponentMoves.iterator();
+        int i = 0;
+        while(allOpponentMovesIterator.hasNext()) {
+            ChessMove Move = allOpponentMovesIterator.next();
+            if(myKing.getRow() == Move.getEndPosition().getRow() && myKing.getColumn() == Move.getEndPosition().getColumn()){
+                i++;
+            }
+        }
+        if(i > 0){
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -91,11 +130,7 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        ChessBoard board = getBoard();
-        CCMCalculator checkCalculator = new CCMCalculator();
-        if(checkCalculator.isInCheck(teamColor, board)){
-            return checkCalculator.isInCheckmate(teamColor, board);
-        }
+
         return false;
     }
 
