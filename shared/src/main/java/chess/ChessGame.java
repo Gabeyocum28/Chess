@@ -14,10 +14,13 @@ public class ChessGame {
 
     private TeamColor Team;
     private ChessBoard Board;
+    private Collection<ChessMove> opponentMoves = new ArrayList<>();
     private Collection<ChessMove> allOpponentMoves = new ArrayList<>();
     private Collection<ChessMove> allMyMoves = new ArrayList<>();
     private Collection<ChessMove> possibleMoves = new ArrayList<>();
     private ChessPosition myKing;
+    private ChessBoard copyBoard;
+    private ChessBoard masterBoard;
 
     public ChessGame() {
         Board = new ChessBoard();
@@ -57,47 +60,31 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-       // make copy of board to save curr state of game to simulate move
-
-//        for (int i = 1; i < 9; i++) {
-//            for (int j = 1; j < 9; j++) {
-//                ChessPosition position = new ChessPosition(i, j);
-//                if (Board.getPiece(position) != null) {
-//                    ChessPiece checkpiece = Board.getPiece(position);
-//                    if ((checkpiece.getTeamColor() == getTeamTurn())) {
-//                        PieceMovesCalculator oppMoves = new PieceMovesCalculator();
-//                        allMyMoves.addAll(oppMoves.PieceMovesCalculator(Board,position));
-//                    }
-//                }
-//            }
-//        }
+        // make copy of board to save curr state of game to simulate move
+        possibleMoves.clear();
         if (Board.getPiece(startPosition) != null) {
-                    ChessPiece checkpiece = Board.getPiece(startPosition);
-                    if ((checkpiece.getTeamColor() == getTeamTurn())) {
-                        PieceMovesCalculator oppMoves = new PieceMovesCalculator();
-                        allMyMoves.addAll(oppMoves.PieceMovesCalculator(Board,startPosition));
-                    }
-                }
+            ChessPiece checkpiece = Board.getPiece(startPosition);
+            PieceMovesCalculator oppMoves = new PieceMovesCalculator();
+            allMyMoves = oppMoves.PieceMovesCalculator(Board, startPosition);
+        }
+        masterBoard = Board.copy();
+
         Iterator<ChessMove> allMyMovesIterator = allMyMoves.iterator();
         while(allMyMovesIterator.hasNext()) {
             ChessMove Move = allMyMovesIterator.next();
 
+            copyBoard = masterBoard.copy();
             ChessPosition Old = new ChessPosition(Move.getStartPosition().getRow(),Move.getStartPosition().getColumn());
             ChessPosition New = new ChessPosition(Move.getEndPosition().getRow(), Move.getEndPosition().getColumn());
-            ChessPiece checkpiece = Board.getPiece(Old);
-            /*
+            ChessPiece checkpiece = copyBoard.getPiece(Old);
             copyBoard.addPiece(New,checkpiece);
             copyBoard.addPiece(Old,null);
-            System.out.println(Old);
-            System.out.println(checkpiece);
-            System.out.println(New);
-            */
-            if(!isInCheck(getTeamTurn())){
+            setBoard(copyBoard);
+            if(!isInCheck(checkpiece.getTeamColor())){
                 possibleMoves.add(Move);
             }
+            setBoard(masterBoard);
         }
-
-
 
         // if is in check returns true on the copy board the move in invalid
         //if false add to collection
@@ -129,7 +116,7 @@ public class ChessGame {
                 ChessPosition position = new ChessPosition(i, j);
                 if (Board.getPiece(position) != null) {
                     ChessPiece checkpiece = Board.getPiece(position);
-                    if ((checkpiece.getTeamColor() == teamColor)) {
+                    if ((checkpiece.getTeamColor() == teamColor) && checkpiece.getPieceType() == ChessPiece.PieceType.KING) {
                         myKing = new ChessPosition(i,j);
                         i = 8;
                         break;
@@ -145,7 +132,8 @@ public class ChessGame {
                     ChessPiece checkpiece = Board.getPiece(position);
                     if ((checkpiece.getTeamColor() != teamColor)) {
                         PieceMovesCalculator oppMoves = new PieceMovesCalculator();
-                        allOpponentMoves.addAll(oppMoves.PieceMovesCalculator(Board,position));
+                        opponentMoves = oppMoves.PieceMovesCalculator(Board,position);
+                        allOpponentMoves.addAll(opponentMoves);
                     }
                 }
             }
@@ -153,13 +141,13 @@ public class ChessGame {
         //iterate through and find if any endposition is on my king
         Iterator<ChessMove> allOpponentMovesIterator = allOpponentMoves.iterator();
         int i = 0;
-        System.out.println(allMyMoves);
         while(allOpponentMovesIterator.hasNext()) {
             ChessMove Move = allOpponentMovesIterator.next();
             if(myKing.getRow() == Move.getEndPosition().getRow() && myKing.getColumn() == Move.getEndPosition().getColumn()){
                 i++;
             }
         }
+        allOpponentMoves.clear();
         if(i > 0){
             i = 0;
             return true;
@@ -174,7 +162,10 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-
+        //possibleMoves = validMoves();
+        if(possibleMoves.isEmpty()) {
+         return true;
+        }
         return false;
     }
 

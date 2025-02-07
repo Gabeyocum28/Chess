@@ -103,4 +103,18 @@ public class ChessBoard {
                 "squares=" + Arrays.deepToString(squares) +
                 '}';
     }
+
+    public ChessBoard copy(){
+        ChessBoard clone = new ChessBoard();
+        for(int i = 0; i < 8; i++){
+            for(int j = 0; j < 8; j++){
+                if(squares[i][j] != null) {
+                    ChessGame.TeamColor pieceColor = squares[i][j].getTeamColor();
+                    ChessPiece.PieceType pieceType = squares[i][j].getPieceType();
+                    clone.addPiece(new ChessPosition(i + 1, j + 1), new ChessPiece(pieceColor, pieceType));
+                }
+            }
+        }
+        return clone;
+    }
 }
