@@ -195,4 +195,59 @@ public class PawnMovesCalculator {
     }
 
 }
+/*
+ChatGPT CODE I GOT AFTER I MADE THE ORIGINAL TRYING TO UNDERSTAND HOW TO OPTIMIZE MY CODE
+package chess;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
+public class PawnMovesCalculator {
+
+    public Collection<ChessMove> pieceMovesCalculator(ChessBoard board, ChessPosition myPosition) {
+        Collection<ChessMove> possibleMoves = new ArrayList<>();
+        ChessPiece myPiece = board.getPiece(myPosition);
+        int row = myPosition.getRow();
+        int col = myPosition.getColumn();
+        int direction = (myPiece.getTeamColor() == ChessGame.TeamColor.WHITE) ? 1 : -1;
+        int startRow = (myPiece.getTeamColor() == ChessGame.TeamColor.WHITE) ? 2 : 7;
+        int promotionRow = (myPiece.getTeamColor() == ChessGame.TeamColor.WHITE) ? 8 : 1;
+
+        // Forward move
+        addMoveIfValid(board, possibleMoves, myPosition, row + direction, col, myPiece, false);
+
+        // Double move from start position
+        if (row == startRow && board.getPiece(new ChessPosition(row + direction, col)) == null) {
+            addMoveIfValid(board, possibleMoves, myPosition, row + 2 * direction, col, myPiece, false);
+        }
+
+        // Captures (diagonal moves)
+        addMoveIfValid(board, possibleMoves, myPosition, row + direction, col + 1, myPiece, true);
+        addMoveIfValid(board, possibleMoves, myPosition, row + direction, col - 1, myPiece, true);
+
+        return possibleMoves;
+    }
+
+    private void addMoveIfValid(ChessBoard board, Collection<ChessMove> moves, ChessPosition from, int toRow, int toCol, ChessPiece piece, boolean isCapture) {
+        if (toRow < 1 || toRow > 8 || toCol < 1 || toCol > 8) return;
+        ChessPosition to = new ChessPosition(toRow, toCol);
+        ChessPiece targetPiece = board.getPiece(to);
+        boolean isEmpty = (targetPiece == null);
+
+        if ((isCapture && !isEmpty && targetPiece.getTeamColor() != piece.getTeamColor()) || (!isCapture && isEmpty)) {
+            if (toRow == (piece.getTeamColor() == ChessGame.TeamColor.WHITE ? 8 : 1)) {
+                addPromotionMoves(moves, from, to);
+            } else {
+                moves.add(new ChessMove(from, to, null));
+            }
+        }
+    }
+
+    private void addPromotionMoves(Collection<ChessMove> moves, ChessPosition from, ChessPosition to) {
+        moves.add(new ChessMove(from, to, ChessPiece.PieceType.QUEEN));
+        moves.add(new ChessMove(from, to, ChessPiece.PieceType.ROOK));
+        moves.add(new ChessMove(from, to, ChessPiece.PieceType.BISHOP));
+        moves.add(new ChessMove(from, to, ChessPiece.PieceType.KNIGHT));
+    }
+}
+ */
