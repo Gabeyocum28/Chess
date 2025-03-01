@@ -24,15 +24,9 @@ public class RegistrationHandler {
             AuthData auth = RegisterService.registerUser(newUser);
             return gson.toJson(auth);
         }catch (AlreadyTakenException ex){
-            response.status(403);
-            String json = new Gson().toJson(Map.of("message", ex.getMessage()));
-            response.body(json);
-            return json;
+            return new ErrorHandler().error(403, response, ex);
         }catch (Exception ex){
-            response.status(500);
-            String json = new Gson().toJson(Map.of("message", ex.getMessage()));
-            response.body(json);
-            return json;
+            return new ErrorHandler().error(500, response, ex);
         }
 
     }
