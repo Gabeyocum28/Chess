@@ -3,6 +3,7 @@ package server;
 import com.google.gson.Gson;
 import exceptions.UnauthorizedException;
 import model.GameData;
+import model.GameId;
 import model.UserData;
 import service.CreateGameService;
 import service.ListGamesService;
@@ -16,7 +17,7 @@ public class CreateGameHandler {
         GameData newGame = gson.fromJson(request.body(), GameData.class);
         try {
             GameData game = new CreateGameService().createGame(authToken, newGame);
-            return gson.toJson(auth);
+            return gson.toJson(new GameId(game.gameId()));
         }catch (UnauthorizedException ex){
             return new ErrorHandler().error(401, response, ex);
         }catch (Exception ex){
