@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.Objects;
 
 public class JoinGameService {
-    public void joinGame(String authToken, JoinRequest joinRequest){
+    public static void joinGame(String authToken, JoinRequest joinRequest){
         AuthData authData = new MemoryAuthDAO().getAuth(authToken);
         if(authData == null){
             throw new UnauthorizedException("Error: unauthorized");
