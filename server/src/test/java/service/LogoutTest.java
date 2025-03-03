@@ -1,13 +1,8 @@
 package service;
 
-import chess.ChessGame;
 import dataaccess.MemoryAuthDAO;
-import dataaccess.MemoryGameDAO;
-import dataaccess.MemoryUserDAO;
 import exceptions.UnauthorizedException;
 import model.AuthData;
-import model.GameData;
-import model.Login;
 import model.UserData;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,7 +18,7 @@ public class LogoutTest {
     }
 
     @Test
-    public void SuccessfulLogout() throws Exception {
+    public void successfulLogout() throws Exception {
         HashMap<String, AuthData> emptyAuthData = new HashMap<>();
 
         UserData userData = new UserData("username", "password", "email");
@@ -40,7 +35,7 @@ public class LogoutTest {
     }
 
     @Test
-    public void FailedLogout() throws Exception {
+    public void failedLogout() throws Exception {
         UserData userData = new UserData("username", "password", "email");
 
         String authToken = RegisterService.registerUser(userData).authToken();

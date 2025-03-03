@@ -2,8 +2,6 @@ package service;
 
 import chess.ChessGame;
 import dataaccess.MemoryAuthDAO;
-import dataaccess.MemoryGameDAO;
-import dataaccess.MemoryUserDAO;
 import exceptions.UnauthorizedException;
 import model.AuthData;
 import model.GameData;
@@ -13,10 +11,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
 
 public class ListGamesTest {
 
@@ -26,7 +21,7 @@ public class ListGamesTest {
     }
 
     @Test
-    public void SuccessfulListGames() throws Exception {
+    public void successfulListGames() throws Exception {
         GameData game = new GameData(2,"whiteUsername","blackUsername","gameName", new ChessGame());
         UserData userData = new UserData("username", "password", "email");
 
@@ -42,7 +37,7 @@ public class ListGamesTest {
     }
 
     @Test
-    public void FailedListGames() throws Exception {
+    public void failedListGames() throws Exception {
 
         GameData game = new GameData(2,"whiteUsername","blackUsername","gameName", new ChessGame());
         UserData userData = new UserData("username", "password", "email");

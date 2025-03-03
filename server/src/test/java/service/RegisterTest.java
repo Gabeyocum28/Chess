@@ -14,14 +14,14 @@ public class RegisterTest {
     }
 
     @Test
-    public void SuccessfulRegister() throws Exception {
+    public void successfulRegister() throws Exception {
         UserData user = new UserData("username", "password", "email");
 
         Assertions.assertNotNull(RegisterService.registerUser(user));
     }
 
     @Test
-    public void FailedRegister() throws Exception {
+    public void failedRegister() throws Exception {
         UserData user = new UserData("username", "password", "email");
 
         Assertions.assertNotNull(RegisterService.registerUser(user));

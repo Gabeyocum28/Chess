@@ -44,7 +44,7 @@ public class ClearTest {
     }
 
     @Test
-    public void ClearAll(){
+    public void clearAll(){
         HashMap<String, UserData> emptyUserData = new HashMap<>();
         HashMap<String, GameData> emptyGameData = new HashMap<>();
         HashMap<String, AuthData> emptyAuthData = new HashMap<>();

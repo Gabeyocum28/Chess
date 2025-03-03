@@ -15,7 +15,7 @@ public class LoginTest {
     }
 
     @Test
-    public void SuccessfulLogin(){
+    public void successfulLogin(){
         UserData userData = new UserData("username", "password", "email");
         Login login = new Login("username", "password");
         try {
@@ -27,7 +27,7 @@ public class LoginTest {
     }
 
     @Test
-    public void FailedLogout(){
+    public void failedLogout(){
         UserData userData = new UserData("username", "password", "email");
         Login wrongPasswordLogin = new Login("username", "wrongPassword");
         Login wrongUsernameLogin = new Login("wrongUsername", "Password");

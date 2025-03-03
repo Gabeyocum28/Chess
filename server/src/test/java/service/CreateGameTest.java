@@ -3,11 +3,9 @@ package service;
 import chess.ChessGame;
 import dataaccess.MemoryAuthDAO;
 import dataaccess.MemoryGameDAO;
-import dataaccess.MemoryUserDAO;
 import exceptions.UnauthorizedException;
 import model.AuthData;
 import model.GameData;
-import model.GameList;
 import model.UserData;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,7 +21,7 @@ public class CreateGameTest {
     }
 
     @Test
-    public void SuccessfulCreateGame() throws Exception {
+    public void successfulCreateGame() throws Exception {
         HashMap<Integer, GameData> games = new HashMap<>();
 
         GameData game = new GameData(2,"whiteUsername","blackUsername","gameName", new ChessGame());
@@ -42,7 +40,7 @@ public class CreateGameTest {
     }
 
     @Test
-    public void FailedCreateGame() throws Exception {
+    public void failedCreateGame() throws Exception {
         HashMap<Integer, GameData> games = new HashMap<>();
 
         GameData game = new GameData(20,"whiteUsername","blackUsername","gameName", new ChessGame());
