@@ -8,12 +8,14 @@ import model.AuthData;
 import model.GameData;
 
 public class CreateGameService {
+    static int ID = 1;
     public static GameData createGame(String authRequest, GameData gameName){
         AuthData authData = new MemoryAuthDAO().getAuth(authRequest);
         if(authData == null){
             throw new UnauthorizedException("Error: unauthorized");
         }
-        GameData newGame = new GameData(1234, gameName.whiteUsername(), gameName.blackUsername(), gameName.gameName(), new ChessGame());
+        ID++;
+        GameData newGame = new GameData(ID, gameName.whiteUsername(), gameName.blackUsername(), gameName.gameName(), new ChessGame());
         new MemoryGameDAO().createGame(newGame);
 
         return newGame;

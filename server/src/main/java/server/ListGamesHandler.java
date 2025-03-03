@@ -10,13 +10,18 @@ import service.LogoutService;
 import spark.Request;
 import spark.Response;
 
+import java.util.Map;
+
 public class ListGamesHandler {
     public static String listGames (Request request, Response response){
-        Gson gson =  new Gson();
         String authToken = request.headers("authorization");
+
+        response.type("application/json");
+
+
         try {
-            new ListGamesService().listGames(authToken);
-            return gson.toJson("");
+            var list = ListGamesService.listGames(authToken).toArray();
+            return new Gson().toJson(Map.of("games", list));
         }catch (UnauthorizedException ex){
             return new ErrorHandler().error(401, response, ex);
         }catch (Exception ex){
