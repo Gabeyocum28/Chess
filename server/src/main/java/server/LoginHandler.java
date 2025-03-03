@@ -21,6 +21,5 @@ public class LoginHandler{
         }catch (Exception ex){
             return new ErrorHandler().error(500, response, ex);
         }
-
     }
 }
