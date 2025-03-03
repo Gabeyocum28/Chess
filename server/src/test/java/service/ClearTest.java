@@ -39,7 +39,7 @@ public class ClearTest {
         Assertions.assertEquals(userData,MemoryUserDAO.users);
         Assertions.assertEquals(gameData,MemoryGameDAO.games);
         Assertions.assertEquals(gamesOutput,MemoryGameDAO.gamesOutput);
-        Assertions.assertEquals(authData,MemoryAuthDAO.authtokens);
+        Assertions.assertEquals(authData,MemoryAuthDAO.AuthTokens);
 
     }
 
@@ -59,7 +59,7 @@ public class ClearTest {
         Assertions.assertEquals(emptyUserData,MemoryUserDAO.users);
         Assertions.assertEquals(emptyGameData,MemoryGameDAO.games);
         Assertions.assertEquals(emptygamesOutput,MemoryGameDAO.gamesOutput);
-        Assertions.assertEquals(emptyAuthData,MemoryAuthDAO.authtokens);
+        Assertions.assertEquals(emptyAuthData,MemoryAuthDAO.AuthTokens);
 
     }
 }

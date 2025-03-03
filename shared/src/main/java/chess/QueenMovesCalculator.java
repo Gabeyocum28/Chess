@@ -7,7 +7,7 @@ public class QueenMovesCalculator {
     public QueenMovesCalculator() {
     }
 
-    public Collection<ChessMove> pieceMovesCalculator(ChessBoard board, ChessPosition myPosition) {
+    public Collection<ChessMove> queenMovesCalculator(ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> possibleMoves = new ArrayList<>();
         int row = myPosition.getRow();
         int column = myPosition.getColumn();

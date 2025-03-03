@@ -29,7 +29,7 @@ public class LogoutTest {
 
         new LogoutService().logout(authToken);
 
-        Assertions.assertEquals(emptyAuthData,MemoryAuthDAO.authtokens);
+        Assertions.assertEquals(emptyAuthData,MemoryAuthDAO.AuthTokens);
 
 
     }

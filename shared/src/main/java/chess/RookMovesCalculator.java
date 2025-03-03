@@ -7,7 +7,7 @@ public class RookMovesCalculator extends PieceMovesCalculator {
     public RookMovesCalculator() {
     }
 
-    public Collection<ChessMove> pieceMovesCalculator(ChessBoard board, ChessPosition myPosition) {
+    public Collection<ChessMove> rookMovesCalculator(ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> possibleMoves = new ArrayList<>();
         int row = myPosition.getRow();
         int column = myPosition.getColumn();

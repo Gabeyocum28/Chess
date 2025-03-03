@@ -35,7 +35,7 @@ public class CreateGameTest {
         GameData newGame = new GameData(gameID,"whiteUsername","blackUsername","gameName", new ChessGame());
         games.put(newGame.gameID(), newGame);
 
-        Assertions.assertEquals(games,MemoryGameDAO.games);
+        Assertions.assertEquals(games,MemoryGameDAO.Games);
 
     }
 

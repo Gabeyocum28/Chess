@@ -7,7 +7,7 @@ public class BishopMovesCalculator extends PieceMovesCalculator {
     public BishopMovesCalculator() {
     }
 
-    public Collection<ChessMove> pieceMovesCalculator(ChessBoard board, ChessPosition myPosition) {
+    public Collection<ChessMove> bishopMovesCalculator(ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> possibleMoves = new ArrayList<>();
         int row = myPosition.getRow();
         int column = myPosition.getColumn();
