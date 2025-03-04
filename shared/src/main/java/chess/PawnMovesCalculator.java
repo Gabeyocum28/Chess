@@ -40,8 +40,11 @@ public class PawnMovesCalculator {
         return possibleMoves;
     }
 
-    private void addMoveIfValid(ChessBoard board, Collection<ChessMove> moves, ChessPosition startPosition, int toRow, int toCol, ChessPiece piece, boolean isCapture) {
-        if (toRow < 1 || toRow > 8 || toCol < 1 || toCol > 8) return;
+    private void addMoveIfValid(ChessBoard board, Collection<ChessMove> moves, ChessPosition startPosition, int toRow,
+                                int toCol, ChessPiece piece, boolean isCapture) {
+        if (toRow < 1 || toRow > 8 || toCol < 1 || toCol > 8) {
+            return;
+        }
         ChessPosition checkPosition = new ChessPosition(toRow, toCol);
         ChessPiece targetPiece = board.getPiece(checkPosition);
         boolean isEmpty = (targetPiece == null);

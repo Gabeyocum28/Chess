@@ -30,7 +30,8 @@ public class MemoryGameDAO implements GameDAO{
             if(gameData.whiteUsername() != null){
                 throw new AlreadyTakenException("Error: already taken");
             }
-            GameData updateGame = new GameData(gameData.gameID(), authData.username(), gameData.blackUsername(), gameData.gameName(), gameData.game());
+            GameData updateGame = new GameData(gameData.gameID(), authData.username(), gameData.blackUsername(),
+                    gameData.gameName(), gameData.game());
             GAMES.remove(joinRequest.gameID());
             GAMES_OUTPUT.remove(joinRequest.gameID());
             createGame(updateGame);
@@ -38,7 +39,8 @@ public class MemoryGameDAO implements GameDAO{
             if(gameData.blackUsername() != null){
                 throw new AlreadyTakenException("Error: already taken");
             }
-            GameData updateGame = new GameData(gameData.gameID(), gameData.whiteUsername(), authData.username(), gameData.gameName(), gameData.game());
+            GameData updateGame = new GameData(gameData.gameID(), gameData.whiteUsername(), authData.username(),
+                    gameData.gameName(), gameData.game());
             GAMES.remove(joinRequest.gameID());
             GAMES_OUTPUT.remove(joinRequest.gameID());
             createGame(updateGame);

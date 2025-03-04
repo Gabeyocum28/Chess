@@ -20,7 +20,9 @@ public class BishopMovesCalculator {
                 row += direction[0];
                 column += direction[1];
 
-                if (row < 1 || row > 8 || column < 1 || column > 8) break;
+                if (row < 1 || row > 8 || column < 1 || column > 8) {
+                    break;
+                }
 
                 ChessPosition newPosition = new ChessPosition(row, column);
                 ChessPiece targetPiece = board.getPiece(newPosition);
