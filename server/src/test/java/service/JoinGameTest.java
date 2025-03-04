@@ -37,7 +37,7 @@ public class JoinGameTest {
         games.put(gameID, new GameData(4,"username",null,"gameName", new ChessGame()));
 
         JoinGameService.joinGame(authToken, joinRequest);
-        Assertions.assertEquals(games,MemoryGameDAO.Games);
+        Assertions.assertEquals(games,MemoryGameDAO.GAMES);
 
 
     }

@@ -5,18 +5,18 @@ import model.AuthData;
 import java.util.HashMap;
 
 public class MemoryAuthDAO implements AuthDAO{
-    public final static HashMap<String, AuthData> AuthTokens = new HashMap<>();
+    public final static HashMap<String, AuthData> AUTH_TOKENS = new HashMap<>();
 
     public void createAuth(AuthData authData){
-        AuthTokens.put(authData.authToken(), authData);
+        AUTH_TOKENS.put(authData.authToken(), authData);
     }
     public AuthData getAuth(String authtoken){
-        return AuthTokens.get(authtoken);
+        return AUTH_TOKENS.get(authtoken);
     }
     public void deleteAuth(String authtoken){
-        AuthTokens.remove(authtoken);
+        AUTH_TOKENS.remove(authtoken);
     }
     public void clear(){
-        AuthTokens.clear();
+        AUTH_TOKENS.clear();
     }
 }

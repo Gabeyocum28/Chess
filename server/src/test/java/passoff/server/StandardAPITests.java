@@ -274,7 +274,7 @@ public class StandardAPITests {
 
     @Test
     @Order(12)
-    @DisplayName("List No Games")
+    @DisplayName("List No GAMES")
     public void noGamesList() {
         TestListResult result = serverFacade.listGames(existingAuth);
 
@@ -285,9 +285,9 @@ public class StandardAPITests {
 
     @Test
     @Order(12)
-    @DisplayName("List Multiple Games")
+    @DisplayName("List Multiple GAMES")
     public void gamesList() {
-        //register a few users to create games
+        //register a few USERS to create games
         TestUser userA = new TestUser("a", "A", "a.A");
         TestUser userB = new TestUser("b", "B", "b.B");
         TestUser userC = new TestUser("c", "C", "c.C");
@@ -339,7 +339,7 @@ public class StandardAPITests {
         Arrays.sort(returnedList, gameIdComparator);
 
         //check
-        Assertions.assertArrayEquals(expectedList, returnedList, "Returned Games list was incorrect");
+        Assertions.assertArrayEquals(expectedList, returnedList, "Returned GAMES list was incorrect");
     }
 
     @Test

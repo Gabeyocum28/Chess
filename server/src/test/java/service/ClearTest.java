@@ -36,10 +36,10 @@ public class ClearTest {
         new MemoryAuthDAO().createAuth(auth);
         authData.put(auth.authToken(), auth);
 
-        Assertions.assertEquals(userData,MemoryUserDAO.users);
-        Assertions.assertEquals(gameData,MemoryGameDAO.Games);
-        Assertions.assertEquals(gamesOutput,MemoryGameDAO.GamesOutput);
-        Assertions.assertEquals(authData,MemoryAuthDAO.AuthTokens);
+        Assertions.assertEquals(userData,MemoryUserDAO.USERS);
+        Assertions.assertEquals(gameData,MemoryGameDAO.GAMES);
+        Assertions.assertEquals(gamesOutput,MemoryGameDAO.GAMES_OUTPUT);
+        Assertions.assertEquals(authData,MemoryAuthDAO.AUTH_TOKENS);
 
     }
 
@@ -56,10 +56,10 @@ public class ClearTest {
 
         new ClearService().clear();
 
-        Assertions.assertEquals(emptyUserData,MemoryUserDAO.users);
-        Assertions.assertEquals(emptyGameData,MemoryGameDAO.Games);
-        Assertions.assertEquals(emptygamesOutput,MemoryGameDAO.GamesOutput);
-        Assertions.assertEquals(emptyAuthData,MemoryAuthDAO.AuthTokens);
+        Assertions.assertEquals(emptyUserData,MemoryUserDAO.USERS);
+        Assertions.assertEquals(emptyGameData,MemoryGameDAO.GAMES);
+        Assertions.assertEquals(emptygamesOutput,MemoryGameDAO.GAMES_OUTPUT);
+        Assertions.assertEquals(emptyAuthData,MemoryAuthDAO.AUTH_TOKENS);
 
     }
 }
