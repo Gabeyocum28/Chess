@@ -1,6 +1,5 @@
 package dataaccess;
 
-import exceptions.UnauthorizedException;
 import model.AuthData;
 
 import java.io.IOException;
@@ -73,16 +72,13 @@ public class SQLAuthDAO implements AuthDAO {
 
     void configureDatabase() throws DataAccessException, SQLException {
         try (var conn = getConnection()) {
-            var createDbStatement = conn.prepareStatement("CREATE DATABASE IF NOT EXISTS pet_store");
-            createDbStatement.executeUpdate();
-
             var propStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("db.properties");
             Properties props = new Properties();
             props.load(propStream);
 
             conn.setCatalog(props.getProperty("db.name"));
 
-            var createPetTable = """
+            var createAuthDataTable = """
             CREATE TABLE IF NOT EXISTS `AuthData` (
             `authToken` varchar(100) NOT NULL,
             `username` varchar(100) NOT NULL,
@@ -91,7 +87,7 @@ public class SQLAuthDAO implements AuthDAO {
             """;
 
 
-            try (var createTableStatement = conn.prepareStatement(createPetTable)) {
+            try (var createTableStatement = conn.prepareStatement(createAuthDataTable)) {
                 createTableStatement.executeUpdate();
             }
         } catch (IOException e) {

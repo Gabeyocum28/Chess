@@ -153,16 +153,13 @@ public class SQLGameDAO implements GameDAO{
     }
         void configureDatabase() throws SQLException, DataAccessException {
         try (var conn = getConnection()) {
-            var createDbStatement = conn.prepareStatement("CREATE DATABASE IF NOT EXISTS pet_store");
-            createDbStatement.executeUpdate();
-
             var propStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("db.properties");
             Properties props = new Properties();
             props.load(propStream);
 
             conn.setCatalog(props.getProperty("db.name"));
 
-            var createPetTable = """
+            var createGameDataTable = """
             CREATE TABLE IF NOT EXISTS `GameData` (
             `gameId` int NOT NULL AUTO_INCREMENT,
             `whiteUsername` varchar(100) DEFAULT NULL,
@@ -174,7 +171,7 @@ public class SQLGameDAO implements GameDAO{
             """;
 
 
-            try (var createTableStatement = conn.prepareStatement(createPetTable)) {
+            try (var createTableStatement = conn.prepareStatement(createGameDataTable)) {
                 createTableStatement.executeUpdate();
             }
         } catch (IOException e) {

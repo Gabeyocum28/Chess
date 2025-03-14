@@ -68,9 +68,6 @@ public class SQLUserDAO implements UserDAO {
 
     void configureDatabase() throws SQLException, DataAccessException {
         try (var conn = getConnection()) {
-            var createDbStatement = conn.prepareStatement("CREATE DATABASE IF NOT EXISTS pet_store");
-            createDbStatement.executeUpdate();
-
             var propStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("db.properties");
             Properties props = new Properties();
             props.load(propStream);
@@ -78,7 +75,7 @@ public class SQLUserDAO implements UserDAO {
             conn.setCatalog(props.getProperty("db.name"));
 
 
-            var createPetTable = """
+            var createUserDataTable = """
             CREATE TABLE IF NOT EXISTS UserData (
             username VARCHAR(100) NOT NULL PRIMARY KEY,
             password VARCHAR(100) NOT NULL,
@@ -87,7 +84,7 @@ public class SQLUserDAO implements UserDAO {
             """;
 
 
-            try (var createTableStatement = conn.prepareStatement(createPetTable)) {
+            try (var createTableStatement = conn.prepareStatement(createUserDataTable)) {
                 createTableStatement.executeUpdate();
             }
         } catch (IOException e) {
