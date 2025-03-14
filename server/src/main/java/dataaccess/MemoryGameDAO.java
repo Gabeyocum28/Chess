@@ -16,10 +16,11 @@ public class MemoryGameDAO implements GameDAO{
         GAMES_OUTPUT.clear();
     }
 
-    public void createGame(GameData gameData){
+    public Integer createGame(GameData gameData){
         GAMES.put(gameData.gameID(), gameData);
         GameList game = new GameList(gameData.gameID(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName());
         GAMES_OUTPUT.put(game.gameID(), game);
+        return null;
     }
     public Collection<GameList> listGames() {
         return GAMES_OUTPUT.values();

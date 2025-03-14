@@ -11,16 +11,15 @@ import model.GameData;
 import java.sql.SQLException;
 
 public class CreateGameService {
-    static int id = 1;
     public static GameData createGame(String authRequest, GameData gameName) throws DataAccessException, SQLException {
         AuthData authData = new SQLAuthDAO().getAuth(authRequest);
         if(authData == null){
             throw new UnauthorizedException("Error: unauthorized");
         }
-        id++;
-        GameData newGame = new GameData(id, gameName.whiteUsername(), gameName.blackUsername(), gameName.gameName(), new ChessGame());
-        new SQLGameDAO().createGame(newGame);
+        GameData newGame = new GameData(0, gameName.whiteUsername(), gameName.blackUsername(), gameName.gameName(), new ChessGame());
+        Integer Id = new SQLGameDAO().createGame(newGame);
+        GameData game = new GameData(Id, newGame.whiteUsername(), newGame.blackUsername(), newGame.gameName(), newGame.game());
 
-        return newGame;
+        return game;
     }
 }
