@@ -13,7 +13,8 @@
     <orderEntry type="library" name="lib" level="project" />
     <orderEntry type="library" name="junit.jupiter" level="project" />
     <orderEntry type="library" name="google.code.gson" level="project" />
-    <orderEntry type="library" name="mysql:mysql-connector-java:8.0.30" level="project" />
     <orderEntry type="library" name="sparkjava.spark.core" level="project" />
+    <orderEntry type="library" name="mysql.connector.java1" level="project" />
+    <orderEntry type="library" name="mindrot.jbcrypt" level="project" />
   </component>
 </module>

@@ -1,28 +1,38 @@
 package dataaccess;
 
-
 import exceptions.SQLException;
-import model.UserData;
+import model.AuthData;
+import model.GameData;
+import model.GameList;
+import model.JoinRequest;
 
+import java.util.Collection;
+import java.util.List;
 
+public class SQLGameDAO implements GameDAO{
 
-public class SQLUserDAO implements UserDAO{
     public void MySqlDataAccess() throws DataAccessException {
         configureDatabase();
     }
 
-    public void createUser(UserData userData){
+    public void clear() throws DataAccessException {
 
     }
 
-    public UserData getUser(String username){
-        return null;
-    }
 
-    public void clear(){
+    public void createGame(GameData gameData) throws DataAccessException {
 
     }
 
+
+    public Collection<GameList> listGames() throws DataAccessException {
+        return List.of();
+    }
+
+
+    public void updateGame(JoinRequest joinRequest, AuthData authData) throws DataAccessException {
+
+    }
 
     private final String[] createStatements = {
             """

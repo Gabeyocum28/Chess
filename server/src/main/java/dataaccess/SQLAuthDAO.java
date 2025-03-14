@@ -1,28 +1,29 @@
 package dataaccess;
 
-
 import exceptions.SQLException;
-import model.UserData;
+import model.AuthData;
 
+public class SQLAuthDAO implements AuthDAO{
 
-
-public class SQLUserDAO implements UserDAO{
     public void MySqlDataAccess() throws DataAccessException {
         configureDatabase();
     }
 
-    public void createUser(UserData userData){
+    public void createAuth(AuthData authData) throws DataAccessException {
 
     }
 
-    public UserData getUser(String username){
+    public AuthData getAuth(String authtoken) throws DataAccessException {
         return null;
     }
 
-    public void clear(){
+    public void deleteAuth(String authtoken) throws DataAccessException {
 
     }
 
+    public void clear() throws DataAccessException {
+
+    }
 
     private final String[] createStatements = {
             """
