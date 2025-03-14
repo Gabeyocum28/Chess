@@ -20,9 +20,9 @@ public class SQLAuthDAO implements AuthDAO {
 
     public void createAuth(AuthData authData){
 
-        try (var preparedStatement = conn.prepareStatement("INSERT INTO AuthData (username, authToken) VALUES(?, ?)")) {
-            preparedStatement.setString(1, authData.username());
-            preparedStatement.setString(2, authData.authToken());
+        try (var preparedStatement = conn.prepareStatement("INSERT INTO AuthData (authToken, username) VALUES(?, ?)")) {
+            preparedStatement.setString(1, authData.authToken());
+            preparedStatement.setString(2, authData.username());
 
             preparedStatement.executeUpdate();
 
@@ -32,16 +32,16 @@ public class SQLAuthDAO implements AuthDAO {
         }
     }
 
-    public AuthData getAuth(String name){
+    public AuthData getAuth(String auth){
 
-        try (var preparedStatement = conn.prepareStatement("SELECT username, authToken FROM AuthData WHERE username=?")) {
-            preparedStatement.setString(1, name);
+        try (var preparedStatement = conn.prepareStatement("SELECT authToken, username FROM AuthData WHERE authToken=?")) {
+            preparedStatement.setString(1, auth);
             try (var rs = preparedStatement.executeQuery()) {
                 while (rs.next()) {
                     var username = rs.getString("username");
                     var authToken = rs.getString("authToken");
 
-                    return new AuthData(username,authToken);
+                    return new AuthData(authToken, username);
                 }
             }
         } catch (SQLException e) {
@@ -52,7 +52,12 @@ public class SQLAuthDAO implements AuthDAO {
     }
 
     public void deleteAuth(String authToken){
-
+        try (var preparedStatement = conn.prepareStatement("DELETE FROM AuthData WHERE authToken=?")) {
+            preparedStatement.setString(1, authToken);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void clear() throws DataAccessException {
@@ -77,9 +82,9 @@ public class SQLAuthDAO implements AuthDAO {
 
             var createPetTable = """
             CREATE TABLE IF NOT EXISTS `AuthData` (
-            `username` varchar(100) NOT NULL,
             `authToken` varchar(100) NOT NULL,
-            PRIMARY KEY (`username`)
+            `username` varchar(100) NOT NULL,
+            PRIMARY KEY (`authToken`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
             """;
 
