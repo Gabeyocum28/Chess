@@ -29,7 +29,8 @@ public class SQLGameDAO implements GameDAO{
 
     public Integer createGame(GameData gameData){
 
-        try (var preparedStatement = conn.prepareStatement("INSERT INTO GameData (whiteUsername, blackUsername, gameName, game) VALUES(?, ?, ?, ?)", RETURN_GENERATED_KEYS)) {
+        try (var preparedStatement = conn.prepareStatement("INSERT INTO GameData (" +
+                "whiteUsername, blackUsername, gameName, game) VALUES(?, ?, ?, ?)", RETURN_GENERATED_KEYS)) {
             Gson gson = new Gson();
             String gameJson = gson.toJson(gameData.game());
 
@@ -85,62 +86,41 @@ public class SQLGameDAO implements GameDAO{
 
 
     public void updateGame(JoinRequest joinRequest, AuthData authData){
+        String check;
+        String update;
         if (Objects.equals(joinRequest.playerColor(), "WHITE")) {
-            try (PreparedStatement checkStatement = conn.prepareStatement(
-                    "SELECT whiteUsername FROM GameData WHERE gameId = ?");
-                    PreparedStatement updateStatement = conn.prepareStatement(
-                    "UPDATE GameData SET whiteUsername = ? WHERE gameId = ?")) {
-
-                checkStatement.setInt(1, joinRequest.gameID());
-                ResultSet resultSet = checkStatement.executeQuery();
-
-                if (resultSet.next()) {
-                    String existingUsername = resultSet.getString(1); // Get username from column
-
-                    if (existingUsername != null && !existingUsername.isEmpty()) {
-                        throw new AlreadyTakenException("Error: already taken");
-                    }
-                } else {
-                    throw new BadRequestException("Error: bad request");
-                }
-
-                updateStatement.setString(1, authData.username());
-                updateStatement.setInt(2, joinRequest.gameID());
-
-                updateStatement.executeUpdate();
-
-            } catch (SQLException e) {
-                throw new RuntimeException("Error updating game: " + e.getMessage(), e);
-            }
+            check = "SELECT whiteUsername FROM GameData WHERE gameId = ?";
+            update = "UPDATE GameData SET whiteUsername = ? WHERE gameId = ?";
+        }else{
+            check = "SELECT blackUsername FROM GameData WHERE gameId = ?";
+            update = "UPDATE GameData SET blackUsername = ? WHERE gameId = ?";
         }
-        else{
-            try (PreparedStatement checkStatement = conn.prepareStatement(
-                    "SELECT blackUsername FROM GameData WHERE gameId = ?");
-                 PreparedStatement updateStatement = conn.prepareStatement(
-                         "UPDATE GameData SET blackUsername = ? WHERE gameId = ?")) {
+        try (PreparedStatement checkStatement = conn.prepareStatement(check);
+                PreparedStatement updateStatement = conn.prepareStatement(update)) {
 
-                checkStatement.setInt(1, joinRequest.gameID());
-                ResultSet resultSet = checkStatement.executeQuery();
+            checkStatement.setInt(1, joinRequest.gameID());
+            ResultSet resultSet = checkStatement.executeQuery();
 
-                if (resultSet.next()) {
-                    String existingUsername = resultSet.getString(1); // Get username from column
+            if (resultSet.next()) {
+                String existingUsername = resultSet.getString(1); // Get username from column
 
-                    if (existingUsername != null && !existingUsername.isEmpty()) {
-                        throw new AlreadyTakenException("Error: already taken");
-                    }
-                } else {
-                    throw new BadRequestException("Error: bad request");
+                if (existingUsername != null && !existingUsername.isEmpty()) {
+                    throw new AlreadyTakenException("Error: already taken");
                 }
-
-                updateStatement.setString(1, authData.username());
-                updateStatement.setInt(2, joinRequest.gameID());
-
-                updateStatement.executeUpdate();
-
-            } catch (SQLException e) {
-                throw new RuntimeException("Error updating game: " + e.getMessage(), e);
+            } else {
+                throw new BadRequestException("Error: bad request");
             }
+
+            updateStatement.setString(1, authData.username());
+            updateStatement.setInt(2, joinRequest.gameID());
+
+            updateStatement.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Error updating game: " + e.getMessage(), e);
         }
+
+
     }
 
     public void clear() throws DataAccessException {

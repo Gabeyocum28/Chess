@@ -17,8 +17,8 @@ public class CreateGameService {
             throw new UnauthorizedException("Error: unauthorized");
         }
         GameData newGame = new GameData(0, gameName.whiteUsername(), gameName.blackUsername(), gameName.gameName(), new ChessGame());
-        Integer Id = new SQLGameDAO().createGame(newGame);
-        GameData game = new GameData(Id, newGame.whiteUsername(), newGame.blackUsername(), newGame.gameName(), newGame.game());
+        Integer id = new SQLGameDAO().createGame(newGame);
+        GameData game = new GameData(id, newGame.whiteUsername(), newGame.blackUsername(), newGame.gameName(), newGame.game());
 
         return game;
     }
