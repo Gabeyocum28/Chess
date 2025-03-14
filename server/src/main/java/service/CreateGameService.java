@@ -8,9 +8,11 @@ import exceptions.UnauthorizedException;
 import model.AuthData;
 import model.GameData;
 
+import java.sql.SQLException;
+
 public class CreateGameService {
     static int id = 1;
-    public static GameData createGame(String authRequest, GameData gameName) throws DataAccessException {
+    public static GameData createGame(String authRequest, GameData gameName) throws DataAccessException, SQLException {
         AuthData authData = new SQLAuthDAO().getAuth(authRequest);
         if(authData == null){
             throw new UnauthorizedException("Error: unauthorized");

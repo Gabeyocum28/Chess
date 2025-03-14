@@ -1,10 +1,11 @@
 package dataaccess;
 
+import exceptions.SQLException;
 import model.AuthData;
 
 public interface AuthDAO {
-    void createAuth(AuthData authData) throws DataAccessException;
-    AuthData getAuth(String authtoken) throws DataAccessException;
-    void deleteAuth(String authtoken) throws DataAccessException;
-    void clear() throws DataAccessException;
+    void createAuth(AuthData authData) throws SQLException;
+    AuthData getAuth(String authtoken) throws SQLException;
+    void deleteAuth(String authtoken) throws SQLException;
+    void clear() throws SQLException, DataAccessException;
 }

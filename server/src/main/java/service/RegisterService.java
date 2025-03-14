@@ -21,10 +21,10 @@ public class RegisterService {
         }
 
         String authToken = UUID.randomUUID().toString();
-        AuthData newAuth = new AuthData(authToken, user.username());
+        AuthData newAuth = new AuthData(user.username(), authToken);
         new SQLAuthDAO().createAuth(newAuth);
 
-        return new SQLAuthDAO().getAuth(authToken);
+        return new SQLAuthDAO().getAuth(newAuth.username());
 
     }
 }

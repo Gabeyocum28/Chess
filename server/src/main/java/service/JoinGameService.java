@@ -9,10 +9,11 @@ import model.AuthData;
 import model.JoinRequest;
 
 
+import java.sql.SQLException;
 import java.util.Objects;
 
 public class JoinGameService {
-    public static void joinGame(String authToken, JoinRequest joinRequest) throws DataAccessException {
+    public static void joinGame(String authToken, JoinRequest joinRequest) throws DataAccessException, SQLException {
         AuthData authData = new SQLAuthDAO().getAuth(authToken);
         if(authData == null){
             throw new UnauthorizedException("Error: unauthorized");
