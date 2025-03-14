@@ -1,5 +1,6 @@
 package dataaccess;
 
+import exceptions.UnauthorizedException;
 import model.AuthData;
 
 import java.io.IOException;
@@ -47,7 +48,7 @@ public class SQLAuthDAO implements AuthDAO {
             throw new RuntimeException(e);
         }
 
-        return new AuthData("","");
+        return null;
     }
 
     public void deleteAuth(String authToken){
