@@ -12,10 +12,12 @@ import static dataaccess.DatabaseManager.getConnection;
 
 public class SQLUserDAO implements UserDAO {
 
-    private final Connection conn = DatabaseManager.getConnection();
+    private Connection conn = null;
 
     public SQLUserDAO() throws DataAccessException, SQLException {
+        DatabaseManager.createDatabase();
         configureDatabase();
+        conn = DatabaseManager.getConnection();
     }
 
     public void createUser(UserData userData) throws DataAccessException {

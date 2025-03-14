@@ -12,10 +12,12 @@ import static dataaccess.DatabaseManager.getConnection;
 
 public class SQLAuthDAO implements AuthDAO {
 
-    private final Connection conn = DatabaseManager.getConnection();
+    private Connection conn = null;
 
     public SQLAuthDAO() throws SQLException, DataAccessException {
+        DatabaseManager.createDatabase();
         configureDatabase();
+        conn = DatabaseManager.getConnection();
     }
 
     public void createAuth(AuthData authData){

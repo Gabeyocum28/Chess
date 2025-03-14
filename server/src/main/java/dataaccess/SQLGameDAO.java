@@ -19,10 +19,12 @@ import static java.sql.Statement.RETURN_GENERATED_KEYS;
 
 public class SQLGameDAO implements GameDAO{
 
-    private final Connection conn = DatabaseManager.getConnection();
+    private Connection conn = null;
 
     public SQLGameDAO() throws SQLException, DataAccessException {
+        DatabaseManager.createDatabase();
         configureDatabase();
+        conn = DatabaseManager.getConnection();
     }
 
     public Integer createGame(GameData gameData){
