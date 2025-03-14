@@ -15,11 +15,6 @@ public class SQLGameDAO implements GameDAO{
         configureDatabase();
     }
 
-    public void clear() throws DataAccessException {
-
-    }
-
-
     public void createGame(GameData gameData) throws DataAccessException {
 
     }
@@ -34,13 +29,19 @@ public class SQLGameDAO implements GameDAO{
 
     }
 
+    public void clear() throws DataAccessException {
+
+    }
+
     private final String[] createStatements = {
             """
-            CREATE TABLE IF NOT EXISTS  `UserData` (
-            `username` varchar(100) NOT NULL,
-            `password` varchar(100) NOT NULL,
-            `email` varchar(100) NOT NULL,
-            PRIMARY KEY (`username`)
+            CREATE TABLE IF NOT EXISTS CREATE TABLE `GameData` (
+            `gameID` int NOT NULL,
+            `whiteUsername` varchar(100) DEFAULT NULL,
+            `blackUsername` varchar(100) DEFAULT NULL,
+            `gameName` varchar(100) NOT NULL,
+            `game` json NOT NULL,
+            PRIMARY KEY (`gameID`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
             """
     };

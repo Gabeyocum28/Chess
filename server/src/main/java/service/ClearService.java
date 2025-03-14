@@ -1,13 +1,11 @@
 package service;
 
-import dataaccess.MemoryAuthDAO;
-import dataaccess.MemoryGameDAO;
-import dataaccess.MemoryUserDAO;
+import dataaccess.*;
 
 public class ClearService {
-    public void clear(){
-        new MemoryUserDAO().clear();
-        new MemoryAuthDAO().clear();
-        new MemoryGameDAO().clear();
+    public void clear() throws DataAccessException {
+        new SQLUserDAO().clear();
+        new SQLAuthDAO().clear();
+        new SQLGameDAO().clear();
     }
 }

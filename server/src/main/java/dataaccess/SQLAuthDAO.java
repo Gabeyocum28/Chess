@@ -27,11 +27,10 @@ public class SQLAuthDAO implements AuthDAO{
 
     private final String[] createStatements = {
             """
-            CREATE TABLE IF NOT EXISTS  `UserData` (
+            CREATE TABLE IF NOT EXISTS  `AuthData` (
+            `authToken` varchar(100) NOT NULL,
             `username` varchar(100) NOT NULL,
-            `password` varchar(100) NOT NULL,
-            `email` varchar(100) NOT NULL,
-            PRIMARY KEY (`username`)
+            PRIMARY KEY (`authToken`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
             """
     };

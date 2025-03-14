@@ -1,21 +1,19 @@
 package service;
 
-import com.google.gson.Gson;
-import dataaccess.MemoryAuthDAO;
-import dataaccess.MemoryGameDAO;
-import dataaccess.MemoryUserDAO;
+import dataaccess.DataAccessException;
+import dataaccess.SQLAuthDAO;
+import dataaccess.SQLGameDAO;
 import exceptions.BadRequestException;
 import exceptions.UnauthorizedException;
 import model.AuthData;
 import model.JoinRequest;
-import model.UserData;
 
-import java.util.Map;
+
 import java.util.Objects;
 
 public class JoinGameService {
-    public static void joinGame(String authToken, JoinRequest joinRequest){
-        AuthData authData = new MemoryAuthDAO().getAuth(authToken);
+    public static void joinGame(String authToken, JoinRequest joinRequest) throws DataAccessException {
+        AuthData authData = new SQLAuthDAO().getAuth(authToken);
         if(authData == null){
             throw new UnauthorizedException("Error: unauthorized");
         }
@@ -23,7 +21,7 @@ public class JoinGameService {
             throw new BadRequestException("Error: bad request");
         }
         if(Objects.equals(joinRequest.playerColor(), "WHITE") || Objects.equals(joinRequest.playerColor(), "BLACK")) {
-            new MemoryGameDAO().updateGame(joinRequest, authData);
+            new SQLGameDAO().updateGame(joinRequest, authData);
         }else{
             throw new BadRequestException("Error: bad request");
         }
