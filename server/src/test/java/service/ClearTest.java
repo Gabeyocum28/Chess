@@ -1,6 +1,7 @@
 package service;
 
 import chess.ChessGame;
+import dataaccess.DataAccessException;
 import dataaccess.MemoryAuthDAO;
 import dataaccess.MemoryGameDAO;
 import dataaccess.MemoryUserDAO;
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 
+import java.sql.SQLException;
 import java.util.HashMap;
 
 public class ClearTest {
@@ -44,7 +46,7 @@ public class ClearTest {
     }
 
     @Test
-    public void clearAll(){
+    public void clearAll() throws SQLException, DataAccessException {
         HashMap<String, UserData> emptyUserData = new HashMap<>();
         HashMap<String, GameData> emptyGameData = new HashMap<>();
         HashMap<String, AuthData> emptyAuthData = new HashMap<>();

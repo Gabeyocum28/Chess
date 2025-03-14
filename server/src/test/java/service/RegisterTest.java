@@ -1,15 +1,18 @@
 package service;
 
 
+import dataaccess.DataAccessException;
 import exceptions.AlreadyTakenException;
 import model.UserData;
 import org.junit.jupiter.api.*;
+
+import java.sql.SQLException;
 
 
 public class RegisterTest {
 
     @BeforeEach
-    public void setup() {
+    public void setup() throws SQLException, DataAccessException {
         new ClearService().clear();
     }
 

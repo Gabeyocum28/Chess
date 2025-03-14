@@ -1,5 +1,6 @@
 package service;
 
+import dataaccess.DataAccessException;
 import exceptions.UnauthorizedException;
 import model.Login;
 import model.UserData;
@@ -7,15 +8,17 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.sql.SQLException;
+
 public class LoginTest {
 
     @BeforeEach
-    public void setup() {
+    public void setup() throws SQLException, DataAccessException {
         new ClearService().clear();
     }
 
     @Test
-    public void successfulLogin(){
+    public void successfulLogin() throws SQLException, DataAccessException {
         UserData userData = new UserData("username", "password", "email");
         Login login = new Login("username", "password");
         try {
@@ -41,11 +44,19 @@ public class LoginTest {
             Assertions.assertNull(LoginService.login(wrongPasswordLogin));
         } catch (UnauthorizedException e) {
 
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
         }
         try{
             Assertions.assertNull(LoginService.login(wrongUsernameLogin));
         } catch (UnauthorizedException e) {
 
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
         }
 
 

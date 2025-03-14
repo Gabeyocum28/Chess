@@ -1,6 +1,7 @@
 package service;
 
 import chess.ChessGame;
+import dataaccess.DataAccessException;
 import dataaccess.MemoryAuthDAO;
 import exceptions.UnauthorizedException;
 import model.AuthData;
@@ -11,12 +12,13 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.sql.SQLException;
 import java.util.Collection;
 
 public class ListGamesTest {
 
     @BeforeEach
-    public void setup() {
+    public void setup() throws SQLException, DataAccessException {
         new ClearService().clear();
     }
 

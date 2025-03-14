@@ -1,6 +1,8 @@
 package dataaccess;
 
 import com.google.gson.Gson;
+import exceptions.AlreadyTakenException;
+import exceptions.BadRequestException;
 import model.AuthData;
 import model.GameData;
 import model.GameList;
@@ -10,10 +12,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 import static dataaccess.DatabaseManager.getConnection;
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
@@ -84,7 +83,62 @@ public class SQLGameDAO implements GameDAO{
 
 
     public void updateGame(JoinRequest joinRequest, AuthData authData){
+        if (Objects.equals(joinRequest.playerColor(), "WHITE")) {
+            try (PreparedStatement checkStatement = conn.prepareStatement(
+                    "SELECT whiteUsername FROM GameData WHERE gameId = ?");
+                    PreparedStatement updateStatement = conn.prepareStatement(
+                    "UPDATE GameData SET whiteUsername = ? WHERE gameId = ?")) {
 
+                checkStatement.setInt(1, joinRequest.gameID());
+                ResultSet resultSet = checkStatement.executeQuery();
+
+                if (resultSet.next()) {
+                    String existingUsername = resultSet.getString(1); // Get username from column
+
+                    if (existingUsername != null && !existingUsername.isEmpty()) {
+                        throw new AlreadyTakenException("Error: already taken");
+                    }
+                } else {
+                    throw new BadRequestException("Error: bad request");
+                }
+
+                updateStatement.setString(1, authData.username());
+                updateStatement.setInt(2, joinRequest.gameID());
+
+                updateStatement.executeUpdate();
+
+            } catch (SQLException e) {
+                throw new RuntimeException("Error updating game: " + e.getMessage(), e);
+            }
+        }
+        else{
+            try (PreparedStatement checkStatement = conn.prepareStatement(
+                    "SELECT blackUsername FROM GameData WHERE gameId = ?");
+                 PreparedStatement updateStatement = conn.prepareStatement(
+                         "UPDATE GameData SET blackUsername = ? WHERE gameId = ?")) {
+
+                checkStatement.setInt(1, joinRequest.gameID());
+                ResultSet resultSet = checkStatement.executeQuery();
+
+                if (resultSet.next()) {
+                    String existingUsername = resultSet.getString(1); // Get username from column
+
+                    if (existingUsername != null && !existingUsername.isEmpty()) {
+                        throw new AlreadyTakenException("Error: already taken");
+                    }
+                } else {
+                    throw new BadRequestException("Error: bad request");
+                }
+
+                updateStatement.setString(1, authData.username());
+                updateStatement.setInt(2, joinRequest.gameID());
+
+                updateStatement.executeUpdate();
+
+            } catch (SQLException e) {
+                throw new RuntimeException("Error updating game: " + e.getMessage(), e);
+            }
+        }
     }
 
     public void clear() throws DataAccessException {
