@@ -14,12 +14,12 @@ import java.sql.SQLException;
 public class ServiceUnitTests {
 
     @BeforeEach
-    public void Clear() throws SQLException, DataAccessException {
+    public void clear() throws SQLException, DataAccessException {
         new ClearService().clear();
     }
 
     @Test
-    public void NewUser(){
+    public void newUser(){
         UserData user = new UserData("username", "password", "email");
 
         try {
@@ -30,7 +30,7 @@ public class ServiceUnitTests {
     }
 
     @Test
-    public void FailNewUser() throws Exception{
+    public void failNewUser() throws Exception{
         UserData user = new UserData("username", "password", "email");
 
         try {
@@ -44,7 +44,7 @@ public class ServiceUnitTests {
     }
 
     @Test
-    public void LoginUser() throws SQLException, DataAccessException {
+    public void loginUser() throws SQLException, DataAccessException {
         UserData user = new UserData("username", "password", "email");
 
         AuthData auth;
@@ -59,7 +59,7 @@ public class ServiceUnitTests {
     }
 
     @Test
-    public void FailLoginUser() throws Exception{
+    public void failLoginUser() throws Exception{
 
         try {
             Login login = new Login("username", "password");
@@ -72,7 +72,7 @@ public class ServiceUnitTests {
     }
 
     @Test
-    public void LogoutUser() throws SQLException, DataAccessException {
+    public void logoutUser() throws SQLException, DataAccessException {
         UserData user = new UserData("username", "password", "email");
 
         AuthData auth;
@@ -86,7 +86,7 @@ public class ServiceUnitTests {
     }
 
     @Test
-    public void FailLogoutUser() throws Exception{
+    public void failLogoutUser() throws Exception{
 
         try {
 
@@ -99,7 +99,7 @@ public class ServiceUnitTests {
     }
 
     @Test
-    public void CreateGame() throws SQLException, DataAccessException {
+    public void createGame() throws SQLException, DataAccessException {
         UserData user = new UserData("username", "password", "email");
 
         AuthData auth;
@@ -114,7 +114,7 @@ public class ServiceUnitTests {
     }
 
     @Test
-    public void FailCreateGame() throws Exception{
+    public void failCreateGame() throws Exception{
 
         try {
             GameData g = new GameData(0,null,null,"game", null);
@@ -127,7 +127,7 @@ public class ServiceUnitTests {
     }
 
     @Test
-    public void ListGame() throws SQLException, DataAccessException {
+    public void listGame() throws SQLException, DataAccessException {
         UserData user = new UserData("username", "password", "email");
 
         AuthData auth;
@@ -144,7 +144,7 @@ public class ServiceUnitTests {
     }
 
     @Test
-    public void FailListGame() throws Exception{
+    public void failListGame() throws Exception{
 
         try {
             GameData g = new GameData(0,null,null,"game", null);
@@ -158,7 +158,7 @@ public class ServiceUnitTests {
     }
 
     @Test
-    public void JoinGame() throws SQLException, DataAccessException {
+    public void joinGame() throws SQLException, DataAccessException {
         UserData user = new UserData("username", "password", "email");
 
         AuthData auth;
@@ -176,7 +176,7 @@ public class ServiceUnitTests {
     }
 
     @Test
-    public void FailJoinGame() throws Exception{
+    public void failJoinGame() throws Exception{
 
         try {
             GameData g = new GameData(0,null,null,"game", null);
