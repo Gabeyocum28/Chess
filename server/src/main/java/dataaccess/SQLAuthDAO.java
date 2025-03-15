@@ -70,7 +70,7 @@ public class SQLAuthDAO implements AuthDAO {
         }
     }
 
-    void configureDatabase() throws DataAccessException, SQLException {
+    public static void configureDatabase() throws DataAccessException, SQLException {
         try (var conn = getConnection()) {
             var propStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("db.properties");
             Properties props = new Properties();

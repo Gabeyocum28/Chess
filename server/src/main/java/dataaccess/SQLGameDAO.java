@@ -131,7 +131,7 @@ public class SQLGameDAO implements GameDAO{
             throw new RuntimeException(e);
         }
     }
-        void configureDatabase() throws SQLException, DataAccessException {
+        public static void configureDatabase() throws SQLException, DataAccessException {
         try (var conn = getConnection()) {
             var propStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("db.properties");
             Properties props = new Properties();
