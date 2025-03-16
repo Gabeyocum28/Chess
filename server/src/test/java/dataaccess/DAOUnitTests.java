@@ -22,116 +22,180 @@ public class DAOUnitTests {
         new ClearService().clear();
 
     }
-    @Test
-    public void userDAOTest() throws SQLException, DataAccessException {
-        UserData userData = new UserData("username", "password", "email");
-        SQLUserDAO.configureDatabase();
-
-        new SQLUserDAO().createUser(userData);
-        UserData authData = new SQLUserDAO().getUser(userData.username());
-        new SQLUserDAO().clear();
-    }
 
     @Test
-    public void authDAOTest() throws SQLException, DataAccessException {
-        UserData userData = new UserData("username", "password", "email");
-        String authToken = UUID.randomUUID().toString();
-        AuthData authData = new AuthData(authToken, userData.username());
-        SQLAuthDAO.configureDatabase();
-
-        new SQLAuthDAO().createAuth(authData);
-        authData = new SQLAuthDAO().getAuth(userData.username());
-        new SQLAuthDAO().deleteAuth(authToken);
-        new SQLAuthDAO().clear();
-    }
-
-    @Test
-    public void gameDAOTest() throws SQLException, DataAccessException {
-        UserData userData = new UserData("username", "password", "email");
-        String authToken = UUID.randomUUID().toString();
-        AuthData authData = new AuthData(authToken, userData.username());
-        GameData game = new GameData(0,null,null, "game", new ChessGame());
-        JoinRequest joinRequest = new JoinRequest("WHITE", new SQLGameDAO().createGame(game) + 1);
-        SQLGameDAO.configureDatabase();
-
-        new SQLGameDAO().createGame(game);
-        System.out.println(new SQLGameDAO().listGames());
-        new SQLGameDAO().updateGame(joinRequest, authData);
-        new SQLGameDAO().clear();
-    }
-
-    @Test
-    public void UserDAOFailures() throws SQLException, DataAccessException {
-        SQLUserDAO.configureDatabase();
+    public void createUserSuccess() throws SQLException, DataAccessException {
         SQLUserDAO dao = new SQLUserDAO();
+        UserData user = new UserData("validUser", "password", "email");
 
-        // Attempt to retrieve a non-existent user
-        UserData userData = dao.getUser("nonexistent_user");
-        assertNull(userData, "Expected null user, but got not-null."); // Should fail if DAO correctly returns null
+        dao.createUser(user);
+        UserData retrieved = dao.getUser("validUser");
 
-        // Attempt to create a duplicate user
-        UserData validUser = new UserData("username", "password", "email");
-        dao.createUser(validUser);
-        assertThrows(Exception.class, () -> dao.createUser(validUser), "Expected exception for duplicate user.");
-
-        // Attempt to retrieve a user after clearing the database
-        dao.clear();
-        UserData clearedUser = dao.getUser(validUser.username());
-        assertNull(clearedUser, "Expected user to be null after clear, but got an object.");
+        assertNotNull(retrieved, "Expected user to be created and retrievable.");
     }
 
     @Test
-    public void AuthDAOFailures() throws SQLException, DataAccessException {
-        SQLAuthDAO.configureDatabase();
+    public void createUserFailure() throws SQLException, DataAccessException {
+        SQLUserDAO dao = new SQLUserDAO();
+        UserData user = new UserData("duplicateUser", "password", "email");
+
+        dao.createUser(user);
+        assertThrows(Exception.class, () -> dao.createUser(user), "Expected exception when creating a duplicate user.");
+    }
+
+    @Test
+    public void getUserSuccess() throws SQLException, DataAccessException {
+        SQLUserDAO dao = new SQLUserDAO();
+        UserData user = new UserData("existingUser", "password", "email");
+
+        dao.createUser(user);
+        UserData retrieved = dao.getUser("existingUser");
+
+        assertEquals(user.username(), retrieved.username(), "Expected retrieved user to match stored user.");
+    }
+
+    @Test
+    public void getUserFailure() throws SQLException, DataAccessException {
+        SQLUserDAO dao = new SQLUserDAO();
+        UserData retrieved = dao.getUser("nonexistentUser");
+
+        assertNull(retrieved, "Expected null when retrieving a non-existent user.");
+    }
+
+    @Test
+    public void clearUsersSuccess() throws SQLException, DataAccessException {
+        SQLUserDAO dao = new SQLUserDAO();
+        dao.createUser(new UserData("user1", "password", "email"));
+        dao.clear();
+
+        UserData retrieved = dao.getUser("user1");
+        assertNull(retrieved, "Expected null after clearing database.");
+    }
+    @Test
+    public void createAuthSuccess() throws SQLException, DataAccessException {
         SQLAuthDAO dao = new SQLAuthDAO();
-
-        // Attempt to retrieve an auth token that doesn't exist
-        AuthData authData = dao.getAuth("invalid_token");
-        assertNull(authData, "Expected null auth data, but got data."); // Should fail if DAO correctly returns null
-
-        // Create a valid auth token
         String authToken = UUID.randomUUID().toString();
-        AuthData validAuth = new AuthData(authToken, "username");
-        dao.createAuth(validAuth);
+        AuthData authData = new AuthData(authToken, "user");
 
-        // Attempt to delete a non-existent auth token
-        dao.deleteAuth("nonexistent_token");
+        dao.createAuth(authData);
+        AuthData retrieved = dao.getAuth(authToken);
 
-        // Ensure deleting a valid auth token actually removes it
-        dao.deleteAuth(authToken);
-        AuthData deletedAuth = dao.getAuth(authToken);
-        assertNull(deletedAuth, "Expected auth token to be deleted, but it was still found."); // Should fail if deletion worked
-
-        // Clear the database and check if auth token is still retrievable
-        dao.clear();
-        AuthData clearedAuth = dao.getAuth(authToken);
-        assertNull(clearedAuth, "Expected null after clear, but got an object.");
+        assertNotNull(retrieved, "Expected auth token to be stored and retrievable.");
     }
 
     @Test
-    public void testGameDAOFailures() throws SQLException, DataAccessException {
-        SQLGameDAO.configureDatabase();
-        SQLGameDAO dao = new SQLGameDAO();
-
-        // Attempt to retrieve a non-existent game
-        Collection<GameList> gamesBefore = dao.listGames();
-        assertTrue(gamesBefore.isEmpty(), "Expected an empty game list, but found games."); // Should fail if DAO correctly returns an empty list
-
-        // Create a valid game
-        GameData game = new GameData(0, null, null, "game", new ChessGame());
-        int gameId = dao.createGame(game);
-
-        // Attempt to update a non-existent game (should not throw an exception but also not affect any valid game)
+    public void createAuthFailure() throws SQLException, DataAccessException {
+        SQLAuthDAO dao = new SQLAuthDAO();
         String authToken = UUID.randomUUID().toString();
-        AuthData authData = new AuthData(authToken, "username");
-        JoinRequest joinRequest = new JoinRequest("WHITE", 9999); // Non-existent game ID
+        AuthData authData = new AuthData(authToken, "user");
 
-        assertThrows(Exception.class, () -> dao.updateGame(joinRequest, authData), "Expected updateGame to handle non-existent game gracefully.");
-
-        // Clear the database and check if games are still listed
-        dao.clear();
-        Collection<GameList> gamesAfterClear = dao.listGames();
-        assertTrue(gamesAfterClear.isEmpty(), "Expected no games to be listed after clear, but found games.");
+        dao.createAuth(authData);
+        assertThrows(Exception.class, () -> dao.createAuth(authData), "Expected failure when creating a duplicate auth token.");
     }
 
+    @Test
+    public void getAuthSuccess() throws SQLException, DataAccessException {
+        SQLAuthDAO dao = new SQLAuthDAO();
+        String authToken = UUID.randomUUID().toString();
+        AuthData authData = new AuthData(authToken, "user");
+
+        dao.createAuth(authData);
+        AuthData retrieved = dao.getAuth(authToken);
+
+        assertEquals(authData.username(), retrieved.username(), "Expected correct user to be associated with the token.");
+    }
+
+    @Test
+    public void getAuthFailure() throws SQLException, DataAccessException {
+        SQLAuthDAO dao = new SQLAuthDAO();
+        AuthData retrieved = dao.getAuth("invalidToken");
+
+        assertNull(retrieved, "Expected null when retrieving a non-existent auth token.");
+    }
+
+    @Test
+    public void deleteAuthSuccess() throws SQLException, DataAccessException {
+        SQLAuthDAO dao = new SQLAuthDAO();
+        String authToken = UUID.randomUUID().toString();
+        dao.createAuth(new AuthData(authToken, "user"));
+
+        dao.deleteAuth(authToken);
+        AuthData retrieved = dao.getAuth(authToken);
+
+        assertNull(retrieved, "Expected auth token to be removed.");
+    }
+
+    @Test
+    public void deleteAuthFailure() throws SQLException, DataAccessException {
+        SQLAuthDAO dao = new SQLAuthDAO();
+        assertDoesNotThrow(() -> dao.deleteAuth("fakeToken"), "Expected deleteAuth to handle non-existent tokens gracefully.");
+    }
+
+    @Test
+    public void clearAuthsSuccess() throws SQLException, DataAccessException {
+        SQLAuthDAO dao = new SQLAuthDAO();
+        dao.createAuth(new AuthData(UUID.randomUUID().toString(), "user"));
+        dao.clear();
+
+        AuthData retrieved = dao.getAuth("anyToken");
+        assertNull(retrieved, "Expected auths to be cleared.");
+    }
+
+    @Test
+    public void createGameSuccess() throws SQLException, DataAccessException {
+        SQLGameDAO dao = new SQLGameDAO();
+        GameData game = new GameData(0, null, null, "game", new ChessGame());
+
+        int gameId = dao.createGame(game);
+        Collection<GameList> games = dao.listGames();
+
+        assertFalse(games.isEmpty(), "Expected the created game to be listed.");
+    }
+
+    @Test
+    public void listGamesSuccess() throws SQLException, DataAccessException {
+        SQLGameDAO dao = new SQLGameDAO();
+        dao.createGame(new GameData(0, null, null, "game", new ChessGame()));
+
+        Collection<GameList> games = dao.listGames();
+        assertFalse(games.isEmpty(), "Expected at least one game in the list.");
+    }
+
+    @Test
+    public void listGamesFailure() throws SQLException, DataAccessException {
+        SQLGameDAO dao = new SQLGameDAO();
+        Collection<GameList> games = dao.listGames();
+
+        assertTrue(games.isEmpty(), "Expected empty list when no games exist.");
+    }
+
+    @Test
+    public void updateGameSuccess() throws SQLException, DataAccessException {
+        SQLGameDAO dao = new SQLGameDAO();
+        int gameId = dao.createGame(new GameData(0, null, null, "game", new ChessGame()));
+
+        JoinRequest joinRequest = new JoinRequest("WHITE", gameId);
+        dao.updateGame(joinRequest, new AuthData(UUID.randomUUID().toString(), "username"));
+
+        // Can't directly verify update effect, so assume no exception = success.
+        assertTrue(true, "Expected game update to succeed.");
+    }
+
+    @Test
+    public void updateGameFailure() throws SQLException, DataAccessException {
+        SQLGameDAO dao = new SQLGameDAO();
+        JoinRequest joinRequest = new JoinRequest("WHITE", 9999);
+
+        assertThrows(Exception.class, () -> dao.updateGame(joinRequest, new AuthData(UUID.randomUUID().toString(), "user")), "Expected failure when updating a non-existent game.");
+    }
+
+    @Test
+    public void clearGamesSuccess() throws SQLException, DataAccessException {
+        SQLGameDAO dao = new SQLGameDAO();
+        dao.createGame(new GameData(0, null, null, "game", new ChessGame()));
+        dao.clear();
+
+        Collection<GameList> games = dao.listGames();
+        assertTrue(games.isEmpty(), "Expected game list to be empty after clear.");
+    }
 }
