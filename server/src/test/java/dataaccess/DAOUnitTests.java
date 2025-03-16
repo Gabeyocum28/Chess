@@ -186,7 +186,9 @@ public class DAOUnitTests {
         SQLGameDAO dao = new SQLGameDAO();
         JoinRequest joinRequest = new JoinRequest("WHITE", 9999);
 
-        assertThrows(Exception.class, () -> dao.updateGame(joinRequest, new AuthData(UUID.randomUUID().toString(), "user")), "Expected failure when updating a non-existent game.");
+        assertThrows(Exception.class, () ->
+                dao.updateGame(joinRequest, new AuthData(UUID.randomUUID().toString(), "user")),
+                "Expected failure when updating a non-existent game.");
     }
 
     @Test
