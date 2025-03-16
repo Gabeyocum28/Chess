@@ -9,77 +9,29 @@ public class KingMovesCalculator {
 
     public Collection<ChessMove> kingMovesCalculator(ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> possibleMoves = new ArrayList<>();
-        int row = myPosition.getRow();
-        int column = myPosition.getColumn();
         ChessPiece myPiece = board.getPiece(myPosition);
-        int start = 0;
-        int i = 0;
+        int[][] directions = {
+                {1, 0}, {1, 1}, {0, 1}, {1, -1},
+                {0, -1}, {-1, -1}, {-1, 0}, {-1, 1}
+        };
 
-        while(true){
-            if(start == 0){
-                row = myPosition.getRow();
-                column = myPosition.getColumn();
-                start = 1;
-            }
+        int row = myPosition.getRow();
+        int col = myPosition.getColumn();
 
-            if(i == 0){
-                row++;
-                column++;
-            }
-            else if(i == 1){
-                row++;
-                column--;
-            }
-            else if(i == 2){
-                row--;
-                column++;
-            }
-            else if (i == 3){
-                row--;
-                column--;
-            }
-            else if(i == 4){
-                row++;
-            }
-            else if(i == 5){
-                row--;
-            }
-            else if(i == 6){
-                column++;
-            }
-            else if(i == 7){
-                column--;
-            }
-            else{
-                break;
-            }
-            if (row <= 0 || row > 8 || column <= 0 || column > 8) {
-                start = 0;
-                i++;
+        for (int[] direction : directions) {
+            int newRow = row + direction[0];
+            int newCol = col + direction[1];
+
+            if (newRow < 1 || newRow > 8 || newCol < 1 || newCol > 8) {
                 continue;
             }
-            ChessPosition checkPosition = new ChessPosition(row, column);
-            if (board.getPiece(checkPosition) != null) {
-                if (myPiece.getTeamColor() != board.getPiece(checkPosition).getTeamColor()) {
-                    ChessMove move = new ChessMove(myPosition, checkPosition, null);
-                    possibleMoves.add(move);
-                    start = 0;
-                    i++;
-                    continue;
 
-                }
-                else {
-                    start = 0;
-                    i++;
-                    continue;
-                }
+            ChessPosition newPosition = new ChessPosition(newRow, newCol);
+            ChessPiece targetPiece = board.getPiece(newPosition);
+
+            if (targetPiece == null || myPiece.getTeamColor() != targetPiece.getTeamColor()) {
+                possibleMoves.add(new ChessMove(myPosition, newPosition, null));
             }
-            ChessPosition newPosition = new ChessPosition(row, column);
-            ChessMove move = new ChessMove(myPosition, newPosition, null);
-            possibleMoves.add(move);
-            i++;
-            start = 0;
-
         }
         return possibleMoves;
     }
