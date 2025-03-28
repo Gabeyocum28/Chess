@@ -50,6 +50,7 @@ public class GamePlayClient {
     public String help() {
 
         return """
+                - Game
                 - register <USERNAME> <PASSWORD> <EMAIL>
                 - login <USERNAME> <PASSWORD>
                 - quit - Exit Program

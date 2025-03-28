@@ -23,7 +23,7 @@ public class PostLoginClient {
             var cmd = (tokens.length > 0) ? tokens[0] : "help";
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
-                case "register" -> register(params);
+                case "join" -> join(params);
                 case "login" -> login(params);
                 case "quit" -> "quit";
                 default -> help();
@@ -33,9 +33,9 @@ public class PostLoginClient {
         }
     }
 
-    public String register(String... params) throws ResponseException {
-        if (params.length >= 3) {
-            return String.format("registered %s %s %s", params[0], params[1], params[2]);
+    public String join(String... params) throws ResponseException {
+        if (params.length >= 2) {
+            return String.format("joined %s %s", params[0], params[1]);
         }
         throw new ResponseException(400, "Expected: <USERNAME> <PASSWORD> <EMAIL>");
     }

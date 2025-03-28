@@ -68,9 +68,34 @@ public abstract class Repl implements NotificationHandler {
                 var msg = e.toString();
                 System.out.print(msg);
             }
+            if(result.contains("observing ") || result.contains("joined ")) {
+                System.out.println();
+                runGame();
+            }
         }
         System.out.println();
         System.out.print(preLoginClient.help());
+    }
+
+    public void runGame() {
+        System.out.print(gamePlayClient.help());
+
+        Scanner scanner = new Scanner(System.in);
+        var result = "";
+        while (!result.equals("quit")) {
+            printPrompt();
+            String line = scanner.nextLine();
+
+            try {
+                result = gamePlayClient.eval(line);
+                System.out.print(SET_TEXT_COLOR_BLUE + result);
+            } catch (Throwable e) {
+                var msg = e.toString();
+                System.out.print(msg);
+            }
+        }
+        System.out.println();
+        System.out.print(postLoginClient.help());
     }
 
 
