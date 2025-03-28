@@ -10,16 +10,12 @@ import static ui.EscapeSequences.*;
 
 public abstract class Repl implements NotificationHandler {
 
-    private final PreLoginClient preLoginClient;
-    private final PostLoginClient postLoginClient;
-    private final GamePlayClient gamePlayClient;
+    private final String url;
     private PreLoginClient client;
 
     public Repl(String serverUrl) {
-        preLoginClient = new PreLoginClient(serverUrl, this);
-        postLoginClient = new PostLoginClient(serverUrl, this);
-        gamePlayClient = new GamePlayClient(serverUrl,this);
-        client = preLoginClient;
+        url = serverUrl;
+        client = new PreLoginClient(serverUrl, this);
     }
 
     public void run() {
@@ -38,6 +34,9 @@ public abstract class Repl implements NotificationHandler {
             } catch (Throwable e) {
                 var msg = e.toString();
                 System.out.print(msg);
+            }
+            if(result.equals("register")){
+                client = new PostLoginClient(url,this);
             }
         }
         System.out.println();
