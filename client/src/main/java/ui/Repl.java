@@ -1,7 +1,6 @@
 package ui;
 
 
-import com.sun.nio.sctp.HandlerResult;
 import com.sun.nio.sctp.Notification;
 import com.sun.nio.sctp.NotificationHandler;
 
@@ -11,10 +10,16 @@ import static ui.EscapeSequences.*;
 
 public abstract class Repl implements NotificationHandler {
 
-    private final PreLoginClient client;
+    private final PreLoginClient preLoginClient;
+    private final PostLoginClient postLoginClient;
+    private final GamePlayClient gamePlayClient;
+    private PreLoginClient client;
 
     public Repl(String serverUrl) {
-        client = new PreLoginClient(serverUrl, this);
+        preLoginClient = new PreLoginClient(serverUrl, this);
+        postLoginClient = new PostLoginClient(serverUrl, this);
+        gamePlayClient = new GamePlayClient(serverUrl,this);
+        client = preLoginClient;
     }
 
     public void run() {
@@ -36,11 +41,6 @@ public abstract class Repl implements NotificationHandler {
             }
         }
         System.out.println();
-    }
-
-    public void notify(Notification notification) {
-        System.out.println(SET_TEXT_COLOR_RED);
-        printPrompt();
     }
 
     private void printPrompt() {

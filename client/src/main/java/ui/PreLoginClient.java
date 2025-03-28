@@ -52,8 +52,8 @@ public class PreLoginClient {
         return """
                 - register <USERNAME> <PASSWORD> <EMAIL>
                 - login <USERNAME> <PASSWORD>
-                - quit
-                _ help
+                - quit - Exit Program
+                _ help - Display Possible Actions
                 """;
 
 
