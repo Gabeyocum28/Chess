@@ -50,6 +50,7 @@ public class PostLoginClient {
     public String help() {
 
         return """
+                - PostLogin
                 - register <USERNAME> <PASSWORD> <EMAIL>
                 - login <USERNAME> <PASSWORD>
                 - quit - Exit Program

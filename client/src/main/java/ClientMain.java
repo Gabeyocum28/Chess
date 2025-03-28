@@ -15,7 +15,7 @@ public class ClientMain {
             public HandlerResult handleNotification(Notification notification, Object attachment) {
                 return null;
             }
-        }.run();
+        }.runPre();
 
         var piece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
         System.out.println("♕ 240 Chess Client: " + piece);

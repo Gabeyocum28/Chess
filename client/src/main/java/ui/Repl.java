@@ -10,17 +10,25 @@ import static ui.EscapeSequences.*;
 
 public abstract class Repl implements NotificationHandler {
 
-    private final String url;
-    private PreLoginClient client;
+    private PreLoginClient preLoginClient;
+    private PostLoginClient postLoginClient;
+    private GamePlayClient gamePlayClient;
+    private Object client;
 
     public Repl(String serverUrl) {
-        url = serverUrl;
-        client = new PreLoginClient(serverUrl, this);
+        preLoginClient = new PreLoginClient(serverUrl, this);
+        postLoginClient = new PostLoginClient(serverUrl, this);
+        gamePlayClient = new GamePlayClient(serverUrl, this);
     }
 
-    public void run() {
+    public void run(){
         System.out.println("Chess!");
-        System.out.print(client.help());
+        runPre();
+        System.out.println();
+    }
+
+    public void runPre() {
+        System.out.print(preLoginClient.help());
 
         Scanner scanner = new Scanner(System.in);
         var result = "";
@@ -29,18 +37,42 @@ public abstract class Repl implements NotificationHandler {
             String line = scanner.nextLine();
 
             try {
-                result = client.eval(line);
+                result = preLoginClient.eval(line);
                 System.out.print(SET_TEXT_COLOR_BLUE + result);
             } catch (Throwable e) {
                 var msg = e.toString();
                 System.out.print(msg);
             }
-            if(result.equals("register")){
-                client = new PostLoginClient(url,this);
+
+            if(result.contains("registered ") || result.contains("Logged ")) {
+                System.out.println();
+                runPost();
+            }
+        }
+
+    }
+
+    public void runPost() {
+        System.out.print(postLoginClient.help());
+
+        Scanner scanner = new Scanner(System.in);
+        var result = "";
+        while (!result.equals("quit")) {
+            printPrompt();
+            String line = scanner.nextLine();
+
+            try {
+                result = postLoginClient.eval(line);
+                System.out.print(SET_TEXT_COLOR_BLUE + result);
+            } catch (Throwable e) {
+                var msg = e.toString();
+                System.out.print(msg);
             }
         }
         System.out.println();
+        System.out.print(preLoginClient.help());
     }
+
 
     private void printPrompt() {
         System.out.print("\n" + SET_TEXT_COLOR_BLACK + ">>> " + SET_TEXT_COLOR_BLUE);
