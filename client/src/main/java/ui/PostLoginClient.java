@@ -23,8 +23,11 @@ public class PostLoginClient {
             var cmd = (tokens.length > 0) ? tokens[0] : "help";
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
+                case "create" -> create(params);
+                case "list" -> list();
                 case "join" -> join(params);
-                case "login" -> login(params);
+                case "observe" -> observe(params);
+                case "logout" -> logout();
                 case "quit" -> "quit";
                 default -> help();
             };
@@ -33,28 +36,45 @@ public class PostLoginClient {
         }
     }
 
-    public String join(String... params) throws ResponseException {
-        if (params.length >= 2) {
-            return String.format("joined %s %s", params[0], params[1]);
+    public String create(String... params) throws ResponseException {
+        if (params.length >= 1) {
+            return String.format("game created %s", params[0]);
         }
-        throw new ResponseException(400, "Expected: <USERNAME> <PASSWORD> <EMAIL>");
+        throw new ResponseException(400, "Expected: <NAME>");
     }
 
-    public String login(String... params) throws ResponseException {
+    public String list() throws ResponseException {
+        return "list of games";
+    }
+
+    public String join(String... params) throws ResponseException {
         if (params.length >= 2) {
-            return String.format("Logged in as %s", params[0]);
+            return String.format("joined game as %s", params[1]);
         }
-        throw new ResponseException(400, "Expected: <USERNAME> <PASSWORD>");
+        throw new ResponseException(400, "Expected: <ID> [WHITE/BLACK]");
+    }
+
+    public String observe(String... params) throws ResponseException {
+        if (params.length >= 1) {
+            return String.format("observing game %s", params[0]);
+        }
+        throw new ResponseException(400, "Expected: <ID>");
+    }
+
+    public String logout() throws ResponseException {
+        return "logged out";
     }
 
     public String help() {
 
         return """
-                - PostLogin
-                - register <USERNAME> <PASSWORD> <EMAIL>
-                - login <USERNAME> <PASSWORD>
-                - quit - Exit Program
-                _ help - Display Possible Actions
+                - "create" <NAME> - a game
+                - "list" - games
+                - "join" <ID> [WHITE/BLACK] - a game
+                - "observe" <ID> - a game
+                - "logout" - when you are done
+                - "quit" - playing chess
+                _ "help" - display possible actions
                 """;
 
 

@@ -35,7 +35,7 @@ public class PreLoginClient {
 
     public String register(String... params) throws ResponseException {
         if (params.length >= 3) {
-            return String.format("registered %s %s %s", params[0], params[1], params[2]);
+            return String.format("Registered %s %s %s", params[0], params[1], params[2]);
         }
         throw new ResponseException(400, "Expected: <USERNAME> <PASSWORD> <EMAIL>");
     }
@@ -50,10 +50,10 @@ public class PreLoginClient {
     public String help() {
 
         return """
-                - register <USERNAME> <PASSWORD> <EMAIL>
-                - login <USERNAME> <PASSWORD>
-                - quit - Exit Program
-                _ help - Display Possible Actions
+                - "register" <USERNAME> <PASSWORD> <EMAIL> - to create an account
+                - "login" <USERNAME> <PASSWORD> - to play chess
+                - "quit" - exit program
+                _ "help" - display possible actions
                 """;
 
 

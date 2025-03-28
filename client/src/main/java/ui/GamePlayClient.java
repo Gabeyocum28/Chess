@@ -23,8 +23,9 @@ public class GamePlayClient {
             var cmd = (tokens.length > 0) ? tokens[0] : "help";
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
-                case "register" -> register(params);
-                case "login" -> login(params);
+                case "move" -> move(params);
+                case "check" -> check(params);
+                case"redraw" -> redraw();
                 case "quit" -> "quit";
                 default -> help();
             };
@@ -33,30 +34,53 @@ public class GamePlayClient {
         }
     }
 
-    public String register(String... params) throws ResponseException {
-        if (params.length >= 3) {
-            return String.format("registered %s %s %s", params[0], params[1], params[2]);
+    public String move(String... params) throws ResponseException {
+        if (params.length >= 2) {
+            return String.format("moved from %s to %s", params[0], params[1]);
         }
-        throw new ResponseException(400, "Expected: <USERNAME> <PASSWORD> <EMAIL>");
+        throw new ResponseException(400, "Expected: <FROM> <TO>");
     }
 
-    public String login(String... params) throws ResponseException {
-        if (params.length >= 2) {
-            return String.format("Logged in as %s", params[0]);
+    public String check(String... params) throws ResponseException {
+        if (params.length >= 1) {
+            return String.format("checking %s", params[0]);
         }
-        throw new ResponseException(400, "Expected: <USERNAME> <PASSWORD>");
+        throw new ResponseException(400, "Expected: <FROM>");
+    }
+
+    public String redraw() throws ResponseException {
+        String printWhite = printWhite();
+        String printBlack = printBlack();
+        String boards = String.format(printWhite + printBlack);
+        return boards;
     }
 
     public String help() {
 
         return """
-                - Game
-                - register <USERNAME> <PASSWORD> <EMAIL>
-                - login <USERNAME> <PASSWORD>
-                - quit - Exit Program
-                _ help - Display Possible Actions
+                - "move" <FROM> <TO> - makes a move
+                - "check" <FROM> - checks the moves
+                - "redraw" - redraws the board
+                - "quit" - exits gameplay
+                _ "help" - display possible actions
                 """;
 
+
+    }
+
+    public String printWhite(){
+        return """
+               
+               
+               """;
+
+    }
+
+    public String printBlack(){
+        return """
+               
+               
+               """;
 
     }
 }

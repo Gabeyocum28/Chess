@@ -3,6 +3,7 @@ package ui;
 
 import com.sun.nio.sctp.Notification;
 import com.sun.nio.sctp.NotificationHandler;
+import exceptions.ResponseException;
 
 import java.util.Scanner;
 
@@ -22,13 +23,13 @@ public abstract class Repl implements NotificationHandler {
     }
 
     public void run(){
-        System.out.println("Chess!");
+        System.out.println(SET_TEXT_COLOR_WHITE + "Chess!");
         runPre();
         System.out.println();
     }
 
     public void runPre() {
-        System.out.print(preLoginClient.help());
+        System.out.print(SET_TEXT_COLOR_BLUE + preLoginClient.help());
 
         Scanner scanner = new Scanner(System.in);
         var result = "";
@@ -38,13 +39,13 @@ public abstract class Repl implements NotificationHandler {
 
             try {
                 result = preLoginClient.eval(line);
-                System.out.print(SET_TEXT_COLOR_BLUE + result);
+                System.out.print(SET_TEXT_COLOR_WHITE + result);
             } catch (Throwable e) {
                 var msg = e.toString();
                 System.out.print(msg);
             }
 
-            if(result.contains("registered ") || result.contains("Logged ")) {
+            if(result.contains("Registered ") || result.contains("Logged ")) {
                 System.out.println();
                 runPost();
             }
@@ -53,7 +54,7 @@ public abstract class Repl implements NotificationHandler {
     }
 
     public void runPost() {
-        System.out.print(postLoginClient.help());
+        System.out.print(SET_TEXT_COLOR_BLUE + postLoginClient.help());
 
         Scanner scanner = new Scanner(System.in);
         var result = "";
@@ -63,7 +64,7 @@ public abstract class Repl implements NotificationHandler {
 
             try {
                 result = postLoginClient.eval(line);
-                System.out.print(SET_TEXT_COLOR_BLUE + result);
+                System.out.print(SET_TEXT_COLOR_WHITE + result);
             } catch (Throwable e) {
                 var msg = e.toString();
                 System.out.print(msg);
@@ -78,7 +79,12 @@ public abstract class Repl implements NotificationHandler {
     }
 
     public void runGame() {
-        System.out.print(gamePlayClient.help());
+        try {
+            System.out.print(gamePlayClient.redraw());
+        } catch (ResponseException e) {
+            throw new RuntimeException(e);
+        }
+        System.out.print(SET_TEXT_COLOR_BLUE + gamePlayClient.help());
 
         Scanner scanner = new Scanner(System.in);
         var result = "";
@@ -88,7 +94,7 @@ public abstract class Repl implements NotificationHandler {
 
             try {
                 result = gamePlayClient.eval(line);
-                System.out.print(SET_TEXT_COLOR_BLUE + result);
+                System.out.print(SET_TEXT_COLOR_WHITE + result);
             } catch (Throwable e) {
                 var msg = e.toString();
                 System.out.print(msg);
@@ -100,6 +106,6 @@ public abstract class Repl implements NotificationHandler {
 
 
     private void printPrompt() {
-        System.out.print("\n" + SET_TEXT_COLOR_BLACK + ">>> " + SET_TEXT_COLOR_BLUE);
+        System.out.print("\n" + SET_TEXT_COLOR_WHITE + ">>> " + SET_TEXT_COLOR_GREEN);
     }
 }
