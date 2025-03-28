@@ -5,7 +5,6 @@ import exceptions.ResponseException;
 import model.*;
 
 import java.util.Collection;
-
 import java.io.*;
 import java.net.*;
 
@@ -18,49 +17,45 @@ public class ServerFacade {
     }
 
     public AuthData registerUser(UserData user) throws ResponseException {
-        var path = "/user";
-        return this.makeRequest("POST", path, user, AuthData.class);
+        return this.makeRequest("POST", "/user", user, AuthData.class, null);
     }
 
     public AuthData login(Login login) throws ResponseException {
-        var path = "/session";
-        return this.makeRequest("POST", path, login, AuthData.class);
+        return this.makeRequest("POST", "/session", login, AuthData.class, null);
     }
 
-    public void logout(String authRequest) throws ResponseException {
-        var path = String.format("/session/%s", authRequest);
-        this.makeRequest("DELETE", path, null, null);
+    public void logout(String authToken) throws ResponseException {
+        this.makeRequest("DELETE", "/session", null, null, authToken);
     }
 
-    public Collection<GameList> listGames(String authRequest) throws ResponseException {
-        var path = String.format("/game/%s", authRequest);
-        record listGamesResponse(Collection<GameList> games) {
-        }
-        var response = this.makeRequest("GET", path, null, listGamesResponse.class);
+    public Collection<GameList> listGames(String authToken) throws ResponseException {
+        record ListGamesResponse(Collection<GameList> games) {}
+        var response = this.makeRequest("GET", "/game", null, ListGamesResponse.class, authToken);
         return response.games();
     }
 
-    public GameData createGame(String authRequest, GameData gameName) throws ResponseException {
-        var path = String.format("/game/%s", authRequest);
-        return this.makeRequest("POST", path, gameName, GameData.class);
+    public GameData createGame(String authToken, GameData gameName) throws ResponseException {
+        return this.makeRequest("POST", "/game", gameName, GameData.class, authToken);
     }
 
     public void joinGame(String authToken, JoinRequest joinRequest) throws ResponseException {
-        var path = String.format("/game/%s", authToken);
-        this.makeRequest("POST", path, joinRequest, null);
+        this.makeRequest("PUT", "/game", joinRequest, null, authToken);
     }
 
     public void clear() throws ResponseException {
-        var path = "/db";
-        this.makeRequest("DELETE", path, null, null);
+        this.makeRequest("DELETE", "/db", null, null, null);
     }
 
-    private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws ResponseException{
-        try{
+    private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass, String authToken) throws ResponseException {
+        try {
             URL url = (new URI(serverUrl + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
             http.setRequestMethod(method);
             http.setDoOutput(true);
+
+            if (authToken != null) {
+                http.setRequestProperty("Authorization", authToken);
+            }
 
             writeBody(request, http);
             http.connect();
@@ -91,27 +86,20 @@ public class ServerFacade {
                     throw ResponseException.fromJson(respErr);
                 }
             }
-
-            throw new ResponseException(status, "other failure: " + status);
+            throw new ResponseException(status, "Request failed with status: " + status);
         }
     }
 
     private static <T> T readBody(HttpURLConnection http, Class<T> responseClass) throws IOException {
-        T response = null;
-        if (http.getContentLength() < 0) {
-            try (InputStream respBody = http.getInputStream()) {
-                InputStreamReader reader = new InputStreamReader(respBody);
-                if (responseClass != null) {
-                    response = new Gson().fromJson(reader, responseClass);
-                }
-            }
+        if (responseClass == null) {
+            return null;
         }
-        return response;
+        try (InputStream respBody = http.getInputStream(); InputStreamReader reader = new InputStreamReader(respBody)) {
+            return new Gson().fromJson(reader, responseClass);
+        }
     }
-
 
     private boolean isSuccessful(int status) {
-        return status / 100 == 2;
+        return status >= 200 && status < 300;
     }
 }
-

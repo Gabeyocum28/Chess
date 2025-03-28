@@ -1,7 +1,14 @@
 package client;
 
+import exceptions.ResponseException;
+import model.AuthData;
+import model.Login;
+import model.UserData;
 import org.junit.jupiter.api.*;
 import server.Server;
+import server.ServerFacade;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 
 public class ServerFacadeTests {
@@ -18,12 +25,6 @@ public class ServerFacadeTests {
     @AfterAll
     static void stopServer() {
         server.stop();
-    }
-
-
-    @Test
-    public void sampleTest() {
-        Assertions.assertTrue(true);
     }
 
 }
