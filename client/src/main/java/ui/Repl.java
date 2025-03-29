@@ -14,7 +14,6 @@ public abstract class Repl implements NotificationHandler {
     private PreLoginClient preLoginClient;
     private PostLoginClient postLoginClient;
     private GamePlayClient gamePlayClient;
-    private Object client;
 
     public Repl(String serverUrl) {
         preLoginClient = new PreLoginClient(serverUrl, this);
