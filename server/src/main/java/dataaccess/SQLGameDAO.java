@@ -88,7 +88,7 @@ public class SQLGameDAO implements GameDAO{
     public void updateGame(JoinRequest joinRequest, AuthData authData){
         String check;
         String update;
-        if (Objects.equals(joinRequest.playerColor(), "white")) {
+        if (Objects.equals(joinRequest.playerColor(), "white") || Objects.equals(joinRequest.playerColor(), "WHITE")) {
             check = "SELECT whiteUsername FROM GameData WHERE gameId = ?";
             update = "UPDATE GameData SET whiteUsername = ? WHERE gameId = ?";
         }else{

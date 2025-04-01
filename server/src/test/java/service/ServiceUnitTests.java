@@ -170,7 +170,7 @@ public class ServiceUnitTests {
         GameData g = new GameData(0,null,null,"game", null);
 
         GameData game = CreateGameService.createGame(auth.authToken(), g);
-        JoinRequest join = new JoinRequest("WHITE", game.gameID());
+        JoinRequest join = new JoinRequest("white", game.gameID());
         JoinGameService.joinGame(auth.authToken(), join);
         System.out.println(ListGamesService.listGames(auth.authToken()));
     }
@@ -181,7 +181,7 @@ public class ServiceUnitTests {
         try {
             GameData g = new GameData(0,null,null,"game", null);
             Assertions.assertThrows(UnauthorizedException.class, () -> {
-                JoinRequest join = new JoinRequest("WHITE", 0);
+                JoinRequest join = new JoinRequest("white", 0);
                 JoinGameService.joinGame("Bad Auth", join);
             });
         } catch (Exception e) {
