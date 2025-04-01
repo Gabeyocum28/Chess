@@ -5,6 +5,7 @@ import com.sun.nio.sctp.Notification;
 import com.sun.nio.sctp.NotificationHandler;
 import exceptions.ResponseException;
 import model.AuthData;
+import model.JoinRequest;
 import model.UserData;
 
 import java.net.MalformedURLException;
@@ -23,7 +24,7 @@ public abstract class Repl implements NotificationHandler {
     public Repl(String serverUrl) throws MalformedURLException, URISyntaxException {
         preLoginClient = new PreLoginClient(serverUrl, this);
         postLoginClient = new PostLoginClient(serverUrl, this);
-        gamePlayClient = new GamePlayClient(serverUrl, this, "White");
+        gamePlayClient = new GamePlayClient(serverUrl, this);
     }
 
     public void run(){
@@ -80,14 +81,16 @@ public abstract class Repl implements NotificationHandler {
             }
             if(result.contains("observing ") || result.contains("joined ")) {
                 System.out.println();
-                runGame();
+                runGame(postLoginClient.joinRequest, postLoginClient.user);
             }
         }
         System.out.println();
         System.out.print(preLoginClient.help());
     }
 
-    public void runGame() {
+    public void runGame(JoinRequest joinRequest, AuthData user) {
+        gamePlayClient.setJoinRequest(joinRequest);
+        gamePlayClient.setUserData(user);
         try {
             System.out.print(gamePlayClient.redraw());
         } catch (ResponseException e) {

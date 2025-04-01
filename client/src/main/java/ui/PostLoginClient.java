@@ -16,7 +16,8 @@ public class PostLoginClient {
     private final ServerFacade server;
     private final String serverUrl;
     private final NotificationHandler notificationHandler;
-    private AuthData user;
+    public AuthData user;
+    public JoinRequest joinRequest;
     private Map<Integer, GameList> gameMap;
 
     public PostLoginClient(String serverUrl, NotificationHandler notificationHandler) throws MalformedURLException, URISyntaxException {
@@ -71,7 +72,6 @@ public class PostLoginClient {
             if(gameMap == null){
                 gameListCreation();
             }
-            JoinRequest joinRequest;
             try {
                 int id = Integer.parseInt(params[0]);
                 joinRequest = new JoinRequest(params[1], gameMap.get(id).gameID());
