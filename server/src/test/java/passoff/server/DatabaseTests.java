@@ -23,8 +23,9 @@ public class DatabaseTests {
 
     @BeforeAll
     public static void startServer() {
+        var portNum = 0;
         server = new Server();
-        var port = server.run(0);
+        var port = server.run(portNum);
         System.out.println("Started test HTTP server on " + port);
 
         serverFacade = new TestServerFacade("localhost", Integer.toString(port));
