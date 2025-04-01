@@ -24,11 +24,10 @@ public class ServerFacadeTests {
 
     @BeforeAll
     public static void init() throws MalformedURLException, URISyntaxException, ResponseException {
-        var portNum = 0;
         server = new Server();
-        var port = server.run(portNum);
+        var port = server.run(0);
         System.out.println("Started test HTTP server on " + port);
-        facade = new ServerFacade("http://localhost:8080");
+        facade = new ServerFacade("http://localhost:" + port);
     }
 
     @AfterAll

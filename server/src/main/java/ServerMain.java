@@ -6,6 +6,6 @@ public class ServerMain {
         var portNum = 0;
         var piece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
         System.out.println("♕ 240 Chess Server: " + piece);
-        int server = new Server().run(portNum);
+        int server = new Server().run(8080);
     }
 }
