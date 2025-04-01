@@ -1,6 +1,7 @@
 package server;
 
 import com.google.gson.Gson;
+import com.sun.net.httpserver.Request;
 import exceptions.ResponseException;
 import model.*;
 
@@ -10,36 +11,37 @@ import java.net.*;
 
 public class ServerFacade {
 
-    private final String serverUrl;
+    private final String stringUrl;
 
-    public ServerFacade(String url){
-        serverUrl = url;
+    public ServerFacade(String url) throws URISyntaxException, MalformedURLException {
+        stringUrl = url;
     }
 
-    public AuthData registerUser(UserData user) throws ResponseException {
-        return this.makeRequest("POST", "/user", user, AuthData.class, null);
+    public AuthData register(UserData request) throws ResponseException {
+        return this.makeRequest("POST", "/user", request, AuthData.class, null);
     }
 
     public AuthData login(Login login) throws ResponseException {
-        return this.makeRequest("POST", "/session", login, AuthData.class, null);
+        return this.makeRequest("POST", "/session", login, AuthData.class,null);
     }
 
-    public void logout(String authToken) throws ResponseException {
-        this.makeRequest("DELETE", "/session", null, null, authToken);
+    public void logout(String authRequest) throws ResponseException {
+
+        this.makeRequest("DELETE", "/session", null, null, authRequest);
     }
 
-    public Collection<GameList> listGames(String authToken) throws ResponseException {
+    public Collection<GameList> listGames(String authRequest) throws ResponseException {
         record ListGamesResponse(Collection<GameList> games) {}
-        var response = this.makeRequest("GET", "/game", null, ListGamesResponse.class, authToken);
+        var response = this.makeRequest("GET", "/game", null, ListGamesResponse.class, authRequest);
         return response.games();
     }
 
-    public GameData createGame(String authToken, GameData gameName) throws ResponseException {
-        return this.makeRequest("POST", "/game", gameName, GameData.class, authToken);
+    public GameData createGame(String authRequest, GameData gameData) throws ResponseException {
+        return this.makeRequest("POST", "/game", gameData, GameData.class, authRequest);
     }
 
-    public void joinGame(String authToken, JoinRequest joinRequest) throws ResponseException {
-        this.makeRequest("PUT", "/game", joinRequest, null, authToken);
+    public void joinGame(String authRequest, JoinRequest joinRequest) throws ResponseException {
+        this.makeRequest("PUT", "/game", joinRequest, null, authRequest);
     }
 
     public void clear() throws ResponseException {
@@ -48,15 +50,13 @@ public class ServerFacade {
 
     private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass, String authToken) throws ResponseException {
         try {
-            URL url = (new URI(serverUrl + path)).toURL();
-            HttpURLConnection http = (HttpURLConnection) url.openConnection();
+            URL pathUrl = new URI(stringUrl + path).toURL();
+
+            HttpURLConnection http = (HttpURLConnection) pathUrl.openConnection();
             http.setRequestMethod(method);
             http.setDoOutput(true);
 
-            if (authToken != null) {
-                http.setRequestProperty("Authorization", authToken);
-            }
-
+            http.addRequestProperty("authorization", authToken);
             writeBody(request, http);
             http.connect();
             throwIfNotSuccessful(http);
@@ -94,7 +94,8 @@ public class ServerFacade {
         if (responseClass == null) {
             return null;
         }
-        try (InputStream respBody = http.getInputStream(); InputStreamReader reader = new InputStreamReader(respBody)) {
+        try (InputStream respBody = http.getInputStream()) {
+            InputStreamReader reader = new InputStreamReader(respBody);
             return new Gson().fromJson(reader, responseClass);
         }
     }

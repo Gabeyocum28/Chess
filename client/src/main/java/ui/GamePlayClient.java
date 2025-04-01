@@ -4,6 +4,8 @@ import com.sun.nio.sctp.NotificationHandler;
 import exceptions.ResponseException;
 import server.ServerFacade;
 
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 
 import static ui.EscapeSequences.*;
@@ -12,11 +14,13 @@ public class GamePlayClient {
     private final ServerFacade server;
     private final String serverUrl;
     private final NotificationHandler notificationHandler;
+    private String teamColor = "White";
 
-    public GamePlayClient(String serverUrl, NotificationHandler notificationHandler) {
+    public GamePlayClient(String serverUrl, NotificationHandler notificationHandler, String color) throws MalformedURLException, URISyntaxException {
         server = new ServerFacade(serverUrl);
         this.serverUrl = serverUrl;
         this.notificationHandler = notificationHandler;
+        teamColor = color;
     }
 
     public String eval(String input) {
@@ -28,7 +32,7 @@ public class GamePlayClient {
                 case "move" -> move(params);
                 case "check" -> check(params);
                 case"redraw" -> redraw();
-                case "quit" -> "quit";
+                case "quit" -> "quit game";
                 default -> help();
             };
         } catch (ResponseException ex) {
@@ -51,10 +55,10 @@ public class GamePlayClient {
     }
 
     public String redraw() throws ResponseException {
-        String printWhite = printWhite();
-        String printBlack = printBlack();
-        String boards = String.format(printWhite + printBlack);
-        return boards;
+        if(teamColor.equals("Black")) {
+            return printBlack();
+        }
+        return printWhite();
     }
 
     public String help() {
@@ -73,7 +77,7 @@ public class GamePlayClient {
     public String printWhite(){
         StringBuilder board = new StringBuilder();
 
-        board.append(SET_BG_COLOR_LIGHT_GREY + EMPTY);
+        board.append(SET_BG_COLOR_DARK_GREY + EMPTY);
         board.append(" a ");
         board.append(" b ");
         board.append(" c ");
@@ -85,105 +89,105 @@ public class GamePlayClient {
         board.append(EMPTY);
         board.append(RESET_BG_COLOR + "\n");
 
-        board.append(SET_BG_COLOR_LIGHT_GREY + " 8 ");
-        board.append(SET_BG_COLOR_BLUE + BLACK_ROOK);
-        board.append(SET_BG_COLOR_RED + BLACK_KNIGHT);
-        board.append(SET_BG_COLOR_BLUE + BLACK_BISHOP);
-        board.append(SET_BG_COLOR_RED + BLACK_QUEEN);
-        board.append(SET_BG_COLOR_BLUE + BLACK_KING);
-        board.append(SET_BG_COLOR_RED + BLACK_BISHOP);
-        board.append(SET_BG_COLOR_BLUE + BLACK_KNIGHT);
-        board.append(SET_BG_COLOR_RED + BLACK_ROOK);
-        board.append(SET_BG_COLOR_LIGHT_GREY + " 8 ");
+        board.append(SET_BG_COLOR_DARK_GREY + SET_TEXT_COLOR_WHITE +  " 8 ");
+        board.append(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + ROOK);
+        board.append(SET_BG_COLOR_GREY + SET_TEXT_COLOR_BLACK + KNIGHT);
+        board.append(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + BISHOP);
+        board.append(SET_BG_COLOR_GREY + SET_TEXT_COLOR_BLACK + QUEEN);
+        board.append(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + KING);
+        board.append(SET_BG_COLOR_GREY + SET_TEXT_COLOR_BLACK + BISHOP);
+        board.append(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + KNIGHT);
+        board.append(SET_BG_COLOR_GREY + SET_TEXT_COLOR_BLACK + ROOK);
+        board.append(SET_BG_COLOR_DARK_GREY + SET_TEXT_COLOR_WHITE + " 8 ");
         board.append(RESET_BG_COLOR + "\n");
 
-        board.append(SET_BG_COLOR_LIGHT_GREY + " 7 ");
-        board.append(SET_BG_COLOR_RED + BLACK_PAWN);
-        board.append(SET_BG_COLOR_BLUE + BLACK_PAWN);
-        board.append(SET_BG_COLOR_RED + BLACK_PAWN);
-        board.append(SET_BG_COLOR_BLUE + BLACK_PAWN);
-        board.append(SET_BG_COLOR_RED + BLACK_PAWN);
-        board.append(SET_BG_COLOR_BLUE + BLACK_PAWN);
-        board.append(SET_BG_COLOR_RED + BLACK_PAWN);
-        board.append(SET_BG_COLOR_BLUE + BLACK_PAWN);
-        board.append(SET_BG_COLOR_LIGHT_GREY + " 7 ");
+        board.append(SET_BG_COLOR_DARK_GREY + SET_TEXT_COLOR_WHITE + " 7 ");
+        board.append(SET_BG_COLOR_GREY + SET_TEXT_COLOR_BLACK + PAWN);
+        board.append(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + PAWN);
+        board.append(SET_BG_COLOR_GREY + SET_TEXT_COLOR_BLACK + PAWN);
+        board.append(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + PAWN);
+        board.append(SET_BG_COLOR_GREY + SET_TEXT_COLOR_BLACK + PAWN);
+        board.append(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + PAWN);
+        board.append(SET_BG_COLOR_GREY + SET_TEXT_COLOR_BLACK + PAWN);
+        board.append(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + PAWN);
+        board.append(SET_BG_COLOR_DARK_GREY + SET_TEXT_COLOR_WHITE + " 7 ");
         board.append(RESET_BG_COLOR + "\n");
 
-        board.append(SET_BG_COLOR_LIGHT_GREY + " 6 ");
-        board.append(SET_BG_COLOR_BLUE + EMPTY);
-        board.append(SET_BG_COLOR_RED + EMPTY);
-        board.append(SET_BG_COLOR_BLUE + EMPTY);
-        board.append(SET_BG_COLOR_RED + EMPTY);
-        board.append(SET_BG_COLOR_BLUE + EMPTY);
-        board.append(SET_BG_COLOR_RED + EMPTY);
-        board.append(SET_BG_COLOR_BLUE + EMPTY);
-        board.append(SET_BG_COLOR_RED + EMPTY);
-        board.append(SET_BG_COLOR_LIGHT_GREY + " 6 ");
-        board.append(RESET_BG_COLOR + "\n");
-
-        board.append(SET_BG_COLOR_LIGHT_GREY + " 5 ");
-        board.append(SET_BG_COLOR_RED + EMPTY);
-        board.append(SET_BG_COLOR_BLUE + EMPTY);
-        board.append(SET_BG_COLOR_RED + EMPTY);
-        board.append(SET_BG_COLOR_BLUE + EMPTY);
-        board.append(SET_BG_COLOR_RED + EMPTY);
-        board.append(SET_BG_COLOR_BLUE + EMPTY);
-        board.append(SET_BG_COLOR_RED + EMPTY);
-        board.append(SET_BG_COLOR_BLUE + EMPTY);
-        board.append(SET_BG_COLOR_LIGHT_GREY + " 5 ");
-        board.append(RESET_BG_COLOR + "\n");
-
-        board.append(SET_BG_COLOR_LIGHT_GREY + " 4 ");
-        board.append(SET_BG_COLOR_BLUE + EMPTY);
-        board.append(SET_BG_COLOR_RED + EMPTY);
-        board.append(SET_BG_COLOR_BLUE + EMPTY);
-        board.append(SET_BG_COLOR_RED + EMPTY);
-        board.append(SET_BG_COLOR_BLUE + EMPTY);
-        board.append(SET_BG_COLOR_RED + EMPTY);
-        board.append(SET_BG_COLOR_BLUE + EMPTY);
-        board.append(SET_BG_COLOR_RED + EMPTY);
-        board.append(SET_BG_COLOR_LIGHT_GREY + " 4 ");
-        board.append(RESET_BG_COLOR + "\n");
-
-        board.append(SET_BG_COLOR_LIGHT_GREY + " 3 ");
-        board.append(SET_BG_COLOR_RED + EMPTY);
-        board.append(SET_BG_COLOR_BLUE + EMPTY);
-        board.append(SET_BG_COLOR_RED + EMPTY);
-        board.append(SET_BG_COLOR_BLUE + EMPTY);
-        board.append(SET_BG_COLOR_RED + EMPTY);
-        board.append(SET_BG_COLOR_BLUE + EMPTY);
-        board.append(SET_BG_COLOR_RED + EMPTY);
-        board.append(SET_BG_COLOR_BLUE + EMPTY);
-        board.append(SET_BG_COLOR_LIGHT_GREY + " 3 ");
-        board.append(RESET_BG_COLOR + "\n");
-
-        board.append(SET_BG_COLOR_LIGHT_GREY + " 2 ");
-        board.append(SET_BG_COLOR_BLUE + WHITE_PAWN);
-        board.append(SET_BG_COLOR_RED + WHITE_PAWN);
-        board.append(SET_BG_COLOR_BLUE + WHITE_PAWN);
-        board.append(SET_BG_COLOR_RED + WHITE_PAWN);
-        board.append(SET_BG_COLOR_BLUE + WHITE_PAWN);
-        board.append(SET_BG_COLOR_RED + WHITE_PAWN);
-        board.append(SET_BG_COLOR_BLUE + WHITE_PAWN);
-        board.append(SET_BG_COLOR_RED + WHITE_PAWN);
-        board.append(SET_BG_COLOR_LIGHT_GREY + " 2 ");
-        board.append(RESET_BG_COLOR + "\n");
-
-        board.append(SET_BG_COLOR_LIGHT_GREY + " 1 ");
-        board.append(SET_BG_COLOR_RED + WHITE_ROOK);
-        board.append(SET_BG_COLOR_BLUE + WHITE_BISHOP);
-        board.append(SET_BG_COLOR_RED + WHITE_KNIGHT);
-        board.append(SET_BG_COLOR_BLUE + WHITE_QUEEN);
-        board.append(SET_BG_COLOR_RED + WHITE_KING);
-        board.append(SET_BG_COLOR_BLUE + WHITE_KNIGHT);
-        board.append(SET_BG_COLOR_RED + WHITE_BISHOP);
-        board.append(SET_BG_COLOR_BLUE + WHITE_ROOK);
-        board.append(SET_BG_COLOR_LIGHT_GREY + " 1 ");
-        board.append(RESET_BG_COLOR + "\n");
-
-
-
+        board.append(SET_BG_COLOR_DARK_GREY + SET_TEXT_COLOR_WHITE + " 6 ");
         board.append(SET_BG_COLOR_LIGHT_GREY + EMPTY);
+        board.append(SET_BG_COLOR_GREY + EMPTY);
+        board.append(SET_BG_COLOR_LIGHT_GREY + EMPTY);
+        board.append(SET_BG_COLOR_GREY + EMPTY);
+        board.append(SET_BG_COLOR_LIGHT_GREY + EMPTY);
+        board.append(SET_BG_COLOR_GREY + EMPTY);
+        board.append(SET_BG_COLOR_LIGHT_GREY + EMPTY);
+        board.append(SET_BG_COLOR_GREY + EMPTY);
+        board.append(SET_BG_COLOR_DARK_GREY + SET_TEXT_COLOR_WHITE + " 6 ");
+        board.append(RESET_BG_COLOR + "\n");
+
+        board.append(SET_BG_COLOR_DARK_GREY + SET_TEXT_COLOR_WHITE + " 5 ");
+        board.append(SET_BG_COLOR_GREY + EMPTY);
+        board.append(SET_BG_COLOR_LIGHT_GREY + EMPTY);
+        board.append(SET_BG_COLOR_GREY + EMPTY);
+        board.append(SET_BG_COLOR_LIGHT_GREY + EMPTY);
+        board.append(SET_BG_COLOR_GREY + EMPTY);
+        board.append(SET_BG_COLOR_LIGHT_GREY + EMPTY);
+        board.append(SET_BG_COLOR_GREY + EMPTY);
+        board.append(SET_BG_COLOR_LIGHT_GREY + EMPTY);
+        board.append(SET_BG_COLOR_DARK_GREY + SET_TEXT_COLOR_WHITE + " 5 ");
+        board.append(RESET_BG_COLOR + "\n");
+
+        board.append(SET_BG_COLOR_DARK_GREY + SET_TEXT_COLOR_WHITE + " 4 ");
+        board.append(SET_BG_COLOR_LIGHT_GREY + EMPTY);
+        board.append(SET_BG_COLOR_GREY + EMPTY);
+        board.append(SET_BG_COLOR_LIGHT_GREY + EMPTY);
+        board.append(SET_BG_COLOR_GREY + EMPTY);
+        board.append(SET_BG_COLOR_LIGHT_GREY + EMPTY);
+        board.append(SET_BG_COLOR_GREY + EMPTY);
+        board.append(SET_BG_COLOR_LIGHT_GREY + EMPTY);
+        board.append(SET_BG_COLOR_GREY + EMPTY);
+        board.append(SET_BG_COLOR_DARK_GREY + SET_TEXT_COLOR_WHITE + " 4 ");
+        board.append(RESET_BG_COLOR + "\n");
+
+        board.append(SET_BG_COLOR_DARK_GREY + SET_TEXT_COLOR_WHITE + " 3 ");
+        board.append(SET_BG_COLOR_GREY + EMPTY);
+        board.append(SET_BG_COLOR_LIGHT_GREY + EMPTY);
+        board.append(SET_BG_COLOR_GREY + EMPTY);
+        board.append(SET_BG_COLOR_LIGHT_GREY + EMPTY);
+        board.append(SET_BG_COLOR_GREY + EMPTY);
+        board.append(SET_BG_COLOR_LIGHT_GREY + EMPTY);
+        board.append(SET_BG_COLOR_GREY + EMPTY);
+        board.append(SET_BG_COLOR_LIGHT_GREY + EMPTY);
+        board.append(SET_BG_COLOR_DARK_GREY + SET_TEXT_COLOR_WHITE + " 3 ");
+        board.append(RESET_BG_COLOR + "\n");
+
+        board.append(SET_BG_COLOR_DARK_GREY + SET_TEXT_COLOR_WHITE + " 2 ");
+        board.append(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_WHITE + PAWN);
+        board.append(SET_BG_COLOR_GREY + SET_TEXT_COLOR_WHITE + PAWN);
+        board.append(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_WHITE + PAWN);
+        board.append(SET_BG_COLOR_GREY + SET_TEXT_COLOR_WHITE + PAWN);
+        board.append(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_WHITE + PAWN);
+        board.append(SET_BG_COLOR_GREY + SET_TEXT_COLOR_WHITE + PAWN);
+        board.append(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_WHITE + PAWN);
+        board.append(SET_BG_COLOR_GREY + SET_TEXT_COLOR_WHITE + PAWN);
+        board.append(SET_BG_COLOR_DARK_GREY + SET_TEXT_COLOR_WHITE + " 2 ");
+        board.append(RESET_BG_COLOR + "\n");
+
+        board.append(SET_BG_COLOR_DARK_GREY + SET_TEXT_COLOR_WHITE + " 1 ");
+        board.append(SET_BG_COLOR_GREY + SET_TEXT_COLOR_WHITE + ROOK);
+        board.append(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_WHITE + BISHOP);
+        board.append(SET_BG_COLOR_GREY + SET_TEXT_COLOR_WHITE + KNIGHT);
+        board.append(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_WHITE + QUEEN);
+        board.append(SET_BG_COLOR_GREY + SET_TEXT_COLOR_WHITE + KING);
+        board.append(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_WHITE + KNIGHT);
+        board.append(SET_BG_COLOR_GREY + SET_TEXT_COLOR_WHITE + BISHOP);
+        board.append(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_WHITE + ROOK);
+        board.append(SET_BG_COLOR_DARK_GREY + SET_TEXT_COLOR_WHITE + " 1 ");
+        board.append(RESET_BG_COLOR + "\n");
+
+
+
+        board.append(SET_BG_COLOR_DARK_GREY + EMPTY);
         board.append(" a ");
         board.append(" b ");
         board.append(" c ");
@@ -203,7 +207,7 @@ public class GamePlayClient {
 
     public String printBlack(){
         StringBuilder board = new StringBuilder();
-        board.append(SET_BG_COLOR_LIGHT_GREY + EMPTY);
+        board.append(SET_BG_COLOR_DARK_GREY + EMPTY);
         board.append(" h ");
         board.append(" g ");
         board.append(" f ");
@@ -215,105 +219,105 @@ public class GamePlayClient {
         board.append(EMPTY);
         board.append(RESET_BG_COLOR + "\n");
 
-        board.append(SET_BG_COLOR_LIGHT_GREY + " 1 ");
-        board.append(SET_BG_COLOR_BLUE + WHITE_ROOK);
-        board.append(SET_BG_COLOR_RED + WHITE_KNIGHT);
-        board.append(SET_BG_COLOR_BLUE + WHITE_BISHOP);
-        board.append(SET_BG_COLOR_RED + WHITE_KING);
-        board.append(SET_BG_COLOR_BLUE + WHITE_QUEEN);
-        board.append(SET_BG_COLOR_RED + WHITE_BISHOP);
-        board.append(SET_BG_COLOR_BLUE + WHITE_KNIGHT);
-        board.append(SET_BG_COLOR_RED + WHITE_ROOK);
-        board.append(SET_BG_COLOR_LIGHT_GREY + " 1 ");
+        board.append(SET_BG_COLOR_DARK_GREY + SET_TEXT_COLOR_WHITE +  " 1 ");
+        board.append(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_WHITE + ROOK);
+        board.append(SET_BG_COLOR_GREY + SET_TEXT_COLOR_WHITE + KNIGHT);
+        board.append(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_WHITE + BISHOP);
+        board.append(SET_BG_COLOR_GREY + SET_TEXT_COLOR_WHITE + KING);
+        board.append(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_WHITE + QUEEN);
+        board.append(SET_BG_COLOR_GREY + SET_TEXT_COLOR_WHITE + BISHOP);
+        board.append(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_WHITE + KNIGHT);
+        board.append(SET_BG_COLOR_GREY + SET_TEXT_COLOR_WHITE + ROOK);
+        board.append(SET_BG_COLOR_DARK_GREY + SET_TEXT_COLOR_WHITE + " 1 ");
         board.append(RESET_BG_COLOR + "\n");
 
-        board.append(SET_BG_COLOR_LIGHT_GREY + " 2 ");
-        board.append(SET_BG_COLOR_RED + WHITE_PAWN);
-        board.append(SET_BG_COLOR_BLUE + WHITE_PAWN);
-        board.append(SET_BG_COLOR_RED + WHITE_PAWN);
-        board.append(SET_BG_COLOR_BLUE + WHITE_PAWN);
-        board.append(SET_BG_COLOR_RED + WHITE_PAWN);
-        board.append(SET_BG_COLOR_BLUE + WHITE_PAWN);
-        board.append(SET_BG_COLOR_RED + WHITE_PAWN);
-        board.append(SET_BG_COLOR_BLUE + WHITE_PAWN);
-        board.append(SET_BG_COLOR_LIGHT_GREY + " 2 ");
+        board.append(SET_BG_COLOR_DARK_GREY + SET_TEXT_COLOR_WHITE + " 2 ");
+        board.append(SET_BG_COLOR_GREY + SET_TEXT_COLOR_WHITE + PAWN);
+        board.append(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_WHITE + PAWN);
+        board.append(SET_BG_COLOR_GREY + SET_TEXT_COLOR_WHITE + PAWN);
+        board.append(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_WHITE + PAWN);
+        board.append(SET_BG_COLOR_GREY + SET_TEXT_COLOR_WHITE + PAWN);
+        board.append(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_WHITE + PAWN);
+        board.append(SET_BG_COLOR_GREY + SET_TEXT_COLOR_WHITE + PAWN);
+        board.append(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_WHITE + PAWN);
+        board.append(SET_BG_COLOR_DARK_GREY + SET_TEXT_COLOR_WHITE + " 2 ");
         board.append(RESET_BG_COLOR + "\n");
 
-        board.append(SET_BG_COLOR_LIGHT_GREY + " 3 ");
-        board.append(SET_BG_COLOR_BLUE + EMPTY);
-        board.append(SET_BG_COLOR_RED + EMPTY);
-        board.append(SET_BG_COLOR_BLUE + EMPTY);
-        board.append(SET_BG_COLOR_RED + EMPTY);
-        board.append(SET_BG_COLOR_BLUE + EMPTY);
-        board.append(SET_BG_COLOR_RED + EMPTY);
-        board.append(SET_BG_COLOR_BLUE + EMPTY);
-        board.append(SET_BG_COLOR_RED + EMPTY);
-        board.append(SET_BG_COLOR_LIGHT_GREY + " 3 ");
-        board.append(RESET_BG_COLOR + "\n");
-
-        board.append(SET_BG_COLOR_LIGHT_GREY + " 4 ");
-        board.append(SET_BG_COLOR_RED + EMPTY);
-        board.append(SET_BG_COLOR_BLUE + EMPTY);
-        board.append(SET_BG_COLOR_RED + EMPTY);
-        board.append(SET_BG_COLOR_BLUE + EMPTY);
-        board.append(SET_BG_COLOR_RED + EMPTY);
-        board.append(SET_BG_COLOR_BLUE + EMPTY);
-        board.append(SET_BG_COLOR_RED + EMPTY);
-        board.append(SET_BG_COLOR_BLUE + EMPTY);
-        board.append(SET_BG_COLOR_LIGHT_GREY + " 4 ");
-        board.append(RESET_BG_COLOR + "\n");
-
-        board.append(SET_BG_COLOR_LIGHT_GREY + " 5 ");
-        board.append(SET_BG_COLOR_BLUE + EMPTY);
-        board.append(SET_BG_COLOR_RED + EMPTY);
-        board.append(SET_BG_COLOR_BLUE + EMPTY);
-        board.append(SET_BG_COLOR_RED + EMPTY);
-        board.append(SET_BG_COLOR_BLUE + EMPTY);
-        board.append(SET_BG_COLOR_RED + EMPTY);
-        board.append(SET_BG_COLOR_BLUE + EMPTY);
-        board.append(SET_BG_COLOR_RED + EMPTY);
-        board.append(SET_BG_COLOR_LIGHT_GREY + " 5 ");
-        board.append(RESET_BG_COLOR + "\n");
-
-        board.append(SET_BG_COLOR_LIGHT_GREY + " 6 ");
-        board.append(SET_BG_COLOR_RED + EMPTY);
-        board.append(SET_BG_COLOR_BLUE + EMPTY);
-        board.append(SET_BG_COLOR_RED + EMPTY);
-        board.append(SET_BG_COLOR_BLUE + EMPTY);
-        board.append(SET_BG_COLOR_RED + EMPTY);
-        board.append(SET_BG_COLOR_BLUE + EMPTY);
-        board.append(SET_BG_COLOR_RED + EMPTY);
-        board.append(SET_BG_COLOR_BLUE + EMPTY);
-        board.append(SET_BG_COLOR_LIGHT_GREY + " 6 ");
-        board.append(RESET_BG_COLOR + "\n");
-
-        board.append(SET_BG_COLOR_LIGHT_GREY + " 7 ");
-        board.append(SET_BG_COLOR_BLUE + BLACK_PAWN);
-        board.append(SET_BG_COLOR_RED + BLACK_PAWN);
-        board.append(SET_BG_COLOR_BLUE + BLACK_PAWN);
-        board.append(SET_BG_COLOR_RED + BLACK_PAWN);
-        board.append(SET_BG_COLOR_BLUE + BLACK_PAWN);
-        board.append(SET_BG_COLOR_RED + BLACK_PAWN);
-        board.append(SET_BG_COLOR_BLUE + BLACK_PAWN);
-        board.append(SET_BG_COLOR_RED + BLACK_PAWN);
-        board.append(SET_BG_COLOR_LIGHT_GREY + " 7 ");
-        board.append(RESET_BG_COLOR + "\n");
-
-        board.append(SET_BG_COLOR_LIGHT_GREY + " 8 ");
-        board.append(SET_BG_COLOR_RED + BLACK_ROOK);
-        board.append(SET_BG_COLOR_BLUE + BLACK_BISHOP);
-        board.append(SET_BG_COLOR_RED + BLACK_KNIGHT);
-        board.append(SET_BG_COLOR_BLUE + BLACK_KING);
-        board.append(SET_BG_COLOR_RED + BLACK_QUEEN);
-        board.append(SET_BG_COLOR_BLUE + BLACK_KNIGHT);
-        board.append(SET_BG_COLOR_RED + BLACK_BISHOP);
-        board.append(SET_BG_COLOR_BLUE + BLACK_ROOK);
-        board.append(SET_BG_COLOR_LIGHT_GREY + " 8 ");
-        board.append(RESET_BG_COLOR + "\n");
-
-
-
+        board.append(SET_BG_COLOR_DARK_GREY + SET_TEXT_COLOR_WHITE + " 3 ");
         board.append(SET_BG_COLOR_LIGHT_GREY + EMPTY);
+        board.append(SET_BG_COLOR_GREY + EMPTY);
+        board.append(SET_BG_COLOR_LIGHT_GREY + EMPTY);
+        board.append(SET_BG_COLOR_GREY + EMPTY);
+        board.append(SET_BG_COLOR_LIGHT_GREY + EMPTY);
+        board.append(SET_BG_COLOR_GREY + EMPTY);
+        board.append(SET_BG_COLOR_LIGHT_GREY + EMPTY);
+        board.append(SET_BG_COLOR_GREY + EMPTY);
+        board.append(SET_BG_COLOR_DARK_GREY + SET_TEXT_COLOR_WHITE + " 3 ");
+        board.append(RESET_BG_COLOR + "\n");
+
+        board.append(SET_BG_COLOR_DARK_GREY + SET_TEXT_COLOR_WHITE + " 4 ");
+        board.append(SET_BG_COLOR_GREY + EMPTY);
+        board.append(SET_BG_COLOR_LIGHT_GREY + EMPTY);
+        board.append(SET_BG_COLOR_GREY + EMPTY);
+        board.append(SET_BG_COLOR_LIGHT_GREY + EMPTY);
+        board.append(SET_BG_COLOR_GREY + EMPTY);
+        board.append(SET_BG_COLOR_LIGHT_GREY + EMPTY);
+        board.append(SET_BG_COLOR_GREY + EMPTY);
+        board.append(SET_BG_COLOR_LIGHT_GREY + EMPTY);
+        board.append(SET_BG_COLOR_DARK_GREY + SET_TEXT_COLOR_WHITE + " 4 ");
+        board.append(RESET_BG_COLOR + "\n");
+
+        board.append(SET_BG_COLOR_DARK_GREY + SET_TEXT_COLOR_WHITE + " 5 ");
+        board.append(SET_BG_COLOR_LIGHT_GREY + EMPTY);
+        board.append(SET_BG_COLOR_GREY + EMPTY);
+        board.append(SET_BG_COLOR_LIGHT_GREY + EMPTY);
+        board.append(SET_BG_COLOR_GREY + EMPTY);
+        board.append(SET_BG_COLOR_LIGHT_GREY + EMPTY);
+        board.append(SET_BG_COLOR_GREY + EMPTY);
+        board.append(SET_BG_COLOR_LIGHT_GREY + EMPTY);
+        board.append(SET_BG_COLOR_GREY + EMPTY);
+        board.append(SET_BG_COLOR_DARK_GREY + SET_TEXT_COLOR_WHITE + " 5 ");
+        board.append(RESET_BG_COLOR + "\n");
+
+        board.append(SET_BG_COLOR_DARK_GREY + SET_TEXT_COLOR_WHITE + " 6 ");
+        board.append(SET_BG_COLOR_GREY + EMPTY);
+        board.append(SET_BG_COLOR_LIGHT_GREY + EMPTY);
+        board.append(SET_BG_COLOR_GREY + EMPTY);
+        board.append(SET_BG_COLOR_LIGHT_GREY + EMPTY);
+        board.append(SET_BG_COLOR_GREY + EMPTY);
+        board.append(SET_BG_COLOR_LIGHT_GREY + EMPTY);
+        board.append(SET_BG_COLOR_GREY + EMPTY);
+        board.append(SET_BG_COLOR_LIGHT_GREY + EMPTY);
+        board.append(SET_BG_COLOR_DARK_GREY + SET_TEXT_COLOR_WHITE + " 6 ");
+        board.append(RESET_BG_COLOR + "\n");
+
+        board.append(SET_BG_COLOR_DARK_GREY + SET_TEXT_COLOR_WHITE + " 7 ");
+        board.append(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + PAWN);
+        board.append(SET_BG_COLOR_GREY + SET_TEXT_COLOR_BLACK + PAWN);
+        board.append(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + PAWN);
+        board.append(SET_BG_COLOR_GREY + SET_TEXT_COLOR_BLACK + PAWN);
+        board.append(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + PAWN);
+        board.append(SET_BG_COLOR_GREY + SET_TEXT_COLOR_BLACK + PAWN);
+        board.append(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + PAWN);
+        board.append(SET_BG_COLOR_GREY + SET_TEXT_COLOR_BLACK + PAWN);
+        board.append(SET_BG_COLOR_DARK_GREY + SET_TEXT_COLOR_WHITE + " 7 ");
+        board.append(RESET_BG_COLOR + "\n");
+
+        board.append(SET_BG_COLOR_DARK_GREY + SET_TEXT_COLOR_WHITE + " 8 ");
+        board.append(SET_BG_COLOR_GREY + SET_TEXT_COLOR_BLACK + ROOK);
+        board.append(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + BISHOP);
+        board.append(SET_BG_COLOR_GREY + SET_TEXT_COLOR_BLACK + KNIGHT);
+        board.append(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + KING);
+        board.append(SET_BG_COLOR_GREY + SET_TEXT_COLOR_BLACK + QUEEN);
+        board.append(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + KNIGHT);
+        board.append(SET_BG_COLOR_GREY + SET_TEXT_COLOR_BLACK + BISHOP);
+        board.append(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + ROOK);
+        board.append(SET_BG_COLOR_DARK_GREY + SET_TEXT_COLOR_WHITE + " 8 ");
+        board.append(RESET_BG_COLOR + "\n");
+
+
+
+        board.append(SET_BG_COLOR_DARK_GREY + EMPTY);
         board.append(" h ");
         board.append(" g ");
         board.append(" f ");

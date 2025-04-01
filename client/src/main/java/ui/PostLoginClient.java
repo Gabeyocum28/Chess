@@ -2,16 +2,21 @@ package ui;
 
 import com.sun.nio.sctp.NotificationHandler;
 import exceptions.ResponseException;
+import model.AuthData;
+import model.GameData;
 import server.ServerFacade;
 
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 
 public class PostLoginClient {
     private final ServerFacade server;
     private final String serverUrl;
     private final NotificationHandler notificationHandler;
+    private AuthData user;
 
-    public PostLoginClient(String serverUrl, NotificationHandler notificationHandler) {
+    public PostLoginClient(String serverUrl, NotificationHandler notificationHandler) throws MalformedURLException, URISyntaxException {
         server = new ServerFacade(serverUrl);
         this.serverUrl = serverUrl;
         this.notificationHandler = notificationHandler;
@@ -38,13 +43,20 @@ public class PostLoginClient {
 
     public String create(String... params) throws ResponseException {
         if (params.length >= 1) {
+            GameData game = new GameData(0, null, null, params[0], null);
+            server.createGame(user.authToken(), game);
             return String.format("game created %s", params[0]);
         }
         throw new ResponseException(400, "Expected: <NAME>");
     }
 
     public String list() throws ResponseException {
-        return "list of games";
+        try {
+            server.listGames(user.authToken());
+        }catch(Exception e){
+            return "Not Authorized";
+        }
+        return server.listGames(user.authToken()).toString();
     }
 
     public String join(String... params) throws ResponseException {
@@ -62,7 +74,12 @@ public class PostLoginClient {
     }
 
     public String logout() throws ResponseException {
-        return "logged out";
+        try {
+            server.logout(user.authToken());
+        }catch(Exception e){
+            return "Not Authorized";
+        }
+        return "logged out (quit)";
     }
 
     public String help() {
@@ -78,5 +95,9 @@ public class PostLoginClient {
                 """;
 
 
+    }
+
+    public void setUserData(AuthData authUser){
+        user = authUser;
     }
 }
