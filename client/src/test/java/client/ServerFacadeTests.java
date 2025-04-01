@@ -44,7 +44,7 @@ public class ServerFacadeTests {
     @Test
     void registerSuccess() throws ResponseException {
         UserData user = new UserData("username", "password", "email");
-        facade.register(user);
+        assertNotNull(facade.register(user));
     }
 
     @Test
@@ -60,7 +60,7 @@ public class ServerFacadeTests {
         facade.register(user);
 
         Login login = new Login(user.username(), user.password());
-        facade.login(login);
+        assertNotNull(facade.login(login));
     }
 
     @Test
@@ -73,7 +73,7 @@ public class ServerFacadeTests {
     void createGameSuccess() throws ResponseException {
         AuthData auth = facade.register(new UserData("gameUser1", "password", "email"));
         GameData game = new GameData(0, null, null, "game1", null);
-        facade.createGame(auth.authToken(), game);
+        assertNotNull(facade.createGame(auth.authToken(), game));
     }
 
     @Test
@@ -105,6 +105,7 @@ public class ServerFacadeTests {
     void logoutSuccess() throws ResponseException {
         AuthData auth = facade.register(new UserData("logoutUser", "password", "email"));
         facade.logout(auth.authToken());
+
     }
 
     @Test
