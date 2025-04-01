@@ -90,19 +90,8 @@ public class ServerFacadeTests {
         facade.createGame(auth.authToken(), game2);
 
         Collection<GameList> games;
-        Map<Integer, GameList> gameMap;
-        gameMap = new HashMap<>();
         games = facade.listGames(auth.authToken());
-        int index = 1;
-        for (GameList game : games) {
-            gameMap.put(index++, game);
-        }
-        for (Map.Entry<Integer, GameList> entry : gameMap.entrySet()) {
-            System.out.println("ID:" + entry.getKey() + "     Name:" + entry.getValue().gameName() +
-                    "    White Username:" + entry.getValue().whiteUsername() +
-                    "    Black Username:" + entry.getValue().blackUsername());
-        }
-
+        assertTrue(games.size() >= 1);
     }
 
     @Test
@@ -138,11 +127,6 @@ public class ServerFacadeTests {
         for (GameList game : games) {
             gameMap.put(index++, game);
         }
-        for (Map.Entry<Integer, GameList> entry : gameMap.entrySet()) {
-            System.out.println("ID:" + entry.getKey() + "     Name:" + entry.getValue().gameName() +
-                    "    White Username:" + entry.getValue().whiteUsername() +
-                    "    Black Username:" + entry.getValue().blackUsername());
-        }
 
         facade.joinGame(auth.authToken(), new JoinRequest("white", gameMap.get(1).gameID()));
     }
@@ -153,19 +137,6 @@ public class ServerFacadeTests {
         GameData game2 = new GameData(0, null, null, "game8", null);
         facade.createGame(auth.authToken(), game2);
 
-        Collection<GameList> games;
-        Map<Integer, GameList> gameMap;
-        gameMap = new HashMap<>();
-        games = facade.listGames(auth.authToken());
-        int index = 1;
-        for (GameList game : games) {
-            gameMap.put(index++, game);
-        }
-        for (Map.Entry<Integer, GameList> entry : gameMap.entrySet()) {
-            System.out.println("ID:" + entry.getKey() + "     Name:" + entry.getValue().gameName() +
-                    "    White Username:" + entry.getValue().whiteUsername() +
-                    "    Black Username:" + entry.getValue().blackUsername());
-        }
         assertThrows(Exception.class, () -> facade.joinGame(auth.authToken(), new JoinRequest("white",
                 0)), "Expected no game to exist with index 0");
 
