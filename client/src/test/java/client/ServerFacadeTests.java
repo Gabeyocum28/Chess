@@ -29,12 +29,16 @@ public class ServerFacadeTests {
         var port = server.run(8080);
         System.out.println("Started test HTTP server on " + port);
         facade = new ServerFacade("http://localhost:8080");
-        facade.clear();
     }
 
     @AfterAll
     static void stopServer() throws ResponseException {
         server.stop();
+    }
+
+    @BeforeEach
+    void clear() throws ResponseException {
+        facade.clear();
     }
 
     @Test
