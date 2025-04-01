@@ -22,7 +22,7 @@ public class JoinGameService {
         if(joinRequest.gameID() < 0 || joinRequest.playerColor() == null){
             throw new BadRequestException("Error: bad request");
         }
-        if(Objects.equals(joinRequest.playerColor(), "WHITE") || Objects.equals(joinRequest.playerColor(), "BLACK")) {
+        if(Objects.equals(joinRequest.playerColor(), "white") || Objects.equals(joinRequest.playerColor(), "black")) {
             new SQLGameDAO().updateGame(joinRequest, authData);
         }else{
             throw new BadRequestException("Error: bad request");
