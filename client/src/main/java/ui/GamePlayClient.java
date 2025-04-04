@@ -109,7 +109,7 @@ public class GamePlayClient {
                 board.append(SET_BG_COLOR_DARK_GREY).append(SET_TEXT_COLOR_WHITE).append(" ").append(row).append(" ");
 
                 for (int col = 0; col < 8; col++) {
-                    String bgColor = ((row + col) % 2 == 0) ? SET_BG_COLOR_LIGHT_GREY : SET_BG_COLOR_GREY;
+                    String bgColor = ((row + col) % 2 == 1) ? SET_BG_COLOR_LIGHT_GREY : SET_BG_COLOR_GREY;
                     String piece = getPiece(row, col, false);
                     String textColor = piece.equals(EMPTY) ? "" : (row > 2 ? SET_TEXT_COLOR_BLACK : SET_TEXT_COLOR_WHITE);
 

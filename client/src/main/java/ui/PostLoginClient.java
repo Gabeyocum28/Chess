@@ -95,6 +95,7 @@ public class PostLoginClient {
             try {
                 int id = Integer.parseInt(params[0]);
                 gameMap.get(id);
+                joinRequest = new JoinRequest("white", gameMap.get(id).gameID());
 
             }catch (Exception e){
                 return "Game does not exist\n";
@@ -111,7 +112,7 @@ public class PostLoginClient {
         }catch(Exception e){
             return "Not Authorized";
         }
-        return "logged out (quit)";
+        return "quit";
     }
 
     public String help() {

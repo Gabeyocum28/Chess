@@ -67,7 +67,7 @@ public abstract class Repl implements NotificationHandler {
 
         Scanner scanner = new Scanner(System.in);
         var result = "";
-        while (!result.contains("quit")) {
+        while (!result.equals("quit")) {
             state = "[LOGGED_IN]";
             printPrompt();
             String line = scanner.nextLine();
