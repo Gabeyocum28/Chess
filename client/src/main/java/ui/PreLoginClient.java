@@ -8,6 +8,7 @@ import model.AuthData;
 import model.Login;
 import model.UserData;
 import server.ServerFacade;
+import websocket.commands.UserGameCommand;
 
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
@@ -50,6 +51,9 @@ public class PreLoginClient {
             }catch(Exception e){
                 return String.format("User already registered\n");
             }
+
+            new UserGameCommand();
+
             return String.format("logged in as %s" + "\n", params[0]);
         }
         throw new ResponseException(400, "Expected: <USERNAME> <PASSWORD> <EMAIL>");

@@ -1,13 +1,17 @@
 package server;
 
+import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
+import org.eclipse.jetty.websocket.api.annotations.WebSocket;
+import server.WebSocket.WebSocketHandler;
 import spark.*;
-
+@WebSocket
 public class Server {
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);
 
         Spark.staticFiles.location("web");
+        Spark.webSocket("/ws", WebSocketHandler.class);
 
         // Register your endpoints and handle exceptions here.
         Spark.post("/user", RegistrationHandler::register);
@@ -28,4 +32,5 @@ public class Server {
         Spark.stop();
         Spark.awaitStop();
     }
+
 }
