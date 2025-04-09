@@ -147,7 +147,7 @@ public class DAOUnitTests {
         GameData game = new GameData(0, null, null, "game", new ChessGame());
 
         int gameId = dao.createGame(game);
-        Collection<GameList> games = dao.listGames();
+        Collection<GameData> games = dao.listGames();
 
         assertFalse(games.isEmpty(), "Expected the created game to be listed.");
     }
@@ -157,14 +157,14 @@ public class DAOUnitTests {
         SQLGameDAO dao = new SQLGameDAO();
         dao.createGame(new GameData(0, null, null, "game", new ChessGame()));
 
-        Collection<GameList> games = dao.listGames();
+        Collection<GameData> games = dao.listGames();
         assertFalse(games.isEmpty(), "Expected at least one game in the list.");
     }
 
     @Test
     public void listGamesFailure() throws SQLException, DataAccessException {
         SQLGameDAO dao = new SQLGameDAO();
-        Collection<GameList> games = dao.listGames();
+        Collection<GameData> games = dao.listGames();
 
         assertTrue(games.isEmpty(), "Expected empty list when no games exist.");
     }
@@ -197,7 +197,7 @@ public class DAOUnitTests {
         dao.createGame(new GameData(0, null, null, "game", new ChessGame()));
         dao.clear();
 
-        Collection<GameList> games = dao.listGames();
+        Collection<GameData> games = dao.listGames();
         assertTrue(games.isEmpty(), "Expected game list to be empty after clear.");
     }
 }

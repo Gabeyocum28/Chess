@@ -30,8 +30,8 @@ public class ServerFacade {
         this.makeRequest("DELETE", "/session", null, null, authRequest);
     }
 
-    public Collection<GameList> listGames(String authRequest) throws ResponseException {
-        record ListGamesResponse(Collection<GameList> games) {}
+    public Collection<GameData> listGames(String authRequest) throws ResponseException {
+        record ListGamesResponse(Collection<GameData> games) {}
         var response = this.makeRequest("GET", "/game", null, ListGamesResponse.class, authRequest);
         return response.games();
     }

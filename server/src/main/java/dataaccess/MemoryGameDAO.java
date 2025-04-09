@@ -22,8 +22,8 @@ public class MemoryGameDAO implements GameDAO{
         GAMES_OUTPUT.put(game.gameID(), game);
         return null;
     }
-    public Collection<GameList> listGames() {
-        return GAMES_OUTPUT.values();
+    public Collection<GameData> listGames() {
+        return GAMES.values();
     }
     public void updateGame(JoinRequest joinRequest, AuthData authData) {
         GameData gameData = GAMES.get(joinRequest.gameID());

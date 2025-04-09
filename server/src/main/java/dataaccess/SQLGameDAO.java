@@ -1,5 +1,6 @@
 package dataaccess;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
 import exceptions.AlreadyTakenException;
 import exceptions.BadRequestException;
@@ -57,8 +58,8 @@ public class SQLGameDAO implements GameDAO{
     }
 
 
-    public Collection<GameList> listGames(){
-        Collection<GameList> gameCollection = new ArrayList<>();
+    public Collection<GameData> listGames(){
+        Collection<GameData> gameCollection = new ArrayList<>();
         Gson gson = new Gson();
 
         try (PreparedStatement preparedStatement = conn.prepareStatement("SELECT * FROM GameData");
@@ -69,9 +70,12 @@ public class SQLGameDAO implements GameDAO{
                 String whiteUsername = resultSet.getString("whiteUsername");
                 String blackUsername = resultSet.getString("blackUsername");
                 String gameName = resultSet.getString("gameName");
+                String gameJson = resultSet.getString("game");
+
+                ChessGame game = gson.fromJson(gameJson, ChessGame.class);
 
                 // Create GameData object and add it to the collection
-                GameList gameList = new GameList(gameId, whiteUsername, blackUsername, gameName);
+                GameData gameList = new GameData(gameId, whiteUsername, blackUsername, gameName, game);
                 gameCollection.add(gameList);
             }
 

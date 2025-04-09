@@ -1,5 +1,6 @@
 package ui;
 
+import chess.ChessGame;
 import com.sun.nio.sctp.NotificationHandler;
 import exceptions.ResponseException;
 import model.AuthData;
@@ -18,7 +19,8 @@ public class PostLoginClient {
     private final NotificationHandler notificationHandler;
     public AuthData user;
     public JoinRequest joinRequest;
-    private Map<Integer, GameList> gameMap;
+    private Map<Integer, GameData> gameMap;
+    public ChessGame game;
 
     public PostLoginClient(String serverUrl, NotificationHandler notificationHandler) throws MalformedURLException, URISyntaxException {
         server = new ServerFacade(serverUrl);
@@ -57,7 +59,7 @@ public class PostLoginClient {
     public String list() throws ResponseException {
         gameListCreation();
 
-        for (Map.Entry<Integer, GameList> entry : gameMap.entrySet()) {
+        for (Map.Entry<Integer, GameData> entry : gameMap.entrySet()) {
             System.out.println("ID:" + entry.getKey() + "     Name:" + entry.getValue().gameName() +
                     "    White Username:" + entry.getValue().whiteUsername() +
                     "    Black Username:" + entry.getValue().blackUsername());
@@ -75,6 +77,7 @@ public class PostLoginClient {
             try {
                 int id = Integer.parseInt(params[0]);
                 joinRequest = new JoinRequest(params[1], gameMap.get(id).gameID());
+                new ChessGame().setBoard(gameMap.get(id).game().getBoard());
             }catch (Exception e){
                 return "Game does not exist\n";
             }
@@ -96,7 +99,7 @@ public class PostLoginClient {
                 int id = Integer.parseInt(params[0]);
                 gameMap.get(id);
                 joinRequest = new JoinRequest("white", gameMap.get(id).gameID());
-
+                new ChessGame().setBoard(gameMap.get(id).game().getBoard());
             }catch (Exception e){
                 return "Game does not exist\n";
             }
@@ -135,7 +138,7 @@ public class PostLoginClient {
     }
 
     public void gameListCreation(){
-        Collection<GameList> games = List.of();
+        Collection<GameData> games = List.of();
         try {
             games = server.listGames(user.authToken());
         }catch(Exception e){
@@ -145,7 +148,7 @@ public class PostLoginClient {
         gameMap = new HashMap<>();
         int index = 1;
 
-        for (GameList game : games) {
+        for (GameData game : games) {
             gameMap.put(index++, game);
         }
     }

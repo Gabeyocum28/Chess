@@ -1,5 +1,9 @@
 package ui;
 
+import chess.ChessBoard;
+import chess.ChessGame;
+import chess.ChessPiece;
+import chess.ChessPosition;
 import com.sun.nio.sctp.NotificationHandler;
 import exceptions.ResponseException;
 import model.AuthData;
@@ -18,12 +22,14 @@ public class GamePlayClient {
     private final NotificationHandler notificationHandler;
     public JoinRequest joinRequest;
     public AuthData user;
+    private ChessBoard board;
 
     public GamePlayClient(String serverUrl, NotificationHandler notificationHandler)
             throws MalformedURLException, URISyntaxException {
         server = new ServerFacade(serverUrl);
         this.serverUrl = serverUrl;
         this.notificationHandler = notificationHandler;
+        board = new ChessGame().getBoard();
     }
 
     public String eval(String input) {
@@ -93,12 +99,28 @@ public class GamePlayClient {
             for (int row = 8; row >= 1; row--) {
                 board.append(SET_BG_COLOR_DARK_GREY).append(SET_TEXT_COLOR_WHITE).append(" ").append(row).append(" ");
 
-                for (int col = 0; col < 8; col++) {
+                for (int col = 1; col < 9; col++) {
                     String bgColor = ((row + col) % 2 == 0) ? SET_BG_COLOR_LIGHT_GREY : SET_BG_COLOR_GREY;
-                    String piece = getPiece(row, col, isWhite);
-                    String textColor = piece.equals(EMPTY) ? "" : (row <= 2 ? SET_TEXT_COLOR_WHITE : SET_TEXT_COLOR_BLACK);
+                    ChessPiece piece = getPiece(row, col);
+                    if(piece != null) {
+                        String pieceColor = String.valueOf(piece.getTeamColor());
+                        String textColor = pieceColor.equals("WHITE") ? SET_TEXT_COLOR_WHITE : SET_TEXT_COLOR_BLACK;
+                        String pieceType = String.valueOf(piece.getPieceType());
+                        if(pieceType == "ROOK") {
+                            board.append(bgColor).append(textColor).append(ROOK);
+                        }else if(pieceType == "KNIGHT") {
+                            board.append(bgColor).append(textColor).append(KNIGHT);
+                        }else if(pieceType == "BISHOP") {
+                            board.append(bgColor).append(textColor).append(BISHOP);
+                        }else if(pieceType == "KING") {
+                            board.append(bgColor).append(textColor).append(KING);
+                        }else if(pieceType == "QUEEN") {
+                            board.append(bgColor).append(textColor).append(QUEEN);
+                        }else if(pieceType == "PAWN") {
+                            board.append(bgColor).append(textColor).append(PAWN);
+                        }
 
-                    board.append(bgColor).append(textColor).append(piece);
+                    }else{board.append(bgColor).append(EMPTY);}
                 }
 
                 board.append(SET_BG_COLOR_DARK_GREY).append(SET_TEXT_COLOR_WHITE).append(" ").append(row).append(" ");
@@ -108,12 +130,28 @@ public class GamePlayClient {
             for (int row = 1; row <= 8; row++) {
                 board.append(SET_BG_COLOR_DARK_GREY).append(SET_TEXT_COLOR_WHITE).append(" ").append(row).append(" ");
 
-                for (int col = 0; col < 8; col++) {
+                for (int col = 8; col > 0; col--) {
                     String bgColor = ((row + col) % 2 == 1) ? SET_BG_COLOR_LIGHT_GREY : SET_BG_COLOR_GREY;
-                    String piece = getPiece(row, col, false);
-                    String textColor = piece.equals(EMPTY) ? "" : (row > 2 ? SET_TEXT_COLOR_BLACK : SET_TEXT_COLOR_WHITE);
+                    ChessPiece piece = getPiece(row, col);
+                    if(piece != null) {
+                        String pieceColor = String.valueOf(piece.getTeamColor());
+                        String textColor = pieceColor.equals("WHITE") ? SET_TEXT_COLOR_WHITE : SET_TEXT_COLOR_BLACK;
+                        String pieceType = String.valueOf(piece.getPieceType());
+                        if(pieceType == "ROOK") {
+                            board.append(bgColor).append(textColor).append(ROOK);
+                        }else if(pieceType == "KNIGHT") {
+                            board.append(bgColor).append(textColor).append(KNIGHT);
+                        }else if(pieceType == "BISHOP") {
+                            board.append(bgColor).append(textColor).append(BISHOP);
+                        }else if(pieceType == "KING") {
+                            board.append(bgColor).append(textColor).append(KING);
+                        }else if(pieceType == "QUEEN") {
+                            board.append(bgColor).append(textColor).append(QUEEN);
+                        }else if(pieceType == "PAWN") {
+                            board.append(bgColor).append(textColor).append(PAWN);
+                        }
 
-                    board.append(bgColor).append(textColor).append(piece);
+                    }else{board.append(bgColor).append(EMPTY);}
                 }
 
                 board.append(SET_BG_COLOR_DARK_GREY).append(SET_TEXT_COLOR_WHITE).append(" ").append(row).append(" ");
@@ -132,28 +170,9 @@ public class GamePlayClient {
         return board.toString();
     }
 
-    private String getPiece(int row, int col, boolean isWhite) {
-        String piece1, piece2;
-
-        if(isWhite){
-            piece1 = QUEEN;
-            piece2 = KING;
-        }else{
-            piece1 = KING;
-            piece2 = QUEEN;
-        }
-        String[][] setup = {
-                {ROOK, KNIGHT, BISHOP, piece1, piece2, BISHOP, KNIGHT, ROOK},
-                {PAWN, PAWN, PAWN, PAWN, PAWN, PAWN, PAWN, PAWN},
-                {EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY},
-                {EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY},
-                {EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY},
-                {EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY},
-                {PAWN, PAWN, PAWN, PAWN, PAWN, PAWN, PAWN, PAWN},
-                {ROOK, KNIGHT, BISHOP, piece1, piece2, BISHOP, KNIGHT, ROOK}
-        };
-
-        return isWhite ? setup[row - 1][col] : setup[7 - (row - 1)][col];
+    private ChessPiece getPiece(int row, int col) {
+        ChessPosition position = new ChessPosition(row, col);
+        return board.getPiece(position);
     }
 
     public void setUserData(AuthData authUser){

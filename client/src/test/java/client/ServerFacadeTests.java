@@ -88,7 +88,7 @@ public class ServerFacadeTests {
         GameData game2 = new GameData(0, null, null, "game2", null);
         facade.createGame(auth.authToken(), game2);
 
-        Collection<GameList> games;
+        Collection<GameData> games;
         games = facade.listGames(auth.authToken());
         assertTrue(games.size() >= 1);
     }
@@ -119,12 +119,12 @@ public class ServerFacadeTests {
         GameData game2 = new GameData(0, null, null, "game7", null);
         facade.createGame(auth.authToken(), game2);
 
-        Collection<GameList> games;
-        Map<Integer, GameList> gameMap;
+        Collection<GameData> games;
+        Map<Integer, GameData> gameMap;
         gameMap = new HashMap<>();
         games = facade.listGames(auth.authToken());
         int index = 1;
-        for (GameList game : games) {
+        for (GameData game : games) {
             gameMap.put(index++, game);
         }
 
