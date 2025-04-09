@@ -52,7 +52,6 @@ public class PreLoginClient {
                 return String.format("User already registered\n");
             }
 
-            new UserGameCommand();
 
             return String.format("logged in as %s" + "\n", params[0]);
         }
