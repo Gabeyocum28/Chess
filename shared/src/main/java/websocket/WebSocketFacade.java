@@ -10,6 +10,7 @@ import java.net.URISyntaxException;
 
 import model.AuthData;
 import model.JoinRequest;
+import model.Move;
 import model.UserData;
 import websocket.commands.UserGameCommand;
 import websocket.messages.Notification;
@@ -59,6 +60,18 @@ public class WebSocketFacade extends Endpoint{
         } catch (IOException e) {
             throw new ResponseException(500, e.getMessage());
         }
+    }
+
+    public void move(AuthData user, Move move){
+
+    }
+
+    public void leave(AuthData user){
+
+    }
+
+    public void resign(AuthData user){
+
     }
 
 

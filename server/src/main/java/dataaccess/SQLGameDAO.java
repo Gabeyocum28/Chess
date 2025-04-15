@@ -108,7 +108,7 @@ public class SQLGameDAO implements GameDAO{
             if (resultSet.next()) {
                 String existingUsername = resultSet.getString(1); // Get username from column
 
-                if (existingUsername != null && !existingUsername.isEmpty()) {
+                if ((existingUsername != null && !existingUsername.isEmpty()) && existingUsername != authData.username()) {
                     throw new AlreadyTakenException("Error: already taken");
                 }
             } else {

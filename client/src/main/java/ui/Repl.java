@@ -103,7 +103,7 @@ public abstract class Repl implements NotificationHandler {
 
         Scanner scanner = new Scanner(System.in);
         var result = "";
-        while (!result.equals("quit game")) {
+        while (!result.equals("You have left the Game")) {
             state = "[PLAYING]";
             printPrompt();
             String line = scanner.nextLine();

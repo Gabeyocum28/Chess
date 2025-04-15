@@ -22,7 +22,7 @@ import static websocket.commands.UserGameCommand.CommandType.MAKE_MOVE;
 @WebSocket
 public class WebSocketHandler {
 
-    private final ConnectCommandHandler connections = new ConnectCommandHandler();
+    private final ConnectCommandHandler connections;
 
     @OnWebSocketMessage
     public void onMessage(Session session, String message) throws IOException {
@@ -41,6 +41,6 @@ public class WebSocketHandler {
     }
 
     private void connect(String authToken, Session session){
-        connections.add(authToken, session);
+        new ConnectCommandHandler(authToken, session);
     }
 }
