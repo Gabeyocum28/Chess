@@ -4,11 +4,12 @@ import chess.ChessBoard;
 import chess.ChessGame;
 import chess.ChessPiece;
 import chess.ChessPosition;
-import com.sun.nio.sctp.NotificationHandler;
 import exceptions.ResponseException;
 import model.AuthData;
 import model.JoinRequest;
 import server.ServerFacade;
+import websocket.NotificationHandler;
+import websocket.WebSocketFacade;
 
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
@@ -20,11 +21,12 @@ public class GamePlayClient {
     private final ServerFacade server;
     private final String serverUrl;
     private final NotificationHandler notificationHandler;
+    private WebSocketFacade ws;
     public JoinRequest joinRequest;
     public AuthData user;
     private ChessBoard board;
 
-    public GamePlayClient(String serverUrl, NotificationHandler notificationHandler)
+    public GamePlayClient(String serverUrl, websocket.NotificationHandler notificationHandler)
             throws MalformedURLException, URISyntaxException {
         server = new ServerFacade(serverUrl);
         this.serverUrl = serverUrl;

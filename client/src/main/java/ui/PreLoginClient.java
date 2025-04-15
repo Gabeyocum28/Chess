@@ -1,14 +1,11 @@
 package ui;
 
-import com.sun.net.httpserver.Request;
 import com.sun.nio.sctp.NotificationHandler;
 import exceptions.ResponseException;
-import exceptions.UnauthorizedException;
 import model.AuthData;
 import model.Login;
 import model.UserData;
 import server.ServerFacade;
-import websocket.commands.UserGameCommand;
 
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
@@ -18,13 +15,11 @@ import static ui.EscapeSequences.*;
 public class PreLoginClient {
     private final ServerFacade server;
     private final String serverUrl;
-    private final NotificationHandler notificationHandler;
     public AuthData user;
 
-    public PreLoginClient(String serverUrl, NotificationHandler notificationHandler) throws MalformedURLException, URISyntaxException {
+    public PreLoginClient(String serverUrl) throws MalformedURLException, URISyntaxException {
         server = new ServerFacade(serverUrl);
         this.serverUrl = serverUrl;
-        this.notificationHandler = notificationHandler;
     }
 
     public String eval(String input) {

@@ -1,8 +1,9 @@
 package ui;
 
 
-import com.sun.nio.sctp.Notification;
-import com.sun.nio.sctp.NotificationHandler;
+
+
+import com.sun.nio.sctp.HandlerResult;
 import exceptions.ResponseException;
 import model.AuthData;
 import model.JoinRequest;
@@ -11,20 +12,22 @@ import model.UserData;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.util.Scanner;
+import websocket.NotificationHandler;
+import websocket.messages.Notification;
 
 import static ui.EscapeSequences.*;
 
 public abstract class Repl implements NotificationHandler {
 
-    private PreLoginClient preLoginClient;
-    private PostLoginClient postLoginClient;
-    private GamePlayClient gamePlayClient;
+    private final PreLoginClient preLoginClient;
+    private final PostLoginClient postLoginClient;
+    private final GamePlayClient gamePlayClient;
     private String state;
 
     public Repl(String serverUrl) throws MalformedURLException, URISyntaxException {
-        preLoginClient = new PreLoginClient(serverUrl, this);
-        postLoginClient = new PostLoginClient(serverUrl, this);
-        gamePlayClient = new GamePlayClient(serverUrl, this);
+        preLoginClient = new PreLoginClient(serverUrl);
+        postLoginClient = new PostLoginClient(serverUrl,  this);
+        gamePlayClient = new GamePlayClient(serverUrl,  this);
     }
 
     public void run(){
@@ -121,4 +124,6 @@ public abstract class Repl implements NotificationHandler {
     private void printPrompt() {
         System.out.print("\n" + SET_TEXT_COLOR_WHITE + state + " >>> " + SET_TEXT_COLOR_GREEN);
     }
+
+    public abstract HandlerResult handleNotification(com.sun.nio.sctp.Notification notification, Object attachment);
 }

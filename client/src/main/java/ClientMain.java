@@ -1,4 +1,3 @@
-import chess.*;
 import com.sun.nio.sctp.HandlerResult;
 import com.sun.nio.sctp.Notification;
 import ui.Repl;
@@ -14,6 +13,11 @@ public class ClientMain {
         }
 
         new Repl(serverUrl) {
+            @Override
+            public void notify(websocket.messages.Notification notification) {
+
+            }
+
             @Override
             public HandlerResult handleNotification(Notification notification, Object attachment) {
                 return null;

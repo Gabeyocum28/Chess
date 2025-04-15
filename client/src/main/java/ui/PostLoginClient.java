@@ -1,13 +1,14 @@
 package ui;
 
 import chess.ChessGame;
-import com.sun.nio.sctp.NotificationHandler;
 import exceptions.ResponseException;
 import model.AuthData;
 import model.GameData;
 import model.GameList;
 import model.JoinRequest;
 import server.ServerFacade;
+import websocket.WebSocketFacade;
+import websocket.NotificationHandler;
 
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
@@ -17,6 +18,7 @@ public class PostLoginClient {
     private final ServerFacade server;
     private final String serverUrl;
     private final NotificationHandler notificationHandler;
+    private WebSocketFacade ws;
     public AuthData user;
     public JoinRequest joinRequest;
     private Map<Integer, GameData> gameMap;
@@ -86,6 +88,9 @@ public class PostLoginClient {
             }catch (Exception e){
                 return "Already taken\n";
             }
+
+            ws = new WebSocketFacade(serverUrl, notificationHandler);
+            ws.enterGame(user, joinRequest);
 
             return String.format("joined game as %s", params[1]);
         }

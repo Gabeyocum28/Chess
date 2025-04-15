@@ -1,25 +1,38 @@
 package server.WebSocket;
 
+
+
 import com.google.gson.Gson;
+
 import org.eclipse.jetty.websocket.api.Session;
-import org.eclipse.jetty.websocket.api.annotations.*;
-import server.WebSocket.*;
+import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
+import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
+import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import websocket.commands.UserGameCommand;
 
+
+import javax.swing.*;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+
+import static websocket.commands.UserGameCommand.*;
+import static websocket.commands.UserGameCommand.CommandType.CONNECT;
+import static websocket.commands.UserGameCommand.CommandType.MAKE_MOVE;
+
 
 @WebSocket
 public class WebSocketHandler {
 
-    private static final Map<UserGameCommand.CommandType, GameCommandHandler> handlers = new HashMap<>();
-    private final Gson gson = new Gson();
-    static {
-        handlers.put(UserGameCommand.CommandType.CONNECT, new ConnectCommandHandler());
-        handlers.put(UserGameCommand.CommandType.MAKE_MOVE, new MakeMoveCommandHandler());
-        handlers.put(UserGameCommand.CommandType.RESIGN, new ResignCommandHandler());
-        handlers.put(UserGameCommand.CommandType.LEAVE, new LeaveCommandHandler());
+    private final ConnectCommandHandler connections = new ConnectCommandHandler();
+
+    @OnWebSocketMessage
+    public void onMessage(Session session, String message) throws IOException {
+        UserGameCommand userGameCommand = new Gson().fromJson(message, UserGameCommand.class);
+        switch (userGameCommand.getCommandType()) {
+            case CONNECT -> connect(userGameCommand.getAuthToken(), session);
+            //case MAKE_MOVE -> makeMove();
+            //case LEAVE -> leave();
+            //case RESIGN -> resign();
+        }
     }
 
     @OnWebSocketConnect
@@ -27,26 +40,7 @@ public class WebSocketHandler {
         System.out.println("WebSocket connected: " + session);
     }
 
-    @OnWebSocketClose
-    public void onClose(Session session, int statusCode, String reason) {
-        System.out.println("WebSocket closed: " + session + " Reason: " + reason);
-    }
-
-    @OnWebSocketMessage
-    public void onMessage(Session session, String message) throws IOException {
-        // Parse the incoming JSON to a command
-        UserGameCommand command = parseCommand(message);
-        GameCommandHandler handler = handlers.get(command.getCommandType());
-
-        if (handler != null) {
-            handler.handle(command, session);
-        } else {
-            session.getRemote().sendString("Unknown command type.");
-        }
-    }
-
-    private UserGameCommand parseCommand(String json) {
-
-        return gson.fromJson(json, UserGameCommand.class);
+    private void connect(String authToken, Session session){
+        connections.add(authToken, session);
     }
 }
