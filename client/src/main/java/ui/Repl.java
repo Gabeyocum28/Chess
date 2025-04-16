@@ -15,7 +15,6 @@ import java.net.URISyntaxException;
 import java.sql.SQLException;
 import java.util.Scanner;
 import websocket.NotificationHandler;
-import websocket.messages.Notification;
 
 import static ui.EscapeSequences.*;
 
