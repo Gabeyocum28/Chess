@@ -90,14 +90,16 @@ public class SQLGameDAO implements GameDAO{
     }
 
     public GameData getGame(int gameId){
-        try (var preparedStatement = conn.prepareStatement("SELECT game FROM GameData WHERE gameId=?")) {
+        try (var preparedStatement = conn.prepareStatement("SELECT whiteUsername, blackUsername, game FROM GameData WHERE gameId=?")) {
             preparedStatement.setInt(1, gameId);
             try (var rs = preparedStatement.executeQuery()) {
                 while (rs.next()) {
+                    var white = rs.getString("whiteUsername");
+                    var black = rs.getString("blackUsername");
                     var game = rs.getString("game");
                     ChessGame board = new Gson().fromJson(game, ChessGame.class);
 
-                    return new GameData(gameId, null, null, null, board);
+                    return new GameData(gameId, white, black, null, board);
                 }
             }
         } catch (SQLException e) {
@@ -144,6 +146,17 @@ public class SQLGameDAO implements GameDAO{
         }
 
 
+    }
+
+    public void updateBoard(int gameId, ChessGame game) {
+        String gameJson = new Gson().toJson(game);
+        try (var stmt = conn.prepareStatement("UPDATE GameData SET game = ? WHERE gameId = ?")) {
+            stmt.setString(1, gameJson);
+            stmt.setInt(2, gameId);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to update game", e);
+        }
     }
 
     public void clear() throws DataAccessException {

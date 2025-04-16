@@ -1,8 +1,11 @@
 package ui;
 
 import chess.*;
+import dataaccess.DataAccessException;
+import dataaccess.SQLGameDAO;
 import exceptions.ResponseException;
 import model.AuthData;
+import model.GameData;
 import model.JoinRequest;
 import server.ServerFacade;
 import websocket.NotificationHandler;
@@ -10,8 +13,11 @@ import websocket.WebSocketFacade;
 
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Objects;
 
 import static ui.EscapeSequences.*;
 
@@ -41,7 +47,7 @@ public class GamePlayClient {
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
                 case "move" -> move(params);
-                case "check" -> check(params);
+                case "highlight" -> highlight(params);
                 case"redraw" -> redraw();
                 case "leave" -> leave();
                 case "resign" -> resign();
@@ -49,12 +55,12 @@ public class GamePlayClient {
             };
         } catch (ResponseException ex) {
             return ex.getMessage();
-        } catch (InvalidMoveException e) {
+        } catch (InvalidMoveException | SQLException | DataAccessException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public String move(String... params) throws ResponseException, InvalidMoveException {
+    public String move(String... params) throws ResponseException, InvalidMoveException, SQLException, DataAccessException {
         if (params.length >= 2) {
             char fromFile = params[0].charAt(0);
             char fromRank = params[0].charAt(1);
@@ -69,16 +75,44 @@ public class GamePlayClient {
             ChessPosition fromPosition = new ChessPosition(fromRow, fromColumn);
             ChessPosition toPosition = new ChessPosition(toRow, toColumn);
             ChessMove move = new ChessMove(fromPosition, toPosition, null);
-            new ChessGame().makeMove(move);
-            System.out.println(String.format("moved from %s to %s", params[0], params[1]));
 
-            return redraw();
+            GameData gameData = new SQLGameDAO().getGame(joinRequest.gameID()); // currentGameId is tracked somewhere
+
+
+
+            if(Objects.equals(user.username(), gameData.blackUsername()) || Objects.equals(user.username(), gameData.whiteUsername())) {
+                ChessGame game = gameData.game();
+                if(game.getTeamTurn() == ChessGame.TeamColor.WHITE && Objects.equals(user.username(), gameData.blackUsername())){
+                    return "It is not your turn";
+                } else if(game.getTeamTurn() == ChessGame.TeamColor.BLACK && Objects.equals(user.username(), gameData.whiteUsername())) {
+                    return "It is not your turn";
+                }
+                try {
+                    game.makeMove(move);
+                }catch(Exception e){
+                    System.out.println("\nNot a valid Move!\n" +
+                            "To see valid moves use the highlight command to see a pieces valid moves\n");
+                    return redraw();
+                }
+
+                new SQLGameDAO().updateBoard(gameData.gameID(), game);
+
+                System.out.println(String.format("Moved from %s to %s", params[0], params[1]));
+
+                checkPosition = null;
+
+                return redraw();
+            }else{
+                return "You are not Playing";
+            }// Re-render the board or return updated info
         }
         throw new ResponseException(400, "Expected: <FROM> <TO>");
     }
 
-    public String check(String... params) throws ResponseException {
+    public String highlight(String... params) throws ResponseException, SQLException, DataAccessException {
         if (params.length >= 1) {
+            GameData gameData = new SQLGameDAO().getGame(joinRequest.gameID());
+            ChessGame game = gameData.game();
 
             char file = params[0].charAt(0);
             char rank = params[0].charAt(1);
@@ -87,7 +121,7 @@ public class GamePlayClient {
             int row = ((rank - '0'));
 
             checkPosition = new ChessPosition(row, column);
-            validMoves = new ChessGame().validMoves(checkPosition);
+            validMoves = game.validMoves(checkPosition);
             System.out.println(String.format("checking %s", params[0]));
 
             return redraw();
@@ -95,7 +129,8 @@ public class GamePlayClient {
         throw new ResponseException(400, "Expected: <FROM>");
     }
 
-    public String redraw() throws ResponseException {
+    public String redraw() throws ResponseException, SQLException, DataAccessException {
+        getBoard(joinRequest.gameID());
         if(joinRequest.playerColor().equals("black")) {
             return printBoard(false);
         }
@@ -115,7 +150,7 @@ public class GamePlayClient {
 
         return """
                 - "move" <FROM> <TO> - makes a move
-                - "check" <FROM> - checks the moves
+                - "highlight" <FROM> - checks the moves
                 - "redraw" - redraws the board
                 - "leave" - exits gameplay
                 - "resign" - give up
@@ -159,6 +194,7 @@ public class GamePlayClient {
                     if (checkPosition != null && checkPosition.getRow() == row && checkPosition.getColumn() == col) {
                         bgColor = SET_BG_COLOR_YELLOW;
                     }
+
 
                     ChessPiece piece = getPiece(row, col);
                     if(piece != null) {
@@ -242,6 +278,8 @@ public class GamePlayClient {
         }
         board.append(EMPTY).append(RESET_BG_COLOR).append("\n\n");
 
+        validMoves = new ArrayList<>();
+
         return board.toString();
     }
 
@@ -256,6 +294,10 @@ public class GamePlayClient {
 
     public void setJoinRequest(JoinRequest request){
         joinRequest = request;
+    }
+
+    public void getBoard(int gameId) throws SQLException, DataAccessException {
+        board = new SQLGameDAO().getGame(gameId).game().getBoard();
     }
 
 }

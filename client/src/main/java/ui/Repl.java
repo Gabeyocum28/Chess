@@ -4,6 +4,7 @@ package ui;
 
 
 import com.sun.nio.sctp.HandlerResult;
+import dataaccess.DataAccessException;
 import exceptions.ResponseException;
 import model.AuthData;
 import model.JoinRequest;
@@ -11,6 +12,7 @@ import model.UserData;
 
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
+import java.sql.SQLException;
 import java.util.Scanner;
 import websocket.NotificationHandler;
 import websocket.messages.Notification;
@@ -30,13 +32,13 @@ public abstract class Repl implements NotificationHandler {
         gamePlayClient = new GamePlayClient(serverUrl,  this);
     }
 
-    public void run(){
+    public void run() throws SQLException, DataAccessException {
         System.out.println(SET_TEXT_COLOR_WHITE + "Welcome to 240 chess!");
         runPre();
         System.out.println();
     }
 
-    public void runPre() {
+    public void runPre() throws SQLException, DataAccessException {
         System.out.print(SET_TEXT_COLOR_BLUE + preLoginClient.help());
 
         Scanner scanner = new Scanner(System.in);
@@ -64,7 +66,7 @@ public abstract class Repl implements NotificationHandler {
 
     }
 
-    public void runPost(AuthData user) {
+    public void runPost(AuthData user) throws SQLException, DataAccessException {
         postLoginClient.setUserData(user);
         System.out.print(SET_TEXT_COLOR_BLUE + postLoginClient.help());
 
@@ -91,9 +93,10 @@ public abstract class Repl implements NotificationHandler {
         System.out.print(preLoginClient.help());
     }
 
-    public void runGame(JoinRequest joinRequest, AuthData user) {
+    public void runGame(JoinRequest joinRequest, AuthData user) throws SQLException, DataAccessException {
         gamePlayClient.setJoinRequest(joinRequest);
         gamePlayClient.setUserData(user);
+        gamePlayClient.getBoard(joinRequest.gameID());
         try {
             System.out.print(gamePlayClient.redraw());
         } catch (ResponseException e) {
