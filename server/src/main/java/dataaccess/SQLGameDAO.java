@@ -1,5 +1,6 @@
 package dataaccess;
 
+import chess.ChessBoard;
 import chess.ChessGame;
 import com.google.gson.Gson;
 import exceptions.AlreadyTakenException;
@@ -86,6 +87,24 @@ public class SQLGameDAO implements GameDAO{
         }
 
         return gameCollection;
+    }
+
+    public GameData getGame(int gameId){
+        try (var preparedStatement = conn.prepareStatement("SELECT game FROM GameData WHERE gameId=?")) {
+            preparedStatement.setInt(1, gameId);
+            try (var rs = preparedStatement.executeQuery()) {
+                while (rs.next()) {
+                    var game = rs.getString("game");
+                    ChessGame board = new Gson().fromJson(game, ChessGame.class);
+
+                    return new GameData(gameId, null, null, null, board);
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return null;
     }
 
 

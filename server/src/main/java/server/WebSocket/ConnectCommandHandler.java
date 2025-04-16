@@ -1,9 +1,13 @@
 package server.WebSocket;
 
+import chess.ChessGame;
 import dataaccess.DataAccessException;
 import dataaccess.SQLAuthDAO;
+import dataaccess.SQLGameDAO;
 import org.eclipse.jetty.websocket.api.Session;
 import websocket.commands.UserGameCommand;
+import websocket.messages.LoadGameMessage;
+import websocket.messages.ServerMessage;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -13,7 +17,8 @@ public class ConnectCommandHandler {
         String username = new SQLAuthDAO().getAuth(command.getAuthToken()).username();
         webSocketHandler.add(username, session);
         System.out.println("User connected: " + username);
-        Connection connection = new WebSocketHandler().getConnection(username);
-        connection.send("Welcome to the game!");
+        Connection connection = webSocketHandler.getConnection(username);
+        ChessGame game = new SQLGameDAO().getGame(command.getGameID()).game();
+        connection.send(new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME, game));
     }
 }
