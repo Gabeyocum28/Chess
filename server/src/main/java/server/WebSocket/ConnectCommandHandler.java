@@ -7,8 +7,8 @@ import dataaccess.SQLAuthDAO;
 import dataaccess.SQLGameDAO;
 import org.eclipse.jetty.websocket.api.Session;
 import websocket.commands.UserGameCommand;
+import websocket.commands.UserNotification;
 import websocket.messages.LoadGameMessage;
-import websocket.messages.Notification;
 import websocket.messages.ServerMessage;
 
 import java.io.IOException;
@@ -38,7 +38,8 @@ public class ConnectCommandHandler {
                 ? String.format("%s connected as %s player", username, playerColor.toString().toLowerCase())
                 : String.format("%s connected as an observer", username);
 
-        Notification notification = new Notification(UserGameCommand.CommandType.CONNECT, roleMessage);
-        webSocketHandler.broadcast(username, notification);
+        UserNotification notification = new UserNotification(UserGameCommand.CommandType.CONNECT, roleMessage);
+        String notiGson = new Gson().toJson(notification);
+        webSocketHandler.broadcast(username, notiGson);
     }
 }

@@ -7,7 +7,6 @@ import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import websocket.commands.UserGameCommand;
-import websocket.messages.Notification;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -48,12 +47,12 @@ public class WebSocketHandler {
         connections.remove(username);
     }
 
-    public void broadcast(String excludeUsername, Notification notification) throws IOException {
+    public void broadcast(String excludeUsername, String notification) throws IOException {
         var removeList = new ArrayList<Connection>();
         for (Connection c : connections.values()) {
             if (c.session.isOpen()) {
                 if (!c.username.equals(excludeUsername)) {
-                    c.send(notification.toString());
+                    c.send(notification);
                 }
             } else {
                 removeList.add(c);

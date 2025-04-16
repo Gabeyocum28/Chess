@@ -1,3 +1,4 @@
+
 import com.sun.nio.sctp.HandlerResult;
 import com.sun.nio.sctp.Notification;
 import dataaccess.DataAccessException;
@@ -15,15 +16,32 @@ public class ClientMain {
         }
 
         new Repl(serverUrl) {
-            @Override
-            public void notify(websocket.messages.Notification notification) {
-
-            }
 
             @Override
             public HandlerResult handleNotification(Notification notification, Object attachment) {
                 return null;
             }
+
+            @Override
+            public void notifyUserGame(websocket.commands.UserNotification notification) {
+                System.out.println(notification);
+            }
+
+            @Override
+            public void notifyLoadGame(websocket.messages.ServerNotification notification) {
+               System.out.println(notification);
+            }
+
+            @Override
+            public void notifyError(websocket.messages.ServerNotification notification) {
+               System.out.println(notification);
+            }
+
+            @Override
+            public void notifyNotification(websocket.messages.ServerNotification notification) {
+                System.out.println(notification);
+            }
+
         }.run();
 
     }

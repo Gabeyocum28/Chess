@@ -1,14 +1,13 @@
-package websocket.messages;
+package websocket.commands;
 
-import websocket.commands.UserGameCommand;
 
-public class Notification {
+public class UserNotification {
     public UserGameCommand.CommandType type;
     public String message;
 
-    public Notification() {} // Required for Gson
+    public UserNotification() {} // Required for Gson
 
-    public Notification(UserGameCommand.CommandType type, String message) {
+    public UserNotification(UserGameCommand.CommandType type, String message) {
         this.type = type;
         this.message = message;
     }

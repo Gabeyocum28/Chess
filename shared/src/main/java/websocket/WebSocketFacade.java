@@ -13,7 +13,8 @@ import model.JoinRequest;
 import model.Move;
 import model.UserData;
 import websocket.commands.UserGameCommand;
-import websocket.messages.Notification;
+import websocket.messages.ServerNotification;
+import websocket.commands.UserNotification;
 
 
 public class WebSocketFacade extends Endpoint{
@@ -35,8 +36,8 @@ public class WebSocketFacade extends Endpoint{
                         session.addMessageHandler(new MessageHandler.Whole<String>() {
                             @Override
                             public void onMessage(String message) {
-                                Notification notification = new Gson().fromJson(message, Notification.class);
-                                notificationHandler.notify(notification);
+                                 // if userGame make userGame message and send
+                                //else if specific server message send to specific handler
                             }
                         });
                     } catch (Exception e) {
