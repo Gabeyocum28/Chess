@@ -21,5 +21,6 @@ public class ResignCommandHandler {
         NotificationMessage notificationMessage = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
         String jsonMessage = new Gson().toJson(notificationMessage);
         webSocketHandler.broadcast(username, jsonMessage);
+
     }
 }

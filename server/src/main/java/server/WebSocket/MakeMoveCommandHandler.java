@@ -23,7 +23,13 @@ public class MakeMoveCommandHandler {
         String authToken = command.getAuthToken();
         Connection connection = webSocketHandler.getConnection(authToken);
 
+
         try {
+            if(connection== null){
+                ErrorMessage errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, "Invalid auth");
+                String jsonMessage = new Gson().toJson(errorMessage);
+                session.getRemote().sendString(jsonMessage);
+            }
             String username = new SQLAuthDAO().getAuth(command.getAuthToken()).username();
             var gameData = new SQLGameDAO().getGame(command.getGameID());
             var game = gameData.game();
@@ -32,6 +38,10 @@ public class MakeMoveCommandHandler {
                 DataAccessException Exception = null;
                 throw Exception;
             } else if(game.getTeamTurn() == ChessGame.TeamColor.BLACK && Objects.equals(username, gameData.whiteUsername())) {
+                DataAccessException Exception = null;
+                throw Exception;
+            }
+            if(!Objects.equals(username, gameData.blackUsername()) && !Objects.equals(username, gameData.whiteUsername())) {
                 DataAccessException Exception = null;
                 throw Exception;
             }
