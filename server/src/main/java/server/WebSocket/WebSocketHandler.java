@@ -1,12 +1,15 @@
 package server.WebSocket;
 
+import chess.ChessMove;
 import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
+import websocket.commands.MakeMoveHelper;
 import websocket.commands.UserGameCommand;
+import websocket.messages.ServerMessage;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -30,7 +33,10 @@ public class WebSocketHandler {
 
         switch (type) {
             case CONNECT -> new ConnectCommandHandler().handle(command, session, this);
-            case MAKE_MOVE -> new MakeMoveCommandHandler().handle(command, session, this);
+            case MAKE_MOVE -> {
+                MakeMoveHelper move = gson.fromJson(message, MakeMoveHelper.class);
+                new MakeMoveCommandHandler().handle(move, session, this);
+            }
             case LEAVE -> new LeaveCommandHandler().handle(command, session, this);
             case RESIGN -> new ResignCommandHandler().handle(command, session, this);
             default -> System.out.println("Unhandled command: " + type);
@@ -71,4 +77,6 @@ public class WebSocketHandler {
     public boolean hasConnection(String username) {
         return connections.containsKey(username);
     }
+
+
 }

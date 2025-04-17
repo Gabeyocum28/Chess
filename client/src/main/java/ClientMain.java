@@ -1,15 +1,20 @@
 
+import chess.ChessGame;
 import com.sun.nio.sctp.HandlerResult;
 import com.sun.nio.sctp.Notification;
 import dataaccess.DataAccessException;
+import exceptions.ResponseException;
 import ui.Repl;
+import websocket.messages.ErrorMessage;
+import websocket.messages.LoadGameMessage;
+import websocket.messages.NotificationMessage;
 
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.sql.SQLException;
 
 public class ClientMain {
-    public static void main(String[] args) throws MalformedURLException, URISyntaxException, SQLException, DataAccessException {
+    public static void main(String[] args) throws MalformedURLException, URISyntaxException, SQLException, DataAccessException, ResponseException {
         var serverUrl = "http://localhost:8080";
         if (args.length == 1) {
             serverUrl = args[0];
@@ -20,26 +25,6 @@ public class ClientMain {
             @Override
             public HandlerResult handleNotification(Notification notification, Object attachment) {
                 return null;
-            }
-
-            @Override
-            public void notifyUserGame(websocket.commands.UserNotification notification) {
-                System.out.println(notification);
-            }
-
-            @Override
-            public void notifyLoadGame(websocket.messages.ServerNotification notification) {
-               System.out.println(notification);
-            }
-
-            @Override
-            public void notifyError(websocket.messages.ServerNotification notification) {
-               System.out.println(notification);
-            }
-
-            @Override
-            public void notifyNotification(websocket.messages.ServerNotification notification) {
-                System.out.println(notification);
             }
 
         }.run();

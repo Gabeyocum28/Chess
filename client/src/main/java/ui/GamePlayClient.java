@@ -33,11 +33,12 @@ public class GamePlayClient {
     private ChessPosition checkPosition;
 
     public GamePlayClient(String serverUrl, websocket.NotificationHandler notificationHandler)
-            throws MalformedURLException, URISyntaxException {
+            throws MalformedURLException, URISyntaxException, ResponseException {
         server = new ServerFacade(serverUrl);
         this.serverUrl = serverUrl;
         this.notificationHandler = notificationHandler;
         board = new ChessGame().getBoard();
+        ws = new WebSocketFacade(serverUrl, notificationHandler);
     }
 
     public String eval(String input) {
@@ -97,11 +98,12 @@ public class GamePlayClient {
 
                 new SQLGameDAO().updateBoard(gameData.gameID(), game);
 
-                System.out.println(String.format("Moved from %s to %s", params[0], params[1]));
+                ws = new WebSocketFacade(serverUrl, notificationHandler);
+                ws.move(user, joinRequest, move);
 
                 checkPosition = null;
 
-                return redraw();
+                return String.format("Moved from %s to %s", params[0], params[1]);
             }else{
                 return "You are not Playing";
             }// Re-render the board or return updated info
@@ -166,7 +168,7 @@ public class GamePlayClient {
                 : new String[]{"h", "g", "f", "e", "d", "c", "b", "a"};
 
         // Print column labels
-        board.append(SET_BG_COLOR_DARK_GREY).append(EMPTY);
+        board.append(SET_BG_COLOR_DARK_GREY).append(EMPTY).append(SET_TEXT_COLOR_WHITE);
         for (String col : cols) {
             board.append(" ").append(col).append(" ");
         }
@@ -298,6 +300,11 @@ public class GamePlayClient {
 
     public void getBoard(int gameId) throws SQLException, DataAccessException {
         board = new SQLGameDAO().getGame(gameId).game().getBoard();
+    }
+
+    public void setBoard(ChessGame game){
+        ChessBoard board = game.getBoard();
+        this.board = board;
     }
 
 }

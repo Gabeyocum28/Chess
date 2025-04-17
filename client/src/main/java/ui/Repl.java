@@ -3,6 +3,7 @@ package ui;
 
 
 
+import chess.ChessGame;
 import com.sun.nio.sctp.HandlerResult;
 import dataaccess.DataAccessException;
 import exceptions.ResponseException;
@@ -15,6 +16,9 @@ import java.net.URISyntaxException;
 import java.sql.SQLException;
 import java.util.Scanner;
 import websocket.NotificationHandler;
+import websocket.messages.ErrorMessage;
+import websocket.messages.LoadGameMessage;
+import websocket.messages.NotificationMessage;
 
 import static ui.EscapeSequences.*;
 
@@ -25,7 +29,7 @@ public abstract class Repl implements NotificationHandler {
     private final GamePlayClient gamePlayClient;
     private String state;
 
-    public Repl(String serverUrl) throws MalformedURLException, URISyntaxException {
+    public Repl(String serverUrl) throws MalformedURLException, URISyntaxException, ResponseException {
         preLoginClient = new PreLoginClient(serverUrl);
         postLoginClient = new PostLoginClient(serverUrl,  this);
         gamePlayClient = new GamePlayClient(serverUrl,  this);
@@ -96,12 +100,7 @@ public abstract class Repl implements NotificationHandler {
         gamePlayClient.setJoinRequest(joinRequest);
         gamePlayClient.setUserData(user);
         gamePlayClient.getBoard(joinRequest.gameID());
-        try {
-            System.out.print(gamePlayClient.redraw());
-        } catch (ResponseException e) {
-            throw new RuntimeException(e);
-        }
-        System.out.print(SET_TEXT_COLOR_BLUE + gamePlayClient.help());
+
 
         Scanner scanner = new Scanner(System.in);
         var result = "";
@@ -128,4 +127,30 @@ public abstract class Repl implements NotificationHandler {
     }
 
     public abstract HandlerResult handleNotification(com.sun.nio.sctp.Notification notification, Object attachment);
+
+    @Override
+    public void notifyLoadGame(LoadGameMessage notification) {
+        ChessGame game = notification.getGame();
+        gamePlayClient.setBoard(game);
+        try {
+            System.out.println("\n" + gamePlayClient.redraw());
+        } catch (ResponseException e) {
+            throw new RuntimeException(e);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+        printPrompt();
+    }
+
+    @Override
+    public void notifyError(ErrorMessage notification) {
+        System.out.println("\n" + notification.getMessage() + "\n");
+    }
+
+    @Override
+    public void notifyNotification(NotificationMessage notification) {
+        System.out.println("\n" + notification.getMessage() + "\n");
+    }
 }

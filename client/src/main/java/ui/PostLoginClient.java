@@ -109,6 +109,9 @@ public class PostLoginClient {
                 return "Game does not exist\n";
             }
 
+            ws = new WebSocketFacade(serverUrl, notificationHandler);
+            ws.enterGame(user, joinRequest);
+
             return String.format("observing game %s", params[0]);
         }
         throw new ResponseException(400, "Expected: <ID>");
