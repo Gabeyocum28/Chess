@@ -21,10 +21,12 @@ import java.sql.SQLException;
 public class ConnectCommandHandler {
     public void handle(UserGameCommand command, Session session, WebSocketHandler webSocketHandler) throws SQLException, DataAccessException, IOException {
         String authToken = command.getAuthToken();
-        webSocketHandler.add(authToken, session);
-        Connection connection = webSocketHandler.getConnection(authToken);
+        int gameId = command.getGameID();
+        webSocketHandler.add(gameId, authToken, session);
+
 
         try {
+            Connection connection = webSocketHandler.getConnection(gameId, authToken);
             String username = new SQLAuthDAO().getAuth(command.getAuthToken()).username();
             var gameData = new SQLGameDAO().getGame(command.getGameID());
             var game = gameData.game();
@@ -45,13 +47,13 @@ public class ConnectCommandHandler {
 
             NotificationMessage notification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, roleMessage);
             String notiGson = new Gson().toJson(notification);
-            webSocketHandler.broadcast(authToken, notiGson);
+            webSocketHandler.broadcast(gameId, authToken, notiGson);
 
         }catch(NullPointerException e){
 
             ErrorMessage errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, "The GameID Does Not Exist");
             String jsonMessage = new Gson().toJson(errorMessage);
-            connection.send(jsonMessage);
+            session.getRemote().sendString(jsonMessage);
         }
 
     }

@@ -1,6 +1,5 @@
 package server.WebSocket;
 
-import chess.ChessMove;
 import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import org.eclipse.jetty.websocket.api.Session;
@@ -9,16 +8,17 @@ import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import websocket.commands.MakeMoveHelper;
 import websocket.commands.UserGameCommand;
-import websocket.messages.ServerMessage;
 
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @WebSocket
 public class WebSocketHandler {
-    private final ConcurrentHashMap<String, Connection> connections = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Integer, ConcurrentHashMap<String, Connection>> connections = new ConcurrentHashMap<>();
     private final Gson gson = new Gson();
 
     @OnWebSocketConnect
@@ -44,41 +44,61 @@ public class WebSocketHandler {
     }
 
     // Connection management
-    public void add(String username, Session session) {
-        Connection connection = new Connection(username, session);
-        System.out.println("session: " + session);
-        connections.put(username, connection);
+    public void add(int gameId, String authToken, Session session) {
+        Connection connection = new Connection(authToken, session);
+        ConcurrentHashMap<String, Connection> users = new ConcurrentHashMap<>();
+        if(connections.containsKey(gameId)){
+            users = connections.get(gameId);
+            if(!users.containsKey(authToken)){
+                users.put(authToken, connection);
+                connections.replace(gameId, users);
+            }
+        }else{
+            users.put(authToken, connection);
+            connections.put(gameId, users);
+        }
     }
 
-    public void remove(String username) {
-        connections.remove(username);
+    public void remove(int gameId, String authToken) {
+        ConcurrentHashMap<String, Connection> users = connections.get(gameId);
+        users.remove(authToken);
+        connections.replace(gameId, users);
     }
 
 
 
-    public void broadcast(String excludeUsername, String notification) throws IOException {
-        var removeList = new ArrayList<Connection>();
-        for (Connection c : connections.values()) {
-            if (c.session.isOpen()) {
-                if (!c.username.equals(excludeUsername)) {
-                    c.send(notification);
+    public void broadcast(int gameId, String excludeAuthToken, String notification) throws IOException {
+        ConcurrentHashMap<String, Connection> users = connections.get(gameId);
+        if (users == null) return;
+
+        List<Connection> removeList = new ArrayList<>();
+
+        for (Map.Entry<String, Connection> entry : users.entrySet()) {
+            String username = entry.getKey();
+            Connection connection = entry.getValue();
+
+            if (!username.equals(excludeAuthToken)) {
+                if (connection.session.isOpen()) {
+                    connection.send(notification);
+                } else {
+                    removeList.add(connection);
                 }
-            } else {
-                removeList.add(c);
             }
         }
 
+        // Remove any closed connections
         for (Connection c : removeList) {
-            connections.remove(c.username);
+            users.remove(c.username); // assumes Connection has a 'username' field
         }
+
     }
 
-    public Connection getConnection(String username) {
-        return connections.get(username);
+    public Connection getConnection(int gameId, String authToken) {
+        return connections.get(gameId).get(authToken);
     }
 
-    public boolean hasConnection(String username) {
-        return connections.containsKey(username);
+    public boolean hasConnection(int gameId, String username) {
+        return connections.get(gameId).containsKey(username);
     }
 
 

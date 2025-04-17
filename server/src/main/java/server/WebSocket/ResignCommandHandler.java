@@ -19,10 +19,12 @@ import java.util.Objects;
 
 public class ResignCommandHandler {
     public void handle(UserGameCommand command, Session session, WebSocketHandler webSocketHandler) throws SQLException, DataAccessException, IOException {
-        String username = new SQLAuthDAO().getAuth(command.getAuthToken()).username();
-        Connection connection = webSocketHandler.getConnection(username);
+        String authToken = command.getAuthToken();
+        int gameId = command.getGameID();
+        Connection connection = webSocketHandler.getConnection(gameId, authToken);
 
         try {
+            String username = new SQLAuthDAO().getAuth(command.getAuthToken()).username();
             var gameData = new SQLGameDAO().getGame(command.getGameID());
             var game = gameData.game();
 
@@ -39,7 +41,7 @@ public class ResignCommandHandler {
             String message = String.format("%s has resigned", username);
             NotificationMessage notificationMessage = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
             String jsonMessage = new Gson().toJson(notificationMessage);
-            webSocketHandler.broadcast(username, jsonMessage);
+            webSocketHandler.broadcast(gameId, "", jsonMessage);
         }catch(ObserverException e){
             ErrorMessage errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, "You are an Observer");
             String jsonMessage = new Gson().toJson(errorMessage);

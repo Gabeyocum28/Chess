@@ -22,7 +22,8 @@ import java.util.Objects;
 public class MakeMoveCommandHandler {
     public void handle(MakeMoveHelper command, Session session, WebSocketHandler webSocketHandler) throws SQLException, DataAccessException, IOException {
         String authToken = command.getAuthToken();
-        Connection connection = webSocketHandler.getConnection(authToken);
+        int gameId = command.getGameID();
+        Connection connection = webSocketHandler.getConnection(gameId, authToken);
 
 
         try {
@@ -70,13 +71,13 @@ public class MakeMoveCommandHandler {
             String move = String.format("%s moved from %s to %s", username, fromPosition, toPosition);
             NotificationMessage notificationMessage = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, move);
             String jsonMessage2 = new Gson().toJson(notificationMessage);
-            webSocketHandler.broadcast(authToken, jsonMessage2);
+            webSocketHandler.broadcast(gameId, authToken, jsonMessage2);
 
 
             LoadGameMessage loadGameMessage = new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME, game);
             String jsonMessage1 = new Gson().toJson(loadGameMessage);
             connection.send(jsonMessage1);
-            webSocketHandler.broadcast(authToken, jsonMessage1);
+            webSocketHandler.broadcast(gameId, authToken, jsonMessage1);
         } catch(GameOverException e){
             ErrorMessage errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, "The game is over");
             String jsonMessage = new Gson().toJson(errorMessage);
