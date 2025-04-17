@@ -77,36 +77,10 @@ public class GamePlayClient {
             ChessPosition toPosition = new ChessPosition(toRow, toColumn);
             ChessMove move = new ChessMove(fromPosition, toPosition, null);
 
-            GameData gameData = new SQLGameDAO().getGame(joinRequest.gameID()); // currentGameId is tracked somewhere
+            ws = new WebSocketFacade(serverUrl, notificationHandler);
+            ws.move(user, joinRequest, move);
 
-
-
-            if(Objects.equals(user.username(), gameData.blackUsername()) || Objects.equals(user.username(), gameData.whiteUsername())) {
-                ChessGame game = gameData.game();
-                if(game.getTeamTurn() == ChessGame.TeamColor.WHITE && Objects.equals(user.username(), gameData.blackUsername())){
-                    return "It is not your turn";
-                } else if(game.getTeamTurn() == ChessGame.TeamColor.BLACK && Objects.equals(user.username(), gameData.whiteUsername())) {
-                    return "It is not your turn";
-                }
-                try {
-                    game.makeMove(move);
-                }catch(Exception e){
-                    System.out.println("\nNot a valid Move!\n" +
-                            "To see valid moves use the highlight command to see a pieces valid moves\n");
-                    return redraw();
-                }
-
-                new SQLGameDAO().updateBoard(gameData.gameID(), game);
-
-                ws = new WebSocketFacade(serverUrl, notificationHandler);
-                ws.move(user, joinRequest, move);
-
-                checkPosition = null;
-
-                return String.format("Moved from %s to %s", params[0], params[1]);
-            }else{
-                return "You are not Playing";
-            }// Re-render the board or return updated info
+            return "";
         }
         throw new ResponseException(400, "Expected: <FROM> <TO>");
     }
@@ -141,10 +115,15 @@ public class GamePlayClient {
 
     public String leave() throws ResponseException {
 
+        ws = new WebSocketFacade(serverUrl, notificationHandler);
+        ws.leave(user, joinRequest);
+
         return "You have left the Game";
     }
 
     public String resign()throws ResponseException{
+        ws = new WebSocketFacade(serverUrl, notificationHandler);
+        ws.resign(user, joinRequest);
         return "";
     }
 
@@ -281,6 +260,7 @@ public class GamePlayClient {
         board.append(EMPTY).append(RESET_BG_COLOR).append("\n\n");
 
         validMoves = new ArrayList<>();
+        checkPosition = null;
 
         return board.toString();
     }

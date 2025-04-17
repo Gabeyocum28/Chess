@@ -147,10 +147,12 @@ public abstract class Repl implements NotificationHandler {
     @Override
     public void notifyError(ErrorMessage notification) {
         System.out.println("\n" + notification.getErrorMessage() + "\n");
+        printPrompt();
     }
 
     @Override
     public void notifyNotification(NotificationMessage notification) {
         System.out.println("\n" + notification.getMessage() + "\n");
+        printPrompt();
     }
 }
