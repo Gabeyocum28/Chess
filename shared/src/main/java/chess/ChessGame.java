@@ -22,6 +22,7 @@ public class ChessGame {
     private ChessPosition myKing;
     private ChessBoard copyBoard;
     private ChessBoard masterBoard;
+    private Boolean Done = false;
 
     public ChessGame() {
         board = new ChessBoard();
@@ -201,6 +202,7 @@ public class ChessGame {
         if(isInCheck(teamColor)) {
             Collection<ChessMove> validMoves = validMovesCheck(teamColor);
             if (validMoves.isEmpty()) {
+                done();
                 return true;
             }
         }
@@ -218,6 +220,7 @@ public class ChessGame {
         if(!isInCheck(teamColor)){
             Collection<ChessMove> validMoves = validMovesCheck(teamColor);
             if (validMoves.isEmpty()) {
+                done();
                 return true;
             }
         }
@@ -259,6 +262,14 @@ public class ChessGame {
      */
     public ChessBoard getBoard() {
         return board;
+    }
+
+    public void done(){
+        Done = true;
+    }
+
+    public boolean getStatus(){
+        return Done;
     }
 
     @Override

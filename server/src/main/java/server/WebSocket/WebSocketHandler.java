@@ -46,12 +46,15 @@ public class WebSocketHandler {
     // Connection management
     public void add(String username, Session session) {
         Connection connection = new Connection(username, session);
+        System.out.println("session: " + session);
         connections.put(username, connection);
     }
 
     public void remove(String username) {
         connections.remove(username);
     }
+
+
 
     public void broadcast(String excludeUsername, String notification) throws IOException {
         var removeList = new ArrayList<Connection>();

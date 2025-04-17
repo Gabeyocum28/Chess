@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import dataaccess.SQLAuthDAO;
 import dataaccess.SQLGameDAO;
+import exceptions.GameOverException;
 import org.eclipse.jetty.websocket.api.Session;
 import websocket.commands.MakeMoveHelper;
 import websocket.messages.ErrorMessage;
@@ -33,6 +34,9 @@ public class MakeMoveCommandHandler {
             String username = new SQLAuthDAO().getAuth(command.getAuthToken()).username();
             var gameData = new SQLGameDAO().getGame(command.getGameID());
             var game = gameData.game();
+            if(game.getStatus()){
+                throw new GameOverException("The game is over");
+            }
 
             if(game.getTeamTurn() == ChessGame.TeamColor.WHITE && Objects.equals(username, gameData.blackUsername())){
                 DataAccessException Exception = null;
@@ -73,7 +77,11 @@ public class MakeMoveCommandHandler {
             String jsonMessage1 = new Gson().toJson(loadGameMessage);
             connection.send(jsonMessage1);
             webSocketHandler.broadcast(authToken, jsonMessage1);
-        }catch(Exception e){
+        } catch(GameOverException e){
+            ErrorMessage errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, "The game is over");
+            String jsonMessage = new Gson().toJson(errorMessage);
+            connection.send(jsonMessage);
+        } catch(Exception e){
             ErrorMessage errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, "Invalid move");
             String jsonMessage = new Gson().toJson(errorMessage);
             connection.send(jsonMessage);

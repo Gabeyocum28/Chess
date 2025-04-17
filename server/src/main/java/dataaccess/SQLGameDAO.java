@@ -5,6 +5,7 @@ import chess.ChessGame;
 import com.google.gson.Gson;
 import exceptions.AlreadyTakenException;
 import exceptions.BadRequestException;
+import exceptions.ObserverException;
 import model.AuthData;
 import model.GameData;
 import model.GameList;
@@ -156,6 +157,27 @@ public class SQLGameDAO implements GameDAO{
             stmt.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException("Failed to update game", e);
+        }
+    }
+
+    public void updatePlayers(int gameId, String username) {
+
+        if(Objects.equals(getGame(gameId).whiteUsername(), username)) {
+            try (var stmt = conn.prepareStatement("UPDATE GameData SET whiteUsername = ? WHERE gameId = ?")) {
+                stmt.setString(1, null);
+                stmt.setInt(2, gameId);
+                stmt.executeUpdate();
+            } catch (SQLException e) {
+                throw new RuntimeException("Failed to update game", e);
+            }
+        }else if(Objects.equals(getGame(gameId).blackUsername(), username)){
+            try (var stmt = conn.prepareStatement("UPDATE GameData SET blackUsername = ? WHERE gameId = ?")) {
+                stmt.setString(1, null);
+                stmt.setInt(2, gameId);
+                stmt.executeUpdate();
+            } catch (SQLException e) {
+                throw new RuntimeException("Failed to update game", e);
+            }
         }
     }
 
