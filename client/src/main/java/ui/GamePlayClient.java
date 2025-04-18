@@ -62,16 +62,31 @@ public class GamePlayClient {
     }
 
     public String move(String... params) throws ResponseException, InvalidMoveException, SQLException, DataAccessException {
-        if (params.length >= 2) {
+        if (params.length == 2) {
+
             char fromFile = params[0].charAt(0);
             char fromRank = params[0].charAt(1);
+            if(Character.isDigit(fromFile) || !Character.isDigit(fromRank)){
+                return "your move input must follow file/rank order, ex:move e2 e4\n";
+            }
+
             int fromColumn = (fromFile - 'a') + 1;
             int fromRow = ((fromRank - '0'));
+            if(fromColumn >= 9 || fromColumn < 1 || fromRow >= 9 || fromRow < 1){
+                return "That spot does not exist\n";
+            }
 
             char toFile = params[1].charAt(0);
             char toRank = params[1].charAt(1);
+            if(Character.isDigit(toFile) || !Character.isDigit(toRank)){
+                return "your move input must follow file/rank order, ex:move e2 e4\n";
+            }
+
             int toColumn = (toFile - 'a') + 1;
             int toRow = ((toRank - '0'));
+            if(toColumn >= 9 || toColumn < 1 || toRow >= 9 || toRow < 1){
+                return "That spot does not exist\n";
+            }
 
             ChessPosition fromPosition = new ChessPosition(fromRow, fromColumn);
             ChessPosition toPosition = new ChessPosition(toRow, toColumn);
@@ -82,19 +97,26 @@ public class GamePlayClient {
 
             return "";
         }
-        throw new ResponseException(400, "Expected: <FROM> <TO>");
+        throw new ResponseException(400, "Expected 2 inputs\nEx:move <FROM> <TO>");
     }
 
     public String highlight(String... params) throws ResponseException, SQLException, DataAccessException {
-        if (params.length >= 1) {
+        if (params.length == 1) {
             GameData gameData = new SQLGameDAO().getGame(joinRequest.gameID());
             ChessGame game = gameData.game();
 
             char file = params[0].charAt(0);
             char rank = params[0].charAt(1);
+            if(Character.isDigit(file) || !Character.isDigit(rank)){
+                return "your highlight input must follow file/rank order, ex:highlight e2\n";
+            }
 
             int column = (file - 'a') + 1;
             int row = ((rank - '0'));
+
+            if(column >= 9 || column < 1 || row >= 9 || row < 1){
+                return "That spot does not exist\n";
+            }
 
             checkPosition = new ChessPosition(row, column);
             validMoves = game.validMoves(checkPosition);
@@ -102,7 +124,7 @@ public class GamePlayClient {
 
             return redraw();
         }
-        throw new ResponseException(400, "Expected: <FROM>");
+        throw new ResponseException(400, "Expected 1 input\nEx:highlight <FROM>");
     }
 
     public String redraw() throws ResponseException, SQLException, DataAccessException {
@@ -129,7 +151,8 @@ public class GamePlayClient {
 
     public String help() {
 
-        return """
+        return SET_TEXT_COLOR_BLUE +
+                """
                 - "move" <FROM> <TO> - makes a move
                 - "highlight" <FROM> - checks the moves
                 - "redraw" - redraws the board

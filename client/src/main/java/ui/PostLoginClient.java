@@ -14,6 +14,8 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.util.*;
 
+import static ui.EscapeSequences.SET_TEXT_COLOR_BLUE;
+
 public class PostLoginClient {
     private final ServerFacade server;
     private final String serverUrl;
@@ -41,7 +43,6 @@ public class PostLoginClient {
                 case "join" -> join(params);
                 case "observe" -> observe(params);
                 case "logout" -> logout();
-                case "quit" -> "quit";
                 default -> help();
             };
         } catch (ResponseException ex) {
@@ -50,12 +51,12 @@ public class PostLoginClient {
     }
 
     public String create(String... params) throws ResponseException {
-        if (params.length >= 1) {
+        if (params.length == 1) {
             GameData game = new GameData(0, null, null, params[0], null);
             server.createGame(user.authToken(), game);
             return String.format("game created %s", params[0]);
         }
-        throw new ResponseException(400, "Expected: <NAME>");
+        throw new ResponseException(400, "Expected 1 input\nEx:create <NAME(no spaces)>");
     }
 
     public String list() throws ResponseException {
@@ -71,14 +72,23 @@ public class PostLoginClient {
     }
 
     public String join(String... params) throws ResponseException {
-        if (params.length >= 2) {
+        if (params.length == 2) {
 
             if(gameMap == null){
                 gameListCreation();
             }
+            int id;
             try {
-                int id = Integer.parseInt(params[0]);
+                id = Integer.parseInt(params[0]);
+            } catch (NumberFormatException e) {
+                return "Game id must be a number";
+            }
+
+            try {
                 joinRequest = new JoinRequest(params[1], gameMap.get(id).gameID());
+                if(!Objects.equals(joinRequest.playerColor(), "white") && !Objects.equals(joinRequest.playerColor(), "black")){
+                    return "The only possible colors are white or black\n";
+                }
                 new ChessGame().setBoard(gameMap.get(id).game().getBoard());
             }catch (Exception e){
                 return "Game does not exist\n";
@@ -94,11 +104,11 @@ public class PostLoginClient {
 
             return String.format("joined game as %s", params[1]);
         }
-        throw new ResponseException(400, "Expected: <ID> [WHITE/BLACK]");
+        throw new ResponseException(400, "Expected 2 inputs\nEx:join <ID> [white/black]");
     }
 
     public String observe(String... params) throws ResponseException {
-        if (params.length >= 1) {
+        if (params.length == 1) {
             gameListCreation();
             try {
                 int id = Integer.parseInt(params[0]);
@@ -114,7 +124,7 @@ public class PostLoginClient {
 
             return String.format("observing game %s", params[0]);
         }
-        throw new ResponseException(400, "Expected: <ID>");
+        throw new ResponseException(400, "Expected 1 input\nEx:observe <ID>");
     }
 
     public String logout() throws ResponseException {
@@ -123,18 +133,18 @@ public class PostLoginClient {
         }catch(Exception e){
             return "Not Authorized";
         }
-        return "quit";
+        return "You have logged out";
     }
 
     public String help() {
 
-        return """
-                - "create" <NAME> - a game
-                - "list" - games
-                - "join" <ID> [WHITE/BLACK] - a game
-                - "observe" <ID> - a game
-                - "logout" - when you are done
-                - "quit" - playing chess
+        return SET_TEXT_COLOR_BLUE +
+                """
+                - "create" <NAME> - creates a game
+                - "list" - lists all games
+                - "join" <ID> [white/black] - joins a game
+                - "observe" <ID> - observes a game
+                - "logout" - logs out of the application
                 _ "help" - display possible actions
                 """;
 

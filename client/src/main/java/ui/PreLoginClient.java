@@ -39,7 +39,7 @@ public class PreLoginClient {
     }
 
     public String register(String... params) throws ResponseException {
-        if (params.length >= 3) {
+        if (params.length == 3) {
             UserData request = new UserData(params[0], params[1], params[2]);
             try {
                 user = server.register(request);
@@ -50,11 +50,11 @@ public class PreLoginClient {
 
             return String.format("logged in as %s" + "\n", params[0]);
         }
-        throw new ResponseException(400, "Expected: <USERNAME> <PASSWORD> <EMAIL>");
+        throw new ResponseException(400, "Expected 3 inputs\nEx:register <USERNAME> <PASSWORD> <EMAIL>");
     }
 
     public String login(String... params) throws ResponseException {
-        if (params.length >= 2) {
+        if (params.length == 2) {
             Login request = new Login(params[0], params[1]);
             try{
                 user = server.login(request);
@@ -65,7 +65,7 @@ public class PreLoginClient {
             return String.format("logged in as %s" + "\n", params[0]);
 
         }
-        throw new ResponseException(400, "Expected: <USERNAME> <PASSWORD>");
+        throw new ResponseException(400, "Expected 2 inputs\nEx:login <USERNAME> <PASSWORD>");
     }
 
     public String help() {
