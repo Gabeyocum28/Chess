@@ -2,11 +2,13 @@ package server.websocket;
 
 import chess.ChessGame;
 import com.google.gson.Gson;
+import dataaccess.DataAccessException;
 import dataaccess.SQLAuthDAO;
 import dataaccess.SQLGameDAO;
 import exceptions.GameOverException;
 import exceptions.ObserverException;
 import exceptions.WrongTurnException;
+import model.GameData;
 import org.eclipse.jetty.websocket.api.Session;
 import websocket.commands.MakeMoveHelper;
 import websocket.messages.ErrorMessage;
@@ -15,6 +17,7 @@ import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Objects;
 
 public class MakeMoveCommandHandler {
@@ -70,38 +73,12 @@ public class MakeMoveCommandHandler {
             String jsonMessage2 = new Gson().toJson(notificationMessage);
             webSocketHandler.broadcast(gameId, authToken, jsonMessage2);
 
-            if(game.isInCheckmate(game.getTeamTurn())){
-                String checkmate = String.format("%s is in chackmate\n%s has Won!", game.getTeamTurn(), myTeam);
-                NotificationMessage checkmateMessage = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION,
-                        checkmate);
-                String checkmatejsonMessage = new Gson().toJson(checkmateMessage);
-                webSocketHandler.broadcast(gameId, "", checkmatejsonMessage);
-                game.done();
-                new SQLGameDAO().updateBoard(gameData.gameID(), game);
-            }else if(game.isInCheck(game.getTeamTurn())){
-                String check = String.format("%s is in chack", game.getTeamTurn(), myTeam);
-                NotificationMessage checkMessage = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION,
-                        check);
-                String checkjsonMessage = new Gson().toJson(checkMessage);
-                webSocketHandler.broadcast(gameId, "", checkjsonMessage);
-            }else if(game.isInStalemate(game.getTeamTurn())){
-                String stalemate = "Stalemate!\nGame Over!";
-                NotificationMessage stalemateMessage = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION,
-                        stalemate);
-                String stalematejsonMessage = new Gson().toJson(stalemateMessage);
-                webSocketHandler.broadcast(gameId, "", stalematejsonMessage);
-                game.done();
-                new SQLGameDAO().updateBoard(gameData.gameID(), game);
-            }
-
-
-
+            afterMoveStatus(webSocketHandler, game, myTeam, gameId, gameData);
 
             LoadGameMessage loadGameMessage = new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME, game);
             String jsonMessage1 = new Gson().toJson(loadGameMessage);
             connection.send(jsonMessage1);
             webSocketHandler.broadcast(gameId, authToken, jsonMessage1);
-
 
         } catch(GameOverException e){
             ErrorMessage errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR,
@@ -125,5 +102,31 @@ public class MakeMoveCommandHandler {
             connection.send(jsonMessage);
         }
 
+    }
+
+    private static void afterMoveStatus(WebSocketHandler webSocketHandler, ChessGame game, String myTeam, int gameId, GameData gameData) throws IOException, SQLException, DataAccessException {
+        if(game.isInCheckmate(game.getTeamTurn())){
+            String checkmate = String.format("%s is in chackmate\n%s has Won!", game.getTeamTurn(), myTeam);
+            NotificationMessage checkmateMessage = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION,
+                    checkmate);
+            String checkmatejsonMessage = new Gson().toJson(checkmateMessage);
+            webSocketHandler.broadcast(gameId, "", checkmatejsonMessage);
+            game.done();
+            new SQLGameDAO().updateBoard(gameData.gameID(), game);
+        }else if(game.isInCheck(game.getTeamTurn())){
+            String check = String.format("%s is in chack", game.getTeamTurn(), myTeam);
+            NotificationMessage checkMessage = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION,
+                    check);
+            String checkjsonMessage = new Gson().toJson(checkMessage);
+            webSocketHandler.broadcast(gameId, "", checkjsonMessage);
+        }else if(game.isInStalemate(game.getTeamTurn())){
+            String stalemate = "Stalemate!\nGame Over!";
+            NotificationMessage stalemateMessage = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION,
+                    stalemate);
+            String stalematejsonMessage = new Gson().toJson(stalemateMessage);
+            webSocketHandler.broadcast(gameId, "", stalematejsonMessage);
+            game.done();
+            new SQLGameDAO().updateBoard(gameData.gameID(), game);
+        }
     }
 }
