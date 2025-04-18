@@ -12,7 +12,6 @@ import websocket.messages.ErrorMessage;
 import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
 
-
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Objects;

@@ -1,7 +1,9 @@
 package dataaccess;
 
 import exceptions.SQLException;
-import model.*;
+import model.AuthData;
+import model.GameData;
+import model.JoinRequest;
 
 import java.util.Collection;
 

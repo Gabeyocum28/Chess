@@ -5,13 +5,9 @@ import exceptions.AlreadyTakenException;
 import exceptions.BadRequestException;
 import exceptions.UnauthorizedException;
 import model.JoinRequest;
-import model.Login;
 import service.JoinGameService;
-import service.ListGamesService;
 import spark.Request;
 import spark.Response;
-
-import java.util.Map;
 
 public class JoinGameHandler {
     public static String joinGame(Request request, Response response){

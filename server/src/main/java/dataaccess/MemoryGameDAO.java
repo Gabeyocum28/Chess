@@ -1,7 +1,10 @@
 package dataaccess;
 
 import exceptions.AlreadyTakenException;
-import model.*;
+import model.AuthData;
+import model.GameData;
+import model.GameList;
+import model.JoinRequest;
 
 import java.util.Collection;
 import java.util.HashMap;

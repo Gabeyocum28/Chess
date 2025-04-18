@@ -1,6 +1,9 @@
 package service;
 
-import dataaccess.*;
+import dataaccess.DataAccessException;
+import dataaccess.SQLAuthDAO;
+import dataaccess.SQLGameDAO;
+import dataaccess.SQLUserDAO;
 
 import java.sql.SQLException;
 

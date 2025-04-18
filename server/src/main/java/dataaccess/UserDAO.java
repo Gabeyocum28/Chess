@@ -1,7 +1,6 @@
 package dataaccess;
 
 import exceptions.SQLException;
-import model.AuthData;
 import model.UserData;
 
 public interface UserDAO {

@@ -2,11 +2,7 @@ package server;
 
 import com.google.gson.Gson;
 import exceptions.UnauthorizedException;
-import model.AuthData;
-import model.Login;
 import service.ListGamesService;
-import service.LoginService;
-import service.LogoutService;
 import spark.Request;
 import spark.Response;
 

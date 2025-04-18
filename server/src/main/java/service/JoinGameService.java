@@ -8,9 +8,7 @@ import exceptions.UnauthorizedException;
 import model.AuthData;
 import model.JoinRequest;
 
-
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Objects;
 
 public class JoinGameService {

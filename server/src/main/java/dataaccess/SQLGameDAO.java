@@ -1,21 +1,22 @@
 package dataaccess;
 
-import chess.ChessBoard;
 import chess.ChessGame;
 import com.google.gson.Gson;
 import exceptions.AlreadyTakenException;
 import exceptions.BadRequestException;
-import exceptions.ObserverException;
 import model.AuthData;
 import model.GameData;
-import model.GameList;
 import model.JoinRequest;
+
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Objects;
+import java.util.Properties;
 
 import static dataaccess.DatabaseManager.getConnection;
 import static java.sql.Statement.RETURN_GENERATED_KEYS;

@@ -9,7 +9,6 @@ import websocket.commands.UserGameCommand;
 import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
 
-
 import java.io.IOException;
 import java.sql.SQLException;
 
