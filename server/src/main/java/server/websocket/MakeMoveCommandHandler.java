@@ -2,7 +2,6 @@ package server.websocket;
 
 import chess.ChessGame;
 import com.google.gson.Gson;
-import dataaccess.DataAccessException;
 import dataaccess.SQLAuthDAO;
 import dataaccess.SQLGameDAO;
 import exceptions.GameOverException;
@@ -16,12 +15,10 @@ import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
 
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.Objects;
 
 public class MakeMoveCommandHandler {
-    public void handle(MakeMoveHelper command, Session session, WebSocketHandler webSocketHandler) throws SQLException,
-            DataAccessException, IOException {
+    public void handle(MakeMoveHelper command, Session session, WebSocketHandler webSocketHandler) throws IOException {
         String authToken = command.getAuthToken();
         int gameId = command.getGameID();
         Connection connection = webSocketHandler.getConnection(gameId, authToken);

@@ -178,25 +178,7 @@ public class GamePlayClient {
 
             for (int j = 1; j <= 8; j++) {
                 int col = isWhite ? j : 9 - j;
-                String bgColor = ((row + col) % 2 == 1) ? SET_BG_COLOR_LIGHT_GREY : SET_BG_COLOR_GREY;
-                if(validMoves != null) {
-                    for (ChessMove move : validMoves) {
-                        if (move.getEndPosition().getRow() == row && move.getEndPosition().getColumn() == col) {
-                            bgColor = ((row + col) % 2 == 1) ? SET_BG_COLOR_GREEN : SET_BG_COLOR_DARK_GREEN;
-                            break;
-                        }else {
-                            bgColor = ((row + col) % 2 == 1) ? SET_BG_COLOR_LIGHT_GREY : SET_BG_COLOR_GREY;
-                        }
-                    }
-                }else{
-                    bgColor = ((row + col) % 2 == 1) ? SET_BG_COLOR_LIGHT_GREY : SET_BG_COLOR_GREY;
-                }
-
-                if (checkPosition != null && checkPosition.getRow() == row && checkPosition.getColumn() == col) {
-                    bgColor = SET_BG_COLOR_YELLOW;
-                }
-
-
+                String bgColor = getBgColor(row, col);
                 ChessPiece piece = getPiece(row, col);
                 getPieceType(board, piece, bgColor);
 
@@ -219,6 +201,27 @@ public class GamePlayClient {
         checkPosition = null;
 
         return board.toString();
+    }
+
+    private String getBgColor(int row, int col) {
+        String bgColor = ((row + col) % 2 == 1) ? SET_BG_COLOR_LIGHT_GREY : SET_BG_COLOR_GREY;
+        if(validMoves != null) {
+            for (ChessMove move : validMoves) {
+                if (move.getEndPosition().getRow() == row && move.getEndPosition().getColumn() == col) {
+                    bgColor = ((row + col) % 2 == 1) ? SET_BG_COLOR_GREEN : SET_BG_COLOR_DARK_GREEN;
+                    break;
+                }else {
+                    bgColor = ((row + col) % 2 == 1) ? SET_BG_COLOR_LIGHT_GREY : SET_BG_COLOR_GREY;
+                }
+            }
+        }else{
+            bgColor = ((row + col) % 2 == 1) ? SET_BG_COLOR_LIGHT_GREY : SET_BG_COLOR_GREY;
+        }
+
+        if (checkPosition != null && checkPosition.getRow() == row && checkPosition.getColumn() == col) {
+            bgColor = SET_BG_COLOR_YELLOW;
+        }
+        return bgColor;
     }
 
     private ChessPiece getPiece(int row, int col) {
@@ -262,6 +265,7 @@ public class GamePlayClient {
 
         }else{board.append(bgColor).append(EMPTY);}
     }
+
 
 
 }
