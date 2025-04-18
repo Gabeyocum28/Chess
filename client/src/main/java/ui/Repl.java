@@ -53,8 +53,7 @@ public abstract class Repl implements NotificationHandler {
 
             try {
                 result = preLoginClient.eval(line);
-                System.out.println();
-                System.out.print(result);
+                System.out.print("\n" + SET_TEXT_COLOR_GREEN + result + "\n");
 
             } catch (Throwable e) {
                 var msg = e.toString();
@@ -75,14 +74,14 @@ public abstract class Repl implements NotificationHandler {
 
         Scanner scanner = new Scanner(System.in);
         var result = "";
-        while (!result.equals("quit")) {
+        while (!result.equals("You have logged out")) {
             state = "[LOGGED_IN]";
             printPrompt();
             String line = scanner.nextLine();
 
             try {
                 result = postLoginClient.eval(line);
-                System.out.print(SET_TEXT_COLOR_WHITE + result);
+                System.out.print("\n" + SET_TEXT_COLOR_GREEN + result + "\n");
             } catch (Throwable e) {
                 var msg = e.toString();
                 System.out.print(msg);
@@ -111,7 +110,7 @@ public abstract class Repl implements NotificationHandler {
 
             try {
                 result = gamePlayClient.eval(line);
-                System.out.print(SET_TEXT_COLOR_WHITE + result);
+                System.out.print("\n" + SET_TEXT_COLOR_GREEN + result + "\n");
             } catch (Throwable e) {
                 var msg = e.toString();
                 System.out.print(msg);
@@ -133,7 +132,7 @@ public abstract class Repl implements NotificationHandler {
         ChessGame game = notification.getGame();
         gamePlayClient.setBoard(game);
         try {
-            System.out.println("\n" + gamePlayClient.redraw());
+            System.out.println("\n\n" + gamePlayClient.redraw());
         } catch (ResponseException e) {
             throw new RuntimeException(e);
         } catch (SQLException e) {
@@ -146,13 +145,13 @@ public abstract class Repl implements NotificationHandler {
 
     @Override
     public void notifyError(ErrorMessage notification) {
-        System.out.println("\n" + notification.getErrorMessage() + "\n");
+        System.out.println("\n\n" + notification.getErrorMessage() + "\n");
         printPrompt();
     }
 
     @Override
     public void notifyNotification(NotificationMessage notification) {
-        System.out.println("\n" + notification.getMessage() + "\n");
+        System.out.println("\n\n" + notification.getMessage() + "\n");
         printPrompt();
     }
 }

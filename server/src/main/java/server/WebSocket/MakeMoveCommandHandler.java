@@ -55,7 +55,6 @@ public class MakeMoveCommandHandler {
 
             new SQLGameDAO().updateBoard(gameData.gameID(), game);
 
-
             int fromColumn = command.getMove().getStartPosition().getColumn();
             int fromRow = command.getMove().getStartPosition().getRow();
             char fromFile = (char) ('a' + (fromColumn - 1));
@@ -77,17 +76,21 @@ public class MakeMoveCommandHandler {
                 String checkmate = String.format("%s is in chackmate\n%s has Won!", game.getTeamTurn(), myTeam);
                 NotificationMessage checkmateMessage = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, checkmate);
                 String checkmatejsonMessage = new Gson().toJson(checkmateMessage);
-                webSocketHandler.broadcast(gameId, authToken, checkmatejsonMessage);
+                webSocketHandler.broadcast(gameId, "", checkmatejsonMessage);
+                game.done();
+                new SQLGameDAO().updateBoard(gameData.gameID(), game);
             }else if(game.isInCheck(game.getTeamTurn())){
                 String check = String.format("%s is in chack", game.getTeamTurn(), myTeam);
                 NotificationMessage checkMessage = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, check);
                 String checkjsonMessage = new Gson().toJson(checkMessage);
-                webSocketHandler.broadcast(gameId, authToken, checkjsonMessage);
+                webSocketHandler.broadcast(gameId, "", checkjsonMessage);
             }else if(game.isInStalemate(game.getTeamTurn())){
                 String stalemate = "Stalemate!\nGame Over!";
                 NotificationMessage stalemateMessage = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, stalemate);
                 String stalematejsonMessage = new Gson().toJson(stalemateMessage);
-                webSocketHandler.broadcast(gameId, authToken, stalematejsonMessage);
+                webSocketHandler.broadcast(gameId, "", stalematejsonMessage);
+                game.done();
+                new SQLGameDAO().updateBoard(gameData.gameID(), game);
             }
 
 

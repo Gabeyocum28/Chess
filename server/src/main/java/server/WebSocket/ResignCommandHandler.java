@@ -22,9 +22,11 @@ public class ResignCommandHandler {
         String authToken = command.getAuthToken();
         int gameId = command.getGameID();
         Connection connection = webSocketHandler.getConnection(gameId, authToken);
+        String resigner = "";
 
         try {
             String username = new SQLAuthDAO().getAuth(command.getAuthToken()).username();
+            resigner = username;
             var gameData = new SQLGameDAO().getGame(command.getGameID());
             var game = gameData.game();
 
@@ -37,8 +39,14 @@ public class ResignCommandHandler {
 
             game.done();
             new SQLGameDAO().updateBoard(gameData.gameID(), game);
+            String opp;
+            if(Objects.equals(gameData.whiteUsername(), username)){
+                opp = gameData.blackUsername();
+            }else{
+                opp = gameData.whiteUsername();
+            }
 
-            String message = String.format("%s has resigned", username);
+            String message = String.format("%s has resigned\n%s has Won!", resigner, opp);
             NotificationMessage notificationMessage = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
             String jsonMessage = new Gson().toJson(notificationMessage);
             webSocketHandler.broadcast(gameId, "", jsonMessage);
@@ -47,7 +55,7 @@ public class ResignCommandHandler {
             String jsonMessage = new Gson().toJson(errorMessage);
             session.getRemote().sendString(jsonMessage);
         }catch(AlreadyResignException e){
-            ErrorMessage errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, "The other player has already resigned");
+            ErrorMessage errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, resigner + " has already resigned");
             String jsonMessage = new Gson().toJson(errorMessage);
             session.getRemote().sendString(jsonMessage);
         }

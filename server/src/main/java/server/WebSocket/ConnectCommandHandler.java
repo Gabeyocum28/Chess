@@ -42,7 +42,7 @@ public class ConnectCommandHandler {
             }
 
             String roleMessage = (playerColor != null)
-                    ? String.format("%s connected as %s player", username, playerColor.toString().toLowerCase())
+                    ? String.format("%s connected as %s", username, playerColor.toString().toLowerCase())
                     : String.format("%s connected as an observer", username);
 
             NotificationMessage notification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, roleMessage);
