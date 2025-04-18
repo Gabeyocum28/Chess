@@ -1,11 +1,8 @@
 package ui;
 
 import chess.*;
-import dataaccess.DataAccessException;
-import dataaccess.SQLGameDAO;
 import exceptions.ResponseException;
 import model.AuthData;
-import model.GameData;
 import model.JoinRequest;
 import server.ServerFacade;
 import websocket.NotificationHandler;
@@ -17,7 +14,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Objects;
 
 import static ui.EscapeSequences.*;
 
@@ -31,6 +27,7 @@ public class GamePlayClient {
     private ChessBoard board;
     private Collection<ChessMove> validMoves;
     private ChessPosition checkPosition;
+    private ChessGame game;
 
     public GamePlayClient(String serverUrl, websocket.NotificationHandler notificationHandler)
             throws MalformedURLException, URISyntaxException, ResponseException {
@@ -56,12 +53,12 @@ public class GamePlayClient {
             };
         } catch (ResponseException ex) {
             return ex.getMessage();
-        } catch (InvalidMoveException | SQLException | DataAccessException e) {
+        } catch (InvalidMoveException | SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public String move(String... params) throws ResponseException, InvalidMoveException, SQLException, DataAccessException {
+    public String move(String... params) throws ResponseException, InvalidMoveException, SQLException {
         if (params.length == 2) {
 
             char fromFile = params[0].charAt(0);
@@ -100,10 +97,8 @@ public class GamePlayClient {
         throw new ResponseException(400, "Expected 2 inputs\nEx:move <FROM> <TO>");
     }
 
-    public String highlight(String... params) throws ResponseException, SQLException, DataAccessException {
+    public String highlight(String... params) throws ResponseException, SQLException {
         if (params.length == 1) {
-            GameData gameData = new SQLGameDAO().getGame(joinRequest.gameID());
-            ChessGame game = gameData.game();
 
             char file = params[0].charAt(0);
             char rank = params[0].charAt(1);
@@ -127,8 +122,7 @@ public class GamePlayClient {
         throw new ResponseException(400, "Expected 1 input\nEx:highlight <FROM>");
     }
 
-    public String redraw() throws ResponseException, SQLException, DataAccessException {
-        getBoard(joinRequest.gameID());
+    public String redraw() throws ResponseException, SQLException{
         if(joinRequest.playerColor().equals("black")) {
             return printBoard(false);
         }
@@ -301,11 +295,9 @@ public class GamePlayClient {
         joinRequest = request;
     }
 
-    public void getBoard(int gameId) throws SQLException, DataAccessException {
-        board = new SQLGameDAO().getGame(gameId).game().getBoard();
-    }
 
     public void setBoard(ChessGame game){
+        this.game = game;
         ChessBoard board = game.getBoard();
         this.board = board;
     }

@@ -1,6 +1,5 @@
 package ui;
 
-import com.sun.nio.sctp.NotificationHandler;
 import exceptions.ResponseException;
 import model.AuthData;
 import model.Login;
@@ -10,7 +9,8 @@ import server.ServerFacade;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.util.Arrays;
-import static ui.EscapeSequences.*;
+
+import static ui.EscapeSequences.SET_TEXT_COLOR_BLUE;
 
 public class PreLoginClient {
     private final ServerFacade server;

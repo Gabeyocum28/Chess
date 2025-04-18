@@ -4,11 +4,10 @@ import chess.ChessGame;
 import exceptions.ResponseException;
 import model.AuthData;
 import model.GameData;
-import model.GameList;
 import model.JoinRequest;
 import server.ServerFacade;
-import websocket.WebSocketFacade;
 import websocket.NotificationHandler;
+import websocket.WebSocketFacade;
 
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;

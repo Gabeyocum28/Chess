@@ -1,24 +1,20 @@
 package ui;
 
 
-
-
 import chess.ChessGame;
 import com.sun.nio.sctp.HandlerResult;
-import dataaccess.DataAccessException;
 import exceptions.ResponseException;
 import model.AuthData;
 import model.JoinRequest;
-import model.UserData;
+import websocket.NotificationHandler;
+import websocket.messages.ErrorMessage;
+import websocket.messages.LoadGameMessage;
+import websocket.messages.NotificationMessage;
 
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.sql.SQLException;
 import java.util.Scanner;
-import websocket.NotificationHandler;
-import websocket.messages.ErrorMessage;
-import websocket.messages.LoadGameMessage;
-import websocket.messages.NotificationMessage;
 
 import static ui.EscapeSequences.*;
 
@@ -35,13 +31,13 @@ public abstract class Repl implements NotificationHandler {
         gamePlayClient = new GamePlayClient(serverUrl,  this);
     }
 
-    public void run() throws SQLException, DataAccessException {
+    public void run() throws SQLException {
         System.out.println(SET_TEXT_COLOR_WHITE + "Welcome to 240 chess!");
         runPre();
         System.out.println();
     }
 
-    public void runPre() throws SQLException, DataAccessException {
+    public void runPre() throws SQLException{
         System.out.print(SET_TEXT_COLOR_BLUE + preLoginClient.help());
 
         Scanner scanner = new Scanner(System.in);
@@ -68,7 +64,7 @@ public abstract class Repl implements NotificationHandler {
 
     }
 
-    public void runPost(AuthData user) throws SQLException, DataAccessException {
+    public void runPost(AuthData user) throws SQLException {
         postLoginClient.setUserData(user);
         System.out.print(SET_TEXT_COLOR_BLUE + postLoginClient.help());
 
@@ -95,10 +91,9 @@ public abstract class Repl implements NotificationHandler {
         System.out.print(preLoginClient.help());
     }
 
-    public void runGame(JoinRequest joinRequest, AuthData user) throws SQLException, DataAccessException {
+    public void runGame(JoinRequest joinRequest, AuthData user) throws SQLException {
         gamePlayClient.setJoinRequest(joinRequest);
         gamePlayClient.setUserData(user);
-        gamePlayClient.getBoard(joinRequest.gameID());
 
 
         Scanner scanner = new Scanner(System.in);
@@ -136,8 +131,6 @@ public abstract class Repl implements NotificationHandler {
         } catch (ResponseException e) {
             throw new RuntimeException(e);
         } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
         printPrompt();

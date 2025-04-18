@@ -3,20 +3,19 @@ package websocket;
 import chess.ChessMove;
 import com.google.gson.Gson;
 import exceptions.ResponseException;
+import model.AuthData;
+import model.JoinRequest;
+import websocket.commands.MakeMoveHelper;
+import websocket.commands.UserGameCommand;
+import websocket.messages.ErrorMessage;
+import websocket.messages.LoadGameMessage;
+import websocket.messages.NotificationMessage;
+import websocket.messages.ServerMessage;
 
 import javax.websocket.*;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-
-import model.AuthData;
-import model.JoinRequest;
-import model.Move;
-import model.UserData;
-import websocket.commands.MakeMoveHelper;
-import websocket.commands.UserGameCommand;
-import websocket.messages.*;
-import websocket.commands.UserNotification;
 
 
 public class WebSocketFacade extends Endpoint{
