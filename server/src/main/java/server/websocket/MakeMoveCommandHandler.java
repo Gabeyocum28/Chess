@@ -104,7 +104,8 @@ public class MakeMoveCommandHandler {
 
     }
 
-    private static void afterMoveStatus(WebSocketHandler webSocketHandler, ChessGame game, String myTeam, int gameId, GameData gameData) throws IOException, SQLException, DataAccessException {
+    private static void afterMoveStatus(WebSocketHandler webSocketHandler, ChessGame game, String myTeam, int gameId,
+                                        GameData gameData) throws IOException, SQLException, DataAccessException {
         if(game.isInCheckmate(game.getTeamTurn())){
             String checkmate = String.format("%s is in chackmate\n%s has Won!", game.getTeamTurn(), myTeam);
             NotificationMessage checkmateMessage = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION,
