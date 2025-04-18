@@ -14,7 +14,8 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 public class LeaveCommandHandler {
-    public void handle(UserGameCommand command, Session session, WebSocketHandler webSocketHandler) throws SQLException, DataAccessException, IOException {
+    public void handle(UserGameCommand command, Session session, WebSocketHandler webSocketHandler) throws SQLException,
+            DataAccessException, IOException {
         String authToken = command.getAuthToken();
         String username = new SQLAuthDAO().getAuth(command.getAuthToken()).username();
         int gameId = command.getGameID();
@@ -30,7 +31,8 @@ public class LeaveCommandHandler {
 
 
         String message = String.format("%s has left the game", username);
-        NotificationMessage notificationMessage = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
+        NotificationMessage notificationMessage = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION,
+                message);
         String jsonMessage = new Gson().toJson(notificationMessage);
         webSocketHandler.broadcast(gameId, authToken, jsonMessage);
 

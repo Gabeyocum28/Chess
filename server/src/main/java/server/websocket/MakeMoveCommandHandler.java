@@ -21,7 +21,8 @@ import java.sql.SQLException;
 import java.util.Objects;
 
 public class MakeMoveCommandHandler {
-    public void handle(MakeMoveHelper command, Session session, WebSocketHandler webSocketHandler) throws SQLException, DataAccessException, IOException {
+    public void handle(MakeMoveHelper command, Session session, WebSocketHandler webSocketHandler) throws SQLException,
+            DataAccessException, IOException {
         String authToken = command.getAuthToken();
         int gameId = command.getGameID();
         Connection connection = webSocketHandler.getConnection(gameId, authToken);
@@ -68,25 +69,29 @@ public class MakeMoveCommandHandler {
             String toPosition = "" + toFile + toRank;
 
             String move = String.format("%s moved from %s to %s", username, fromPosition, toPosition);
-            NotificationMessage notificationMessage = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, move);
+            NotificationMessage notificationMessage = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION,
+                    move);
             String jsonMessage2 = new Gson().toJson(notificationMessage);
             webSocketHandler.broadcast(gameId, authToken, jsonMessage2);
 
             if(game.isInCheckmate(game.getTeamTurn())){
                 String checkmate = String.format("%s is in chackmate\n%s has Won!", game.getTeamTurn(), myTeam);
-                NotificationMessage checkmateMessage = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, checkmate);
+                NotificationMessage checkmateMessage = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION,
+                        checkmate);
                 String checkmatejsonMessage = new Gson().toJson(checkmateMessage);
                 webSocketHandler.broadcast(gameId, "", checkmatejsonMessage);
                 game.done();
                 new SQLGameDAO().updateBoard(gameData.gameID(), game);
             }else if(game.isInCheck(game.getTeamTurn())){
                 String check = String.format("%s is in chack", game.getTeamTurn(), myTeam);
-                NotificationMessage checkMessage = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, check);
+                NotificationMessage checkMessage = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION,
+                        check);
                 String checkjsonMessage = new Gson().toJson(checkMessage);
                 webSocketHandler.broadcast(gameId, "", checkjsonMessage);
             }else if(game.isInStalemate(game.getTeamTurn())){
                 String stalemate = "Stalemate!\nGame Over!";
-                NotificationMessage stalemateMessage = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, stalemate);
+                NotificationMessage stalemateMessage = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION,
+                        stalemate);
                 String stalematejsonMessage = new Gson().toJson(stalemateMessage);
                 webSocketHandler.broadcast(gameId, "", stalematejsonMessage);
                 game.done();
@@ -103,19 +108,23 @@ public class MakeMoveCommandHandler {
 
 
         } catch(GameOverException e){
-            ErrorMessage errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, "The game is over");
+            ErrorMessage errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR,
+                    "The game is over");
             String jsonMessage = new Gson().toJson(errorMessage);
             connection.send(jsonMessage);
         } catch(WrongTurnException e){
-            ErrorMessage errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, "It is not your turn");
+            ErrorMessage errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR,
+                    "It is not your turn");
             String jsonMessage = new Gson().toJson(errorMessage);
             connection.send(jsonMessage);
         } catch(ObserverException e){
-            ErrorMessage errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, "You are an observer");
+            ErrorMessage errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR,
+                    "You are an observer");
             String jsonMessage = new Gson().toJson(errorMessage);
             connection.send(jsonMessage);
         } catch(Exception e){
-            ErrorMessage errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, "Invalid move");
+            ErrorMessage errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR,
+                    "Invalid move");
             String jsonMessage = new Gson().toJson(errorMessage);
             connection.send(jsonMessage);
         }

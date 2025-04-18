@@ -15,14 +15,7 @@ public class ClientMain {
             serverUrl = args[0];
         }
 
-        new Repl(serverUrl) {
-
-            @Override
-            public HandlerResult handleNotification(Notification notification, Object attachment) {
-                return null;
-            }
-
-        }.run();
+        new Repl(serverUrl).run();
 
     }
 }

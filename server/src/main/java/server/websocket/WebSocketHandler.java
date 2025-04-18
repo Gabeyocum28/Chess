@@ -69,7 +69,9 @@ public class WebSocketHandler {
 
     public void broadcast(int gameId, String excludeAuthToken, String notification) throws IOException {
         ConcurrentHashMap<String, Connection> users = connections.get(gameId);
-        if (users == null) return;
+        if (users == null) {
+            return;
+        }
 
         List<Connection> removeList = new ArrayList<>();
 
@@ -97,9 +99,6 @@ public class WebSocketHandler {
         return connections.get(gameId).get(authToken);
     }
 
-    public boolean hasConnection(int gameId, String username) {
-        return connections.get(gameId).containsKey(username);
-    }
 
 
 }

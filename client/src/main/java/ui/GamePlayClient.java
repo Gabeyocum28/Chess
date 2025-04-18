@@ -170,69 +170,42 @@ public class GamePlayClient {
         }
         board.append(EMPTY).append(RESET_BG_COLOR).append("\n");
 
-        if(isWhite) {
-            for (int row = 8; row >= 1; row--) {
-                board.append(SET_BG_COLOR_DARK_GREY).append(SET_TEXT_COLOR_WHITE).append(" ").append(row).append(" ");
 
-                for (int col = 1; col < 9; col++) {
-                    String bgColor = ((row + col) % 2 == 0) ? SET_BG_COLOR_LIGHT_GREY : SET_BG_COLOR_GREY;
-                    if(validMoves != null) {
-                        for (ChessMove move : validMoves) {
-                            if (move.getEndPosition().getRow() == row && move.getEndPosition().getColumn() == col) {
-                                bgColor = ((row + col) % 2 == 0) ? SET_BG_COLOR_GREEN : SET_BG_COLOR_DARK_GREEN;
-                                break;
-                            }else {
-                                bgColor = ((row + col) % 2 == 0) ? SET_BG_COLOR_LIGHT_GREY : SET_BG_COLOR_GREY;
-                            }
+        for (int i = 1; i <= 8; i++) {
+            int row = isWhite ? 9 - i : i;
+
+            board.append(SET_BG_COLOR_DARK_GREY).append(SET_TEXT_COLOR_WHITE).append(" ").append(row).append(" ");
+
+            for (int j = 1; j <= 8; j++) {
+                int col = isWhite ? j : 9 - j;
+                String bgColor = ((row + col) % 2 == 1) ? SET_BG_COLOR_LIGHT_GREY : SET_BG_COLOR_GREY;
+                if(validMoves != null) {
+                    for (ChessMove move : validMoves) {
+                        if (move.getEndPosition().getRow() == row && move.getEndPosition().getColumn() == col) {
+                            bgColor = ((row + col) % 2 == 1) ? SET_BG_COLOR_GREEN : SET_BG_COLOR_DARK_GREEN;
+                            break;
+                        }else {
+                            bgColor = ((row + col) % 2 == 1) ? SET_BG_COLOR_LIGHT_GREY : SET_BG_COLOR_GREY;
                         }
-                    }else{
-                        bgColor = ((row + col) % 2 == 0) ? SET_BG_COLOR_LIGHT_GREY : SET_BG_COLOR_GREY;
                     }
-
-                    if (checkPosition != null && checkPosition.getRow() == row && checkPosition.getColumn() == col) {
-                        bgColor = SET_BG_COLOR_YELLOW;
-                    }
-
-
-                    ChessPiece piece = getPiece(row, col);
-                    getPieceType(board, piece, bgColor);
-
+                }else{
+                    bgColor = ((row + col) % 2 == 1) ? SET_BG_COLOR_LIGHT_GREY : SET_BG_COLOR_GREY;
                 }
 
-                board.append(SET_BG_COLOR_DARK_GREY).append(SET_TEXT_COLOR_WHITE).append(" ").append(row).append(" ");
-                board.append(RESET_BG_COLOR).append("\n");
-            }
-        }else{
-            for (int row = 1; row <= 8; row++) {
-                board.append(SET_BG_COLOR_DARK_GREY).append(SET_TEXT_COLOR_WHITE).append(" ").append(row).append(" ");
-
-                for (int col = 8; col > 0; col--) {
-                    String bgColor = ((row + col) % 2 == 1) ? SET_BG_COLOR_LIGHT_GREY : SET_BG_COLOR_GREY;
-                    if(validMoves != null) {
-                        for (ChessMove move : validMoves) {
-                            if (move.getEndPosition().getRow() == row && move.getEndPosition().getColumn() == col) {
-                                bgColor = ((row + col) % 2 == 1) ? SET_BG_COLOR_GREEN : SET_BG_COLOR_DARK_GREEN;
-                                break;
-                            }else {
-                                bgColor = ((row + col) % 2 == 1) ? SET_BG_COLOR_LIGHT_GREY : SET_BG_COLOR_GREY;
-                            }
-                        }
-                    }else{
-                        bgColor = ((row + col) % 2 == 1) ? SET_BG_COLOR_LIGHT_GREY : SET_BG_COLOR_GREY;
-                    }
-
-                    if (checkPosition != null && checkPosition.getRow() == row && checkPosition.getColumn() == col) {
-                        bgColor = SET_BG_COLOR_YELLOW;
-                    }
-                    ChessPiece piece = getPiece(row, col);
-                    getPieceType(board, piece, bgColor);
-
+                if (checkPosition != null && checkPosition.getRow() == row && checkPosition.getColumn() == col) {
+                    bgColor = SET_BG_COLOR_YELLOW;
                 }
 
-                board.append(SET_BG_COLOR_DARK_GREY).append(SET_TEXT_COLOR_WHITE).append(" ").append(row).append(" ");
-                board.append(RESET_BG_COLOR).append("\n");
+
+                ChessPiece piece = getPiece(row, col);
+                getPieceType(board, piece, bgColor);
+
             }
+
+            board.append(SET_BG_COLOR_DARK_GREY).append(SET_TEXT_COLOR_WHITE).append(" ").append(row).append(" ");
+            board.append(RESET_BG_COLOR).append("\n");
         }
+
 
 
         // Print column labels again
@@ -289,6 +262,7 @@ public class GamePlayClient {
 
         }else{board.append(bgColor).append(EMPTY);}
     }
+
 
 }
 

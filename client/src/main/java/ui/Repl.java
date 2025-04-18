@@ -3,6 +3,7 @@ package ui;
 
 import chess.ChessGame;
 import com.sun.nio.sctp.HandlerResult;
+import com.sun.nio.sctp.Notification;
 import exceptions.ResponseException;
 import model.AuthData;
 import model.JoinRequest;
@@ -18,7 +19,7 @@ import java.util.Scanner;
 
 import static ui.EscapeSequences.*;
 
-public abstract class Repl implements NotificationHandler {
+public class Repl implements NotificationHandler {
 
     private final PreLoginClient preLoginClient;
     private final PostLoginClient postLoginClient;
@@ -120,7 +121,6 @@ public abstract class Repl implements NotificationHandler {
         System.out.print("\n" + SET_TEXT_COLOR_WHITE + state + " >>> " + SET_TEXT_COLOR_GREEN);
     }
 
-    public abstract HandlerResult handleNotification(com.sun.nio.sctp.Notification notification, Object attachment);
 
     @Override
     public void notifyLoadGame(LoadGameMessage notification) {
@@ -147,4 +147,5 @@ public abstract class Repl implements NotificationHandler {
         System.out.println("\n\n" + notification.getMessage() + "\n");
         printPrompt();
     }
+
 }
