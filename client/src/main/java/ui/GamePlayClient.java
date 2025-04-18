@@ -195,25 +195,8 @@ public class GamePlayClient {
 
 
                     ChessPiece piece = getPiece(row, col);
-                    if(piece != null) {
-                        String pieceColor = String.valueOf(piece.getTeamColor());
-                        String textColor = pieceColor.equals("WHITE") ? SET_TEXT_COLOR_WHITE : SET_TEXT_COLOR_BLACK;
-                        String pieceType = String.valueOf(piece.getPieceType());
-                        if(pieceType == "ROOK") {
-                            board.append(bgColor).append(textColor).append(ROOK);
-                        }else if(pieceType == "KNIGHT") {
-                            board.append(bgColor).append(textColor).append(KNIGHT);
-                        }else if(pieceType == "BISHOP") {
-                            board.append(bgColor).append(textColor).append(BISHOP);
-                        }else if(pieceType == "KING") {
-                            board.append(bgColor).append(textColor).append(KING);
-                        }else if(pieceType == "QUEEN") {
-                            board.append(bgColor).append(textColor).append(QUEEN);
-                        }else if(pieceType == "PAWN") {
-                            board.append(bgColor).append(textColor).append(PAWN);
-                        }
+                    getPieceType(board, piece, bgColor);
 
-                    }else{board.append(bgColor).append(EMPTY);}
                 }
 
                 board.append(SET_BG_COLOR_DARK_GREY).append(SET_TEXT_COLOR_WHITE).append(" ").append(row).append(" ");
@@ -242,25 +225,8 @@ public class GamePlayClient {
                         bgColor = SET_BG_COLOR_YELLOW;
                     }
                     ChessPiece piece = getPiece(row, col);
-                    if(piece != null) {
-                        String pieceColor = String.valueOf(piece.getTeamColor());
-                        String textColor = pieceColor.equals("WHITE") ? SET_TEXT_COLOR_WHITE : SET_TEXT_COLOR_BLACK;
-                        String pieceType = String.valueOf(piece.getPieceType());
-                        if(pieceType == "ROOK") {
-                            board.append(bgColor).append(textColor).append(ROOK);
-                        }else if(pieceType == "KNIGHT") {
-                            board.append(bgColor).append(textColor).append(KNIGHT);
-                        }else if(pieceType == "BISHOP") {
-                            board.append(bgColor).append(textColor).append(BISHOP);
-                        }else if(pieceType == "KING") {
-                            board.append(bgColor).append(textColor).append(KING);
-                        }else if(pieceType == "QUEEN") {
-                            board.append(bgColor).append(textColor).append(QUEEN);
-                        }else if(pieceType == "PAWN") {
-                            board.append(bgColor).append(textColor).append(PAWN);
-                        }
+                    getPieceType(board, piece, bgColor);
 
-                    }else{board.append(bgColor).append(EMPTY);}
                 }
 
                 board.append(SET_BG_COLOR_DARK_GREY).append(SET_TEXT_COLOR_WHITE).append(" ").append(row).append(" ");
@@ -300,6 +266,28 @@ public class GamePlayClient {
         this.game = game;
         ChessBoard board = game.getBoard();
         this.board = board;
+    }
+
+    public void getPieceType(StringBuilder board, ChessPiece piece, String bgColor){
+        if(piece != null) {
+            String pieceColor = String.valueOf(piece.getTeamColor());
+            String textColor = pieceColor.equals("WHITE") ? SET_TEXT_COLOR_WHITE : SET_TEXT_COLOR_BLACK;
+            String pieceType = String.valueOf(piece.getPieceType());
+            if(pieceType == "ROOK") {
+                board.append(bgColor).append(textColor).append(ROOK);
+            }else if(pieceType == "KNIGHT") {
+                board.append(bgColor).append(textColor).append(KNIGHT);
+            }else if(pieceType == "BISHOP") {
+                board.append(bgColor).append(textColor).append(BISHOP);
+            }else if(pieceType == "KING") {
+                board.append(bgColor).append(textColor).append(KING);
+            }else if(pieceType == "QUEEN") {
+                board.append(bgColor).append(textColor).append(QUEEN);
+            }else if(pieceType == "PAWN") {
+                board.append(bgColor).append(textColor).append(PAWN);
+            }
+
+        }else{board.append(bgColor).append(EMPTY);}
     }
 
 }

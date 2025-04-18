@@ -1,4 +1,4 @@
-package server.WebSocket;
+package server.websocket;
 
 import chess.ChessGame;
 import com.google.gson.Gson;

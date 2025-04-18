@@ -22,7 +22,7 @@ public class ChessGame {
     private ChessPosition myKing;
     private ChessBoard copyBoard;
     private ChessBoard masterBoard;
-    private Boolean Done = false;
+    private Boolean done = false;
 
     public ChessGame() {
         board = new ChessBoard();
@@ -265,11 +265,11 @@ public class ChessGame {
     }
 
     public void done(){
-        Done = true;
+        done = true;
     }
 
     public boolean getStatus(){
-        return Done;
+        return done;
     }
 
     @Override

@@ -1,4 +1,4 @@
-package server.WebSocket;
+package server.websocket;
 
 import com.google.gson.Gson;
 import dataaccess.DataAccessException;
