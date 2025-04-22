@@ -64,6 +64,7 @@ public class ChessGame {
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         // make copy of board to save curr state of game to simulate move
         possibleMoves.clear();
+        allMyMoves.clear();
         if (board.getPiece(startPosition) != null) {
             ChessPiece checkpiece = board.getPiece(startPosition);
             PieceMovesCalculator oppMoves = new PieceMovesCalculator();

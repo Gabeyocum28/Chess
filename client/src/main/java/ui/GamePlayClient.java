@@ -14,6 +14,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Objects;
 
 import static ui.EscapeSequences.*;
 
@@ -28,6 +29,7 @@ public class GamePlayClient {
     private Collection<ChessMove> validMoves;
     private ChessPosition checkPosition;
     private ChessGame game;
+    private int safety;
 
     public GamePlayClient(String serverUrl, websocket.NotificationHandler notificationHandler)
             throws MalformedURLException, URISyntaxException, ResponseException {
@@ -36,6 +38,7 @@ public class GamePlayClient {
         this.notificationHandler = notificationHandler;
         board = new ChessGame().getBoard();
         ws = new WebSocketFacade(serverUrl, notificationHandler);
+        safety = 0;
     }
 
     public String eval(String input) {
@@ -49,6 +52,7 @@ public class GamePlayClient {
                 case"redraw" -> redraw();
                 case "leave" -> leave();
                 case "resign" -> resign();
+                case "no" -> resetSafety();
                 default -> help();
             };
         } catch (ResponseException ex) {
@@ -59,7 +63,7 @@ public class GamePlayClient {
     }
 
     public String move(String... params) throws ResponseException, InvalidMoveException, SQLException {
-        if (params.length == 2) {
+        if (params.length >= 2) {
 
             char fromFile = params[0].charAt(0);
             char fromRank = params[0].charAt(1);
@@ -87,7 +91,22 @@ public class GamePlayClient {
 
             ChessPosition fromPosition = new ChessPosition(fromRow, fromColumn);
             ChessPosition toPosition = new ChessPosition(toRow, toColumn);
-            ChessMove move = new ChessMove(fromPosition, toPosition, null);
+            ChessMove move = null;
+            if(params.length == 3){
+                switch (params[2]){
+                    case "queen" -> move = new ChessMove(fromPosition, toPosition, ChessPiece.PieceType.QUEEN);
+                    case "rook" -> move = new ChessMove(fromPosition, toPosition, ChessPiece.PieceType.ROOK);
+                    case "knight" -> move = new ChessMove(fromPosition, toPosition, ChessPiece.PieceType.KNIGHT);
+                    case "bishop" -> move = new ChessMove(fromPosition, toPosition, ChessPiece.PieceType.BISHOP);
+                    default -> {
+                        return "Invalid promotion piece\nEx:queen, rook, knight, bishop";
+                    }
+                }
+            }else{
+                move = new ChessMove(fromPosition, toPosition, null);
+            }
+
+
 
             ws = new WebSocketFacade(serverUrl, notificationHandler);
             ws.move(user, joinRequest, move);
@@ -138,8 +157,13 @@ public class GamePlayClient {
     }
 
     public String resign()throws ResponseException{
-        ws = new WebSocketFacade(serverUrl, notificationHandler);
-        ws.resign(user, joinRequest);
+        if(safety == 0){
+            safety = 1;
+            return "Are you sure?\nType resign again to confirm.\nType no to decline.";
+        }else {
+            ws = new WebSocketFacade(serverUrl, notificationHandler);
+            ws.resign(user, joinRequest);
+        }
         return "";
     }
 
@@ -187,8 +211,6 @@ public class GamePlayClient {
             board.append(SET_BG_COLOR_DARK_GREY).append(SET_TEXT_COLOR_WHITE).append(" ").append(row).append(" ");
             board.append(RESET_BG_COLOR).append("\n");
         }
-
-
 
         // Print column labels again
         board.append(SET_BG_COLOR_DARK_GREY).append(EMPTY);
@@ -242,6 +264,15 @@ public class GamePlayClient {
         this.game = game;
         ChessBoard board = game.getBoard();
         this.board = board;
+    }
+
+    public String resetSafety(){
+        if(safety == 1) {
+            safety = 0;
+            return "You have declined";
+        }else {
+            return help();
+        }
     }
 
     public void getPieceType(StringBuilder board, ChessPiece piece, String bgColor){

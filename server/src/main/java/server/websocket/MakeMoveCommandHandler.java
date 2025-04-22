@@ -49,7 +49,8 @@ public class MakeMoveCommandHandler {
             if(!Objects.equals(username, gameData.blackUsername()) && !Objects.equals(username, gameData.whiteUsername())) {
                 throw new ObserverException("");
             }
-            String myTeam = game.getTeamTurn().toString();
+            String myTeam = username;
+            String oppTeam = (Objects.equals(username, gameData.whiteUsername())) ? gameData.blackUsername() : gameData.whiteUsername();
 
             game.makeMove(command.getMove());
 
@@ -73,7 +74,7 @@ public class MakeMoveCommandHandler {
             String jsonMessage2 = new Gson().toJson(notificationMessage);
             webSocketHandler.broadcast(gameId, authToken, jsonMessage2);
 
-            afterMoveStatus(webSocketHandler, game, myTeam, gameId, gameData);
+            afterMoveStatus(webSocketHandler, game, myTeam, oppTeam, gameId, gameData);
 
             LoadGameMessage loadGameMessage = new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME, game);
             String jsonMessage1 = new Gson().toJson(loadGameMessage);
@@ -104,10 +105,10 @@ public class MakeMoveCommandHandler {
 
     }
 
-    private static void afterMoveStatus(WebSocketHandler webSocketHandler, ChessGame game, String myTeam, int gameId,
-                                        GameData gameData) throws IOException, SQLException, DataAccessException {
+    private static void afterMoveStatus(WebSocketHandler webSocketHandler, ChessGame game, String myTeam, String oppTeam,
+                                        int gameId, GameData gameData) throws IOException, SQLException, DataAccessException {
         if(game.isInCheckmate(game.getTeamTurn())){
-            String checkmate = String.format("%s is in chackmate\n%s has Won!", game.getTeamTurn(), myTeam);
+            String checkmate = String.format("%s is in checkmate\n%s has Won!", oppTeam, myTeam);
             NotificationMessage checkmateMessage = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION,
                     checkmate);
             String checkmatejsonMessage = new Gson().toJson(checkmateMessage);
@@ -115,7 +116,7 @@ public class MakeMoveCommandHandler {
             game.done();
             new SQLGameDAO().updateBoard(gameData.gameID(), game);
         }else if(game.isInCheck(game.getTeamTurn())){
-            String check = String.format("%s is in chack", game.getTeamTurn(), myTeam);
+            String check = String.format("%s is in check", oppTeam);
             NotificationMessage checkMessage = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION,
                     check);
             String checkjsonMessage = new Gson().toJson(checkMessage);
