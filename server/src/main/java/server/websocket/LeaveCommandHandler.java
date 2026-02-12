@@ -19,12 +19,8 @@ public class LeaveCommandHandler {
         String username = new SQLAuthDAO().getAuth(command.getAuthToken()).username();
         int gameId = command.getGameID();
         webSocketHandler.remove(gameId, authToken);
-        Connection connection = webSocketHandler.getConnection(gameId, authToken);
-
 
         var gameData = new SQLGameDAO().getGame(command.getGameID());
-        var game = gameData.game();
-
 
         new SQLGameDAO().updatePlayers(gameData.gameID(), username);
 

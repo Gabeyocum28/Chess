@@ -232,12 +232,8 @@ public class GamePlayClient {
                 if (move.getEndPosition().getRow() == row && move.getEndPosition().getColumn() == col) {
                     bgColor = ((row + col) % 2 == 1) ? SET_BG_COLOR_GREEN : SET_BG_COLOR_DARK_GREEN;
                     break;
-                }else {
-                    bgColor = ((row + col) % 2 == 1) ? SET_BG_COLOR_LIGHT_GREY : SET_BG_COLOR_GREY;
                 }
             }
-        }else{
-            bgColor = ((row + col) % 2 == 1) ? SET_BG_COLOR_LIGHT_GREY : SET_BG_COLOR_GREY;
         }
 
         if (checkPosition != null && checkPosition.getRow() == row && checkPosition.getColumn() == col) {
@@ -277,20 +273,20 @@ public class GamePlayClient {
 
     public void getPieceType(StringBuilder board, ChessPiece piece, String bgColor){
         if(piece != null) {
-            String pieceColor = String.valueOf(piece.getTeamColor());
-            String textColor = pieceColor.equals("WHITE") ? SET_TEXT_COLOR_WHITE : SET_TEXT_COLOR_BLACK;
+            boolean isWhitePiece = piece.getTeamColor() == chess.ChessGame.TeamColor.WHITE;
+            String textColor = isWhitePiece ? SET_TEXT_COLOR_WHITE : SET_TEXT_COLOR_BLACK;
             String pieceType = String.valueOf(piece.getPieceType());
-            if(pieceType == "ROOK") {
+            if(pieceType.equals("ROOK")) {
                 board.append(bgColor).append(textColor).append(ROOK);
-            }else if(pieceType == "KNIGHT") {
+            }else if(pieceType.equals("KNIGHT")) {
                 board.append(bgColor).append(textColor).append(KNIGHT);
-            }else if(pieceType == "BISHOP") {
+            }else if(pieceType.equals("BISHOP")) {
                 board.append(bgColor).append(textColor).append(BISHOP);
-            }else if(pieceType == "KING") {
+            }else if(pieceType.equals("KING")) {
                 board.append(bgColor).append(textColor).append(KING);
-            }else if(pieceType == "QUEEN") {
+            }else if(pieceType.equals("QUEEN")) {
                 board.append(bgColor).append(textColor).append(QUEEN);
-            }else if(pieceType == "PAWN") {
+            }else if(pieceType.equals("PAWN")) {
                 board.append(bgColor).append(textColor).append(PAWN);
             }
 

@@ -3,7 +3,6 @@ package dataaccess;
 import model.AuthData;
 
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Properties;
 
@@ -11,31 +10,30 @@ import static dataaccess.DatabaseManager.getConnection;
 
 public class SQLAuthDAO implements AuthDAO {
 
-    private Connection conn = null;
-
     public SQLAuthDAO() throws SQLException, DataAccessException {
         DatabaseManager.createDatabase();
         configureDatabase();
-        conn = DatabaseManager.getConnection();
     }
 
     public void createAuth(AuthData authData){
 
-        try (var preparedStatement = conn.prepareStatement("INSERT INTO AuthData (authToken, username) VALUES(?, ?)")) {
+        try (var conn = getConnection();
+             var preparedStatement = conn.prepareStatement("INSERT INTO AuthData (authToken, username) VALUES(?, ?)")) {
             preparedStatement.setString(1, authData.authToken());
             preparedStatement.setString(2, authData.username());
 
             preparedStatement.executeUpdate();
 
 
-        } catch (SQLException e) {
+        } catch (SQLException | DataAccessException e) {
             throw new RuntimeException(e);
         }
     }
 
     public AuthData getAuth(String auth){
 
-        try (var preparedStatement = conn.prepareStatement("SELECT authToken, username FROM AuthData WHERE authToken=?")) {
+        try (var conn = getConnection();
+             var preparedStatement = conn.prepareStatement("SELECT authToken, username FROM AuthData WHERE authToken=?")) {
             preparedStatement.setString(1, auth);
             try (var rs = preparedStatement.executeQuery()) {
                 while (rs.next()) {
@@ -45,7 +43,7 @@ public class SQLAuthDAO implements AuthDAO {
                     return new AuthData(authToken, username);
                 }
             }
-        } catch (SQLException e) {
+        } catch (SQLException | DataAccessException e) {
             throw new RuntimeException(e);
         }
 
@@ -53,16 +51,18 @@ public class SQLAuthDAO implements AuthDAO {
     }
 
     public void deleteAuth(String authToken){
-        try (var preparedStatement = conn.prepareStatement("DELETE FROM AuthData WHERE authToken=?")) {
+        try (var conn = getConnection();
+             var preparedStatement = conn.prepareStatement("DELETE FROM AuthData WHERE authToken=?")) {
             preparedStatement.setString(1, authToken);
             preparedStatement.executeUpdate();
-        } catch (SQLException e) {
+        } catch (SQLException | DataAccessException e) {
             throw new RuntimeException(e);
         }
     }
 
     public void clear() throws DataAccessException {
-        try (var preparedStatement = conn.prepareStatement("DELETE FROM AuthData")) {
+        try (var conn = getConnection();
+             var preparedStatement = conn.prepareStatement("DELETE FROM AuthData")) {
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {

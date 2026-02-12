@@ -4,7 +4,6 @@ import model.UserData;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Properties;
 
@@ -12,19 +11,17 @@ import static dataaccess.DatabaseManager.getConnection;
 
 public class SQLUserDAO implements UserDAO {
 
-    private Connection conn = null;
-
     public SQLUserDAO() throws DataAccessException, SQLException {
         DatabaseManager.createDatabase();
         configureDatabase();
-        conn = DatabaseManager.getConnection();
     }
 
     public void createUser(UserData userData) throws DataAccessException {
 
         String hashedPassword = BCrypt.hashpw(userData.password(), BCrypt.gensalt());
 
-        try (var preparedStatement = conn.prepareStatement("INSERT INTO UserData (username, password, email) VALUES(?, ?, ?)")) {
+        try (var conn = getConnection();
+             var preparedStatement = conn.prepareStatement("INSERT INTO UserData (username, password, email) VALUES(?, ?, ?)")) {
             preparedStatement.setString(1, userData.username());
             preparedStatement.setString(2, hashedPassword);
             preparedStatement.setString(3, userData.email());
@@ -39,7 +36,8 @@ public class SQLUserDAO implements UserDAO {
     }
 
     public UserData getUser(String name){
-        try (var preparedStatement = conn.prepareStatement("SELECT username, password, email FROM UserData WHERE username=?")) {
+        try (var conn = getConnection();
+             var preparedStatement = conn.prepareStatement("SELECT username, password, email FROM UserData WHERE username=?")) {
             preparedStatement.setString(1, name);
             try (var rs = preparedStatement.executeQuery()) {
                 while (rs.next()) {
@@ -50,7 +48,7 @@ public class SQLUserDAO implements UserDAO {
                     return new UserData(username, password, email);
                 }
             }
-        } catch (SQLException e) {
+        } catch (SQLException | DataAccessException e) {
             throw new RuntimeException(e);
         }
 
@@ -58,7 +56,8 @@ public class SQLUserDAO implements UserDAO {
     }
 
     public void clear() throws DataAccessException {
-        try (var preparedStatement = conn.prepareStatement("DELETE FROM UserData")) {
+        try (var conn = getConnection();
+             var preparedStatement = conn.prepareStatement("DELETE FROM UserData")) {
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {

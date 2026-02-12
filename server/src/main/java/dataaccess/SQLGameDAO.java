@@ -9,7 +9,6 @@ import model.GameData;
 import model.JoinRequest;
 
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -23,17 +22,15 @@ import static java.sql.Statement.RETURN_GENERATED_KEYS;
 
 public class SQLGameDAO implements GameDAO{
 
-    private Connection conn = null;
-
     public SQLGameDAO() throws SQLException, DataAccessException {
         DatabaseManager.createDatabase();
         configureDatabase();
-        conn = DatabaseManager.getConnection();
     }
 
     public Integer createGame(GameData gameData){
 
-        try (var preparedStatement = conn.prepareStatement("INSERT INTO GameData (" +
+        try (var conn = getConnection();
+             var preparedStatement = conn.prepareStatement("INSERT INTO GameData (" +
                 "whiteUsername, blackUsername, gameName, game) VALUES(?, ?, ?, ?)", RETURN_GENERATED_KEYS)) {
             Gson gson = new Gson();
             String gameJson = gson.toJson(gameData.game());
@@ -55,7 +52,7 @@ public class SQLGameDAO implements GameDAO{
             }
 
 
-        } catch (SQLException e) {
+        } catch (SQLException | DataAccessException e) {
             throw new RuntimeException(e);
         }
     }
@@ -65,7 +62,8 @@ public class SQLGameDAO implements GameDAO{
         Collection<GameData> gameCollection = new ArrayList<>();
         Gson gson = new Gson();
 
-        try (PreparedStatement preparedStatement = conn.prepareStatement("SELECT * FROM GameData");
+        try (var conn = getConnection();
+             PreparedStatement preparedStatement = conn.prepareStatement("SELECT * FROM GameData");
              ResultSet resultSet = preparedStatement.executeQuery()) {
 
             while (resultSet.next()) {
@@ -84,7 +82,7 @@ public class SQLGameDAO implements GameDAO{
 
 
 
-        } catch (SQLException e) {
+        } catch (SQLException | DataAccessException e) {
             throw new RuntimeException(e);
         }
 
@@ -92,7 +90,8 @@ public class SQLGameDAO implements GameDAO{
     }
 
     public GameData getGame(int gameId){
-        try (var preparedStatement = conn.prepareStatement("SELECT whiteUsername, blackUsername, game FROM GameData WHERE gameId=?")) {
+        try (var conn = getConnection();
+             var preparedStatement = conn.prepareStatement("SELECT whiteUsername, blackUsername, game FROM GameData WHERE gameId=?")) {
             preparedStatement.setInt(1, gameId);
             try (var rs = preparedStatement.executeQuery()) {
                 while (rs.next()) {
@@ -104,7 +103,7 @@ public class SQLGameDAO implements GameDAO{
                     return new GameData(gameId, white, black, null, board);
                 }
             }
-        } catch (SQLException e) {
+        } catch (SQLException | DataAccessException e) {
             throw new RuntimeException(e);
         }
 
@@ -122,8 +121,9 @@ public class SQLGameDAO implements GameDAO{
             check = "SELECT blackUsername FROM GameData WHERE gameId = ?";
             update = "UPDATE GameData SET blackUsername = ? WHERE gameId = ?";
         }
-        try (PreparedStatement checkStatement = conn.prepareStatement(check);
-                PreparedStatement updateStatement = conn.prepareStatement(update)) {
+        try (var conn = getConnection();
+             PreparedStatement checkStatement = conn.prepareStatement(check);
+             PreparedStatement updateStatement = conn.prepareStatement(update)) {
 
             checkStatement.setInt(1, joinRequest.gameID());
             ResultSet resultSet = checkStatement.executeQuery();
@@ -131,7 +131,7 @@ public class SQLGameDAO implements GameDAO{
             if (resultSet.next()) {
                 String existingUsername = resultSet.getString(1); // Get username from column
 
-                if ((existingUsername != null && !existingUsername.isEmpty()) && existingUsername != authData.username()) {
+                if ((existingUsername != null && !existingUsername.isEmpty()) && !existingUsername.equals(authData.username())) {
                     throw new AlreadyTakenException("Error: already taken");
                 }
             } else {
@@ -143,7 +143,7 @@ public class SQLGameDAO implements GameDAO{
 
             updateStatement.executeUpdate();
 
-        } catch (SQLException e) {
+        } catch (SQLException | DataAccessException e) {
             throw new RuntimeException("Error updating game: " + e.getMessage(), e);
         }
 
@@ -152,11 +152,12 @@ public class SQLGameDAO implements GameDAO{
 
     public void updateBoard(int gameId, ChessGame game) {
         String gameJson = new Gson().toJson(game);
-        try (var stmt = conn.prepareStatement("UPDATE GameData SET game = ? WHERE gameId = ?")) {
+        try (var conn = getConnection();
+             var stmt = conn.prepareStatement("UPDATE GameData SET game = ? WHERE gameId = ?")) {
             stmt.setString(1, gameJson);
             stmt.setInt(2, gameId);
             stmt.executeUpdate();
-        } catch (SQLException e) {
+        } catch (SQLException | DataAccessException e) {
             throw new RuntimeException("Failed to update game", e);
         }
     }
@@ -164,26 +165,29 @@ public class SQLGameDAO implements GameDAO{
     public void updatePlayers(int gameId, String username) {
 
         if(Objects.equals(getGame(gameId).whiteUsername(), username)) {
-            try (var stmt = conn.prepareStatement("UPDATE GameData SET whiteUsername = ? WHERE gameId = ?")) {
+            try (var conn = getConnection();
+                 var stmt = conn.prepareStatement("UPDATE GameData SET whiteUsername = ? WHERE gameId = ?")) {
                 stmt.setString(1, null);
                 stmt.setInt(2, gameId);
                 stmt.executeUpdate();
-            } catch (SQLException e) {
+            } catch (SQLException | DataAccessException e) {
                 throw new RuntimeException("Failed to update game", e);
             }
         }else if(Objects.equals(getGame(gameId).blackUsername(), username)){
-            try (var stmt = conn.prepareStatement("UPDATE GameData SET blackUsername = ? WHERE gameId = ?")) {
+            try (var conn = getConnection();
+                 var stmt = conn.prepareStatement("UPDATE GameData SET blackUsername = ? WHERE gameId = ?")) {
                 stmt.setString(1, null);
                 stmt.setInt(2, gameId);
                 stmt.executeUpdate();
-            } catch (SQLException e) {
+            } catch (SQLException | DataAccessException e) {
                 throw new RuntimeException("Failed to update game", e);
             }
         }
     }
 
     public void clear() throws DataAccessException {
-        try (var preparedStatement = conn.prepareStatement("DELETE FROM GameData")) {
+        try (var conn = getConnection();
+             var preparedStatement = conn.prepareStatement("DELETE FROM GameData")) {
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
